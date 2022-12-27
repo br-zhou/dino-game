@@ -68,4 +68,12 @@ export class CanvasTools {
       return (length - this.camPos.y) / this.fov * this.windowSize.y;
     }
   }
+
+  drawRect(color, x, y, width, length) {
+    this.ctx.fillStyle = color;
+    this.ctx.fillRect(
+      this.worldToScreenPosX(x),this.worldToScreenPosY(y),
+      this.worldToScreen(width), this.worldToScreen(length)
+    );
+  }
 }

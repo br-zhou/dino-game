@@ -9,22 +9,16 @@ export class Foreground {
     this.color_ = '#000000';
     this.scene_ = scene;
     this.position_ = new Vec2();
-    this.size_ = new Vec2(90, 20);
+    this.size_ = new Vec2(10, 2);
   }
 
   render() {
     const tools = new CanvasTools();
 
-    tools.ctx.fillStyle = this.color_;
-    tools.ctx.fillRect(
-      tools.worldToScreenPosX(0),tools.worldToScreenPosY(0),
-      tools.worldToScreen(49), tools.worldToScreen(10)
-    );
-    
-    tools.ctx.fillStyle = "red";
-    tools.ctx.fillRect(
-      100  + tools.windowSize.x / 2, 100 + tools.windowSize.y / 2,
-      100, 100
+    tools.drawRect(
+      this.color_,
+      this.position_.x, this.position_.y,
+      this.size_.x, this.size_.y
     );
   }
 }
