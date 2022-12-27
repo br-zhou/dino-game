@@ -3,11 +3,14 @@
  */
 export class Canvas {
   constructor() {
+    console.log("HI")
     this.canvas_ = document.querySelector('canvas');
     this.context_ = this.canvas_.getContext('2d');
 
     this.setEventsListeners_();
     this.resizeCanvas_();
+
+    console.log(this.canvas_)
   }
 
   /**
@@ -33,11 +36,17 @@ export class Canvas {
     // clears canvas
     this.context_.fillStyle = "black";
     this.context_.fillRect(0,0, this.canvas_.width, this.canvas_.height);
-
-    console.log(this.canvas_.width, this.canvas_.height)
   }
 
   getContext() {
     return this.context_;
+  }
+
+  get width() {
+    return this.canvas_.width;
+  }
+
+  get height() {
+    return this.canvas_.height;
   }
 }

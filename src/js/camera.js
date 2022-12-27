@@ -6,16 +6,13 @@ import { Vec2 } from "./vec2.js";
  */
 export class Camera {
   constructor() {
-    this.canvas_ = new Canvas();
+    this.canvas = new Canvas();
+    this.ctx = this.canvas.getContext();
     this.position = new Vec2();
     this.viewRange = 100;
   }
 
-  render() {
-    // render background
-
-    // render foreground
-
-    // render entities
+  get size() {
+    return new Vec2(this.canvas.width, this.canvas.height);
   }
 }

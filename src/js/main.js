@@ -1,10 +1,16 @@
-import { Canvas } from "./canvas.js";
+import { Scene } from "./scene.js";
 
-const canvas = new Canvas();
+const scene = new Scene();
 
 function animationLoop() {
+  // render background
+  scene.renderBackground();
+
+  // render foreground
+
+  // render entities
+
   window.requestAnimationFrame(animationLoop);
-  console.log(window.innerWidth, window.innerHeight);
 }
 
 animationLoop();
