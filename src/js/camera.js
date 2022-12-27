@@ -15,16 +15,6 @@ export class Camera {
     void new CanvasTools(this);
   }
 
-  get tools() {
-    return {
-      canvas: this.canvas_,
-      ctx: this.ctx_,
-      fov: this.fov_,
-      camPos: this.position_,
-      windowSize: {x: window.innerWidth, y: window.innerHeight},
-    };
-  }
-
   get fov() {
     return this.fov_;
   }

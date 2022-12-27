@@ -1,3 +1,8 @@
+const CanvasModes = {
+  HORIZONATAL: Symbol("Horizontal"),
+  VERTICAL: Symbol("Vertical")
+}
+
 /**
  * 2d canvas for game
  * Singleton class
@@ -10,6 +15,7 @@ export class Canvas {
 
     this.canvas_ = document.querySelector('canvas');
     this.context_ = this.canvas_.getContext('2d');
+    this.mode = null;
 
     this.setEventsListeners_();
     this.resizeCanvas_();
@@ -37,9 +43,7 @@ export class Canvas {
     this.canvas_.width = window.innerWidth;
     this.canvas_.height = window.innerHeight;
 
-    // clears canvas
-    this.context_.fillStyle = "black";
-    this.context_.fillRect(0,0, this.canvas_.width, this.canvas_.height);
+    this.mode = (window.innerWidth > window.innerHeight) ? CanvasModes.HORIZONATAL : CanvasModes.VERTICAL;
   }
 
   getContext() {
