@@ -1,5 +1,6 @@
 /**
  * 2d canvas for game
+ * Singleton class
  */
 export class Canvas {
   constructor() {

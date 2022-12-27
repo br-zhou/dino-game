@@ -10,16 +10,9 @@ export class Camera {
     this.canvas_ = new Canvas();
     this.ctx_ = this.canvas_.getContext();
     this.position_ = new Vec2();
-    this.windowSize_ = new Vec2(this.canvas_.width, this.canvas_.height);
     this.fov_ = 100;
 
     bindToolsToCam(this);
-  }
-
-  get windowSize() {
-    this.windowSize_.x = this.canvas_.width;
-    this.windowSize_.y = this.canvas_.height;
-    return this.windowSize_;
   }
 
   get tools() {
@@ -30,5 +23,13 @@ export class Camera {
       camPos: this.position_,
       windowSize: {x: window.innerWidth, y: window.innerHeight},
     };
+  }
+
+  get fov() {
+    return this.fov_;
+  }
+
+  get position() {
+    return this.position_;
   }
 }
