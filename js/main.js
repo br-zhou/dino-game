@@ -1,8 +1,10 @@
-const canvas = document.querySelector('canvas');
-const c = canvas.getContext('2d');
+import { Canvas } from "./canvas.js";
 
-canvas.width = 1024;
-canvas.height = 576;
+const canvas = new Canvas();
 
-c.fillStyle = "white";
-c.fillRect(0,0,canvas.width,canvas.height);
+function animationLoop() {
+  window.requestAnimationFrame(animationLoop);
+  console.log(window.innerWidth, window.innerHeight);
+}
+
+animationLoop();
