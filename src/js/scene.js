@@ -24,4 +24,8 @@ export class Scene {
     ctx.fillStyle = this.backgroundColor_;
     ctx.fillRect(0,0,canvas.width,canvas.height);
   }
+
+  get camera() {
+    return this.camera_;
+  }
 }

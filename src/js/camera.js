@@ -1,5 +1,5 @@
 import { Canvas } from "./canvas.js";
-import { bindToolsToCam } from "./renderingTools.js";
+import { CanvasTools } from "./canvasTools.js";
 import { Vec2 } from "./vec2.js";
 
 /**
@@ -12,7 +12,7 @@ export class Camera {
     this.position_ = new Vec2();
     this.fov_ = 100;
 
-    bindToolsToCam(this);
+    void new CanvasTools(this);
   }
 
   get tools() {

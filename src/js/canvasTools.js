@@ -8,11 +8,9 @@ export class CanvasTools {
       return CanvasTools.instance;
     }
 
-    this.camera_ = camera;
-    this.canvas_ = this.camera_.canvas_;
-    this.ctx_ = this.canvas_.getContext();
-    this.fov_ = this.camera_.fov;
-    this.camPos_ = camera.position;
+    this.camera = camera;
+    this.canvas = this.camera.canvas_;
+    this.ctx = this.canvas.getContext();
 
     CanvasTools.instance = this;
   }
@@ -22,12 +20,22 @@ export class CanvasTools {
    */
   get tools() {
     return {
-      canvas: this.canvas_,
-      ctx: this.ctx_,
-      fov: this.fov_,
-      camPos: this.camPos_,
-      windowSize: {x: window.innerWidth, y: window.innerHeight},
+      fov: this.fov,
+      camPos: this.camPos,
+      
     };
+  }
+
+  get fov() {
+    return this.camera.fov;
+  }
+
+  get camPos() {
+    return this.camera.position;
+  }
+
+  get windowSize() {
+    return {x: window.innerWidth, y: window.innerHeight};
   }
 
   /**
@@ -35,7 +43,7 @@ export class CanvasTools {
    * @returns the world coordinate positionX converted to the window pixel
    */
   worldToScreenX(positionX) {
-    return (positionX - tools.camPos.x) / tools.fov * tools.windowSize.x;
+    return (positionX - this.camPos.x) / this.fov * this.windowSize.x;
   }
 
   
@@ -44,6 +52,6 @@ export class CanvasTools {
    * @returns the world coordinate positionY converted to the window pixel
    */
   worldToScreenY(positionY) {
-    return (positionY - tools.camPos.y) / tools.fov * tools.windowSize.y;
+    return (positionY - this.camPos.y) / this.fov * this.windowSize.y;
   }
 }

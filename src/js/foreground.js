@@ -1,4 +1,4 @@
-import { getRenderTools } from "./renderingTools.js";
+import { CanvasTools } from "./canvasTools.js";
 import { Vec2 } from "./vec2.js";
 
 /**
@@ -13,21 +13,10 @@ export class Foreground {
   }
 
   render() {
-    const tools = getRenderTools();
+    const tools = new CanvasTools();
 
     tools.ctx.fillStyle = this.color_;
-    tools.ctx.fillRect(this.worldToScreenX(0),this.worldToScreenY(0),
-                      this.worldToScreenX(50), this.worldToScreenY(50));
-  }
-
-  worldToScreenX(number) {
-    const tools = getRenderTools();
-
-    return (number - tools.camPos.x) / tools.fov * tools.windowSize.x;
-  }
-
-  worldToScreenY(number) {
-    const tools = getRenderTools();
-    return (number - tools.camPos.y) / tools.fov * tools.windowSize.y;
+    tools.ctx.fillRect(tools.worldToScreenX(0),tools.worldToScreenY(0),
+                      tools.worldToScreenX(50), tools.worldToScreenY(50));
   }
 }
