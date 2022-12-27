@@ -1,3 +1,5 @@
+import { CanvasModes } from "./canvas.js";
+
 /**
  * Gives tools needed to draw on canvas
  * Singleton class
@@ -42,8 +44,8 @@ export class CanvasTools {
    * @param {number} positionX 
    * @returns the world coordinate positionX converted to the window pixel
    */
-  worldToScreenX(positionX) {
-    return (positionX - this.camPos.x) / this.fov * this.windowSize.x;
+  worldToScreenPosX(positionX) {
+    return this.worldToScreen(positionX) + this.windowSize.x / 2;
   }
 
   
@@ -51,8 +53,19 @@ export class CanvasTools {
    * @param {number} positionY
    * @returns the world coordinate positionY converted to the window pixel
    */
-  worldToScreenY(positionY) {
-    console.log(this.canvas.mode);
-    return (positionY - this.camPos.y) / this.fov * this.windowSize.y;
+  worldToScreenPosY(positionY) {
+    return this.worldToScreen(positionY) + this.windowSize.y / 2;
+  }
+
+  /**
+   * @param {number} length 
+   * @returns the world units converted to window pixel length
+   */
+  worldToScreen(length) {
+    if (this.canvas.mode === CanvasModes.HORIZONATAL) {
+      return (length - this.camPos.x) / this.fov * this.windowSize.x;
+    } else {
+      return (length - this.camPos.y) / this.fov * this.windowSize.y;
+    }
   }
 }

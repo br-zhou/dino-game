@@ -1,7 +1,8 @@
-const CanvasModes = {
+export const CanvasModes = {
   HORIZONATAL: Symbol("Horizontal"),
   VERTICAL: Symbol("Vertical")
 }
+Object.freeze(CanvasModes);
 
 /**
  * 2d canvas for game

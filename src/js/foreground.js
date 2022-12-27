@@ -16,7 +16,15 @@ export class Foreground {
     const tools = new CanvasTools();
 
     tools.ctx.fillStyle = this.color_;
-    tools.ctx.fillRect(tools.worldToScreenX(0),tools.worldToScreenY(0),
-                      tools.worldToScreenX(50), tools.worldToScreenY(50));
+    tools.ctx.fillRect(
+      tools.worldToScreenPosX(0),tools.worldToScreenPosY(0),
+      tools.worldToScreen(49), tools.worldToScreen(10)
+    );
+    
+    tools.ctx.fillStyle = "red";
+    tools.ctx.fillRect(
+      100  + tools.windowSize.x / 2, 100 + tools.windowSize.y / 2,
+      100, 100
+    );
   }
 }
