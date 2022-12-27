@@ -19,7 +19,7 @@ export class Scene {
   }
 
   renderBackground() {
-    const canvas = this.camera_.canvas;
+    const canvas = this.camera_.canvas_;
     const ctx = canvas.getContext();
     ctx.fillStyle = this.backgroundColor_;
     ctx.fillRect(0,0,canvas.width,canvas.height);

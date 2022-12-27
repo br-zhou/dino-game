@@ -3,14 +3,17 @@
  */
 export class Canvas {
   constructor() {
-    console.log("HI")
+    if (Canvas.instance instanceof Canvas) {
+      return Settings.instace;
+    }
+
     this.canvas_ = document.querySelector('canvas');
     this.context_ = this.canvas_.getContext('2d');
 
     this.setEventsListeners_();
     this.resizeCanvas_();
 
-    console.log(this.canvas_)
+    Canvas.instace = this;
   }
 
   /**

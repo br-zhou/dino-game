@@ -1,4 +1,5 @@
 import { Canvas } from "./canvas.js";
+import { bindToolsToCam } from "./renderingTools.js";
 import { Vec2 } from "./vec2.js";
 
 /**
@@ -6,13 +7,28 @@ import { Vec2 } from "./vec2.js";
  */
 export class Camera {
   constructor() {
-    this.canvas = new Canvas();
-    this.ctx = this.canvas.getContext();
-    this.position = new Vec2();
-    this.viewRange = 100;
+    this.canvas_ = new Canvas();
+    this.ctx_ = this.canvas_.getContext();
+    this.position_ = new Vec2();
+    this.windowSize_ = new Vec2(this.canvas_.width, this.canvas_.height);
+    this.fov_ = 100;
+
+    bindToolsToCam(this);
   }
 
-  get size() {
-    return new Vec2(this.canvas.width, this.canvas.height);
+  get windowSize() {
+    this.windowSize_.x = this.canvas_.width;
+    this.windowSize_.y = this.canvas_.height;
+    return this.windowSize_;
+  }
+
+  get tools() {
+    return {
+      canvas: this.canvas_,
+      ctx: this.ctx_,
+      fov: this.fov_,
+      camPos: this.position_,
+      windowSize: {x: window.innerWidth, y: window.innerHeight},
+    };
   }
 }
