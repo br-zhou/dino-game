@@ -1,3 +1,4 @@
+import { startLoop } from "./AnimationLoop.js";
 import { Foreground } from "./foreground.js";
 import { Player } from "./player.js";
 import { Scene } from "./scene.js";
@@ -6,23 +7,15 @@ const scene = new Scene();
 const ground = new Foreground(scene);
 const player = new Player();
 
-let lastFrameElapsedTimeMillis = 0;
+const loop = (dtSec, elapsedTimeSec) => {
+    // render background
+    scene.renderBackground();
 
-function animationLoop(elapsedTimeMillis = 0) {
-  const dtMillis = elapsedTimeMillis - lastFrameElapsedTimeMillis;
-  const dtSec = dtMillis / 1000;
-
-  // render background
-  scene.renderBackground();
-
-  // render foreground
-  ground.render();
-  // render entities
-  player.update(dtSec);
-  player.render();
-
-  lastFrameElapsedTimeMillis = elapsedTimeMillis;
-  window.requestAnimationFrame(animationLoop);
+    // render foreground
+    ground.render();
+    // render entities
+    player.update(dtSec);
+    player.render();
 }
 
-animationLoop(0);
+startLoop(loop);
