@@ -6,14 +6,10 @@ const scene = new Scene();
 const ground = new Foreground(scene);
 const player = new Player();
 
-function timeNow() {
-	return ( typeof performance === 'undefined' ? Date : performance ).now();
-}
+let lastFrameElapsedTimeMillis = 0;
 
-let lastFrameRunTimeMillis = 0;
-
-function animationLoop(runTimeMillis = 0) {
-  const dtMillis = runTimeMillis - lastFrameRunTimeMillis;
+function animationLoop(elapsedTimeMillis = 0) {
+  const dtMillis = elapsedTimeMillis - lastFrameElapsedTimeMillis;
   const dtSec = dtMillis / 1000;
 
   // render background
@@ -25,8 +21,8 @@ function animationLoop(runTimeMillis = 0) {
   player.update(dtSec);
   player.render();
 
-  lastFrameRunTimeMillis = runTimeMillis;
+  lastFrameElapsedTimeMillis = elapsedTimeMillis;
   window.requestAnimationFrame(animationLoop);
 }
 
-animationLoop();
+animationLoop(0);

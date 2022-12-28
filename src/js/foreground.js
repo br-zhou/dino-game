@@ -1,5 +1,5 @@
 import { CanvasTools } from "./canvasTools.js";
-import { Vec2 } from "./vec2.js";
+import { Vector2 } from "./vector2.js";
 
 /**
  * Represents the ground that entities interact with
@@ -8,8 +8,8 @@ export class Foreground {
   constructor(scene) {
     this.color_ = '#000000';
     this.scene_ = scene;
-    this.position_ = new Vec2();
-    this.size_ = new Vec2(10, 2);
+    this.position_ = new Vector2();
+    this.size_ = new Vector2(10, 2);
   }
 
   render() {

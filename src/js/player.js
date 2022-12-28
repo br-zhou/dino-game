@@ -1,14 +1,14 @@
 import { CanvasTools } from "./canvasTools.js";
 import { Entity } from "./Entity.js";
-import { Vec2 } from "./vec2.js";
+import { Vector2 } from "./vector2.js";
 
 export class Player extends Entity {
   constructor() {
     super();
 
-    this.position_ = new Vec2(0, -5);
-    this.size_ = new Vec2(2, 2);
-    this.velocity_ = new Vec2(0, 3);
+    this.position_ = new Vector2(0, -5);
+    this.size_ = new Vector2(2, 2);
+    this.velocity_ = new Vector2(0, 3);
   }
 
   /** @override */
