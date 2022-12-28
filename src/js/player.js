@@ -8,7 +8,7 @@ export class Player extends Entity {
 
     this.position_ = new Vec2(0, -5);
     this.size_ = new Vec2(2, 2);
-    this.velocity_ = new Vec2();
+    this.velocity_ = new Vec2(0, 3);
   }
 
   /** @override */
