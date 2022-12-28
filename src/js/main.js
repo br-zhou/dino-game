@@ -10,11 +10,10 @@ function timeNow() {
 	return ( typeof performance === 'undefined' ? Date : performance ).now();
 }
 
-let thenDate = timeNow();
+let lastFrameRunTimeMillis = 0;
 
-function animationLoop() {
-  const nowDate = timeNow();
-  const dtMillis = nowDate - thenDate;
+function animationLoop(runTimeMillis = 0) {
+  const dtMillis = runTimeMillis - lastFrameRunTimeMillis;
   const dtSec = dtMillis / 1000;
 
   // render background
@@ -26,7 +25,7 @@ function animationLoop() {
   player.update(dtSec);
   player.render();
 
-  thenDate = nowDate;
+  lastFrameRunTimeMillis = runTimeMillis;
   window.requestAnimationFrame(animationLoop);
 }
 
