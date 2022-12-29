@@ -2,5 +2,5 @@
  * Represents world constants
  */
 export class World {
-  static GRAVITY = 50;
+  static GRAVITY = 10;
 }

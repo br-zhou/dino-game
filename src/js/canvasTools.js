@@ -72,13 +72,13 @@ export class CanvasTools {
   /**
    * Draws a rectangle of given width and height,
    * with the top left corner at the world postion x and y
-   * @param {string} color String in the format '#000000'
    * @param {number} x x world position
    * @param {number} y y world position
    * @param {number} width width of rectangle
    * @param {number} height height of rectangle
+   * @param {string} color String in the format '#000000'
    */
-  drawRect(color, x, y, width, height) {
+  drawRect(x, y, width, height, color = "#FF0000") {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(
       this.worldToScreenPosX(x),this.worldToScreenPosY(y),

@@ -1,6 +1,6 @@
 import { CanvasTools } from "./canvasTools.js";
 
-const tileWidth = 2;
+export const tileWidth = 2;
 const tileColor = "#000000";
 /**
  * TileMap for ground
@@ -9,6 +9,7 @@ export class TileMap {
   constructor() {
     this.mapData_ = null;
     this.tileData_ = null;
+    this.tools = new CanvasTools();
   }
 
   /**
@@ -33,20 +34,34 @@ export class TileMap {
   }
 
   render() {
-    const tools = new CanvasTools();
-
     if (this.tileData_ != null) { // todo: optimize rendering to only show tiles visible to camera
       for (const gridX of Object.keys(this.tileData_)) {
         for (const gridY of Object.keys(this.tileData_[gridX])) {
-          tools.drawRect(
-            tileColor,
-            gridX * tileWidth + this.offsetX_,
-            gridY * tileWidth + this.offsetY_,
-            tileWidth,
-            tileWidth
-          );
+          this.colorGrid({x: gridX, y: gridY}, tileColor);
         }
       }
     }
+  }
+
+  /**
+   * @param {x, y} position colors tile at index {x,y}
+   * @param {string} color the specified color
+   */
+  colorGrid({x, y}, color) {
+    this.tools.drawRect(
+      x * tileWidth + this.offsetX_,
+      y * tileWidth + this.offsetY_,
+      tileWidth,
+      tileWidth,
+      color
+    );
+  }
+
+  get offsetX() {
+    return this.offsetX_;
+  }
+
+  get offsetY() {
+    return this.offsetY_;
   }
 }

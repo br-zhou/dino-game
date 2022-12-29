@@ -7,9 +7,7 @@ import { Scene } from "./scene.js";
  */
 
 const scene = new Scene();
-const player = new Player();
-
-scene.add(player);
+const player = new Player(scene);
 
 const loop = (dtSec, elapsedTimeSec) => {
   scene.update(dtSec, elapsedTimeSec);

@@ -1,5 +1,5 @@
 import { Camera } from "./camera.js";
-import { TileMap } from "./map.js";
+import { TileMap } from "./tileMap.js";
 
 /**
  * Represents a scene in the game. Holds all
@@ -25,7 +25,6 @@ export class Scene {
    */
   load(callback) {
     this.sceneLoadedCallback_ = callback;
-    console.log(this.sceneLoadedCallback_);
     this.tileMap.load(this.objectLoaded_);
   }
 
@@ -36,8 +35,6 @@ export class Scene {
    */
   objectLoaded_ = ({object, result}) => {
     this.unloadedObjects_.delete(object);
-
-    console.log(this.unloadedObjects_.size);
 
     if (this.unloadedObjects_.size === 0) {
       this.loaded_ = true;
@@ -51,7 +48,6 @@ export class Scene {
    */
   add(entity) {
     this.entities_.push(entity);
-    entity.setScene(this);
   }
 
   /**
