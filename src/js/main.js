@@ -8,18 +8,13 @@ import { Scene } from "./scene.js";
  */
 
 const scene = new Scene();
-const ground = new Foreground(scene);
 const player = new Player();
 
-const loop = (dtSec, elapsedTimeSec) => {
-    // render background
-    scene.render();
+scene.add(player);
 
-    // render foreground
-    ground.render();
-    // render entities
-    player.update(dtSec);
-    player.render();
+const loop = (dtSec, elapsedTimeSec) => {
+    scene.update(dtSec, elapsedTimeSec);
+    scene.render();
 }
 
 startLoop(loop);

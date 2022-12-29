@@ -14,15 +14,31 @@ export class Scene {
   }
 
   /**
-   * adds enity to list of entities
+   * adds `entity` to list of entities
    */
   add(entity) {
     this.entities_.push(entity);
   }
 
+  /**
+   * updates all entities in scene
+   */
+  update(dtSec, elapsedTimeSec) {
+    for (const entitiy of this.entities_) {
+      entitiy.update(dtSec, elapsedTimeSec);
+    }
+  }
+
+  /**
+   * renders background, foreground, the entities onto canvas
+   */
   render() {
     this.renderBackground_();
     this.renderForeground_();
+
+    for (const entitiy of this.entities_) {
+      entitiy.render();
+    }
   }
 
   renderBackground_() {
