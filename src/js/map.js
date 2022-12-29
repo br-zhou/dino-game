@@ -4,11 +4,13 @@ export class TileMap {
     this.getMap();
   }
 
-  * getMap() {
-    fetch("./assets/map.json")
-    .then((response) => response.json()) // converts response to json obj
-    .then((mapData) => {
-      console.log(mapData);
-    });
+  async getMap() {
+    try {
+      const response = await fetch("./assets/map.json");
+      const mapJson = await response.json()
+      console.log(mapJson);
+    } catch (err) {
+      console.log(error);
+    }
   }
 }
