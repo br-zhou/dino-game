@@ -12,16 +12,16 @@ export class Player extends Entity {
 
     this.position_ = new Vector2(0, -5);
     this.size_ = new Vector2(2, 2);
-    this.velocity_ = new Vector2(0, 1);
+    this.velocity_ = new Vector2(1, -1);
     this.mapCollider = new TileMapCollider(this);
   }
 
   /** @override */
   update(dtSec) {
-    this.position_.x -= this.velocity_.x * dtSec;
-    this.position_.y -= this.velocity_.y * dtSec;
+    this.position_.x += this.velocity_.x * dtSec;
+    this.position_.y += this.velocity_.y * dtSec;
 
-    this.velocity_.y += World.GRAVITY * dtSec;
+    this.velocity_.y -= World.GRAVITY * dtSec;
 
     this.mapCollider.update();
   }
@@ -37,5 +37,7 @@ export class Player extends Entity {
       this.size_.y,
       "#FF0000"
     );
+
+    this.mapCollider.render();
   }
 }

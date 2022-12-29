@@ -8,7 +8,7 @@ const tileColor = "#000000";
 export class TileMap {
   constructor() {
     this.mapData_ = null;
-    this.tileData_ = null;
+    this.tileGrid_ = null;
     this.tools = new CanvasTools();
   }
 
@@ -22,7 +22,7 @@ export class TileMap {
     try {
       const response = await fetch("./assets/map.json");
       this.mapData_ = await response.json()
-      this.tileData_ = this.mapData_.tileData;
+      this.tileGrid_ = this.mapData_.tileData;
       this.offsetX_ = - this.mapData_.width * tileWidth / 2;
       this.offsetY_ = - this.mapData_.height * tileWidth / 2;
       callbackArgument.result = true;
@@ -34,9 +34,9 @@ export class TileMap {
   }
 
   render() {
-    if (this.tileData_ != null) { // todo: optimize rendering to only show tiles visible to camera
-      for (const gridX of Object.keys(this.tileData_)) {
-        for (const gridY of Object.keys(this.tileData_[gridX])) {
+    if (this.tileGrid_ != null) { // todo: optimize rendering to only show tiles visible to camera
+      for (const gridX of Object.keys(this.tileGrid_)) {
+        for (const gridY of Object.keys(this.tileGrid_[gridX])) {
           this.colorGrid({x: gridX, y: gridY}, tileColor);
         }
       }
@@ -56,6 +56,20 @@ export class TileMap {
       color
     );
   }
+
+    /**
+   * @param {x, y} position outlines tile at index {x,y}
+   * @param {string} color the specified color
+   */
+    outlineGrid({x, y}, color) {
+      this.tools.drawRectOutline(
+        x * tileWidth + this.offsetX_,
+        y * tileWidth + this.offsetY_,
+        tileWidth,
+        tileWidth,
+        color
+      );
+    }
 
   get offsetX() {
     return this.offsetX_;

@@ -85,4 +85,21 @@ export class CanvasTools {
       this.worldToScreen(width), this.worldToScreen(height)
     );
   }
+
+    /**
+   * Draws a write rectangle of given width and height,
+   * with the top left corner at the world postion x and y
+   * @param {number} x x world position
+   * @param {number} y y world position
+   * @param {number} width width of rectangle
+   * @param {number} height height of rectangle
+   * @param {string} color String in the format '#000000'
+   */
+  drawRectOutline(x, y, width, height, color = "#FF0000") {
+    this.ctx.strokeStyle = color;
+    this.ctx.strokeRect(
+      this.worldToScreenPosX(x),this.worldToScreenPosY(y),
+      this.worldToScreen(width), this.worldToScreen(height)
+    );
+  }
 }
