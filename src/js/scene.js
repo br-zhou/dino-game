@@ -1,4 +1,5 @@
 import { Camera } from "./camera.js";
+import { TileMap } from "./map.js";
 
 /**
  * Represents a scene in the game. Holds all
@@ -9,6 +10,7 @@ export class Scene {
     this.camera_ = new Camera(this);
     this.entities_ = [];
     this.backgroundColor_ = '#87CEEB';
+    this.tileMap_ = new TileMap();
   }
 
   /**
@@ -18,11 +20,20 @@ export class Scene {
     this.entities_.push(entity);
   }
 
-  renderBackground() {
+  render() {
+    this.renderBackground_();
+    this.renderForeground_();
+  }
+
+  renderBackground_() {
     const canvas = this.camera_.canvas_;
     const ctx = canvas.getContext();
     ctx.fillStyle = this.backgroundColor_;
     ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
+
+  renderForeground_() {
+    this.tileMap_.render();
   }
 
   get camera() {
