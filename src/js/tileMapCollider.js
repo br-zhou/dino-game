@@ -29,8 +29,12 @@ export class TileMapCollider {
       }
     }
 
-    let trueCenter = Vector2.add(this.position, this.halfSize);
-    new CanvasTools().drawRect(trueCenter.x, trueCenter.y, .5, .5, "#FFFFFF")
+    let trueCenter = {
+      x: this.position.x + this.halfSize.x,
+      y: this.position.y - this.halfSize.y
+    }
+
+    new CanvasTools().drawCircle(trueCenter, .15, "#FFFFFF");
   }
 
   /**

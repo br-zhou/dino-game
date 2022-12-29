@@ -1,4 +1,5 @@
 import { startLoop } from "./animationLoop.js";
+import { CanvasTools } from "./canvasTools.js";
 import { Player } from "./player.js";
 import { Scene } from "./scene.js";
 

@@ -102,4 +102,18 @@ export class CanvasTools {
       this.worldToScreen(width), this.worldToScreen(height)
     );
   }
+  
+  drawCircle({x, y}, radius, color = "#FF0000") {
+    this.ctx.fillStyle = color;
+    this.ctx.beginPath();
+    this.ctx.arc(
+      this.worldToScreenPosX(x),
+      this.worldToScreenPosY(y),
+      this.worldToScreen(radius),
+      0,
+      2 * Math.PI
+    );
+
+    this.ctx.fill();
+  }
 }
