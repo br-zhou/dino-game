@@ -10,14 +10,48 @@ export class Scene {
     this.camera_ = new Camera(this);
     this.entities_ = [];
     this.backgroundColor_ = '#87CEEB';
-    this.tileMap_ = new TileMap();
+    this.tileMap = new TileMap();
+    this.sceneLoadedCallback_ = null;
+    this.unloadedObjects_ = new Set();
+    this.loaded_ = false;
+
+    this.unloadedObjects_.add(this.tileMap);
+  }
+
+  /**
+   * loads scene and all entities added to it. 
+   * @param {function(boolean)} callback
+   * @returns result as boolean to callback
+   */
+  load(callback) {
+    this.sceneLoadedCallback_ = callback;
+    console.log(this.sceneLoadedCallback_);
+    this.tileMap.load(this.objectLoaded_);
+  }
+
+  /**
+   * If every object in scene is loaded, calls sceneLoadedCallback
+   * function with result
+   * @param {string, boolean} result name of object loaded and result
+   */
+  objectLoaded_ = ({object, result}) => {
+    this.unloadedObjects_.delete(object);
+
+    console.log(this.unloadedObjects_.size);
+
+    if (this.unloadedObjects_.size === 0) {
+      this.loaded_ = true;
+      this.sceneLoadedCallback_(result);
+    }
   }
 
   /**
    * adds `entity` to list of entities
+   * REQUIRES: can only be called before scene.load is called!
    */
   add(entity) {
     this.entities_.push(entity);
+    entity.setScene(this);
   }
 
   /**
@@ -49,7 +83,7 @@ export class Scene {
   }
 
   renderForeground_() {
-    this.tileMap_.render();
+    this.tileMap.render();
   }
 
   get camera() {

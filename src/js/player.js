@@ -6,10 +6,14 @@ import { World } from "./world.js";
 export class Player extends Entity {
   constructor() {
     super();
-
+    this.scene = null;
     this.position_ = new Vector2(0, -5);
     this.size_ = new Vector2(2, 2);
     this.velocity_ = new Vector2(0, 3);
+  }
+
+  setScene(scene) {
+    this.scene = scene;
   }
 
   /** @override */

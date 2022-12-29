@@ -9,19 +9,27 @@ export class TileMap {
   constructor() {
     this.mapData_ = null;
     this.tileData_ = null;
-    this.getMap();
   }
 
-  async getMap() {
+  /**
+   * tries loading map data and returns success to callback
+   * @param {function({type: string, result: boolean})} callback function that receives result
+   */
+  async load(callback) {
+    let callbackArgument = {object: this, result: false};
+    
     try {
       const response = await fetch("./assets/map.json");
       this.mapData_ = await response.json()
       this.tileData_ = this.mapData_.tileData;
       this.offsetX_ = - this.mapData_.width * tileWidth / 2;
       this.offsetY_ = - this.mapData_.height * tileWidth / 2;
+      callbackArgument.result = true;
     } catch (err) {
       console.log(err);
     }
+
+    callback(callbackArgument);
   }
 
   render() {
