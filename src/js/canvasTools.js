@@ -54,7 +54,7 @@ export class CanvasTools {
    * @returns the world coordinate positionY converted to the window pixel
    */
   worldToScreenPosY(positionY) {
-    return this.worldToScreen(positionY) + this.windowSize.y / 2;
+    return - this.worldToScreen(positionY) + this.windowSize.y / 2;
   }
 
   /**

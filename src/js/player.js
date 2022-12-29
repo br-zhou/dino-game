@@ -14,8 +14,8 @@ export class Player extends Entity {
 
   /** @override */
   update(dtSec) {
-    this.position_.x += this.velocity_.x * dtSec;
-    this.position_.y += this.velocity_.y * dtSec;
+    this.position_.x -= this.velocity_.x * dtSec;
+    this.position_.y -= this.velocity_.y * dtSec;
 
     this.velocity_.y += World.GRAVITY * dtSec;
   }
