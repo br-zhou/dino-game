@@ -1,4 +1,4 @@
-import { startLoop } from "./AnimationLoop.js";
+import { startLoop } from "./animationLoop.js";
 import { Foreground } from "./foreground.js";
 import { Player } from "./player.js";
 import { Scene } from "./scene.js";

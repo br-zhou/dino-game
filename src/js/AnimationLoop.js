@@ -1,13 +1,17 @@
 /**
  * Starts an animation loop and calls callback every frame
- * @param {function(number, number)} callback loop function that is called every frame
+ * @param {function(number, number)} callback loop function that is called every frame.
+ * Passes dtSec and elapsedTimeSec to callback
  */
 export function startLoop(callback) {
   let lastFrameElapsedTimeMillis = 0;
 
   function loop(elapsedTimeMillis) {
-    const dtSec = (elapsedTimeMillis - lastFrameElapsedTimeMillis) / 1000;
     const elapsedTimeSec = elapsedTimeMillis / 1000;
+    let dtSec = (elapsedTimeMillis - lastFrameElapsedTimeMillis) / 1000;
+    
+    const maxDt = 0.1;
+    if (dtSec > maxDt) dtSec = maxDt; // stops player teleportation // todo: implement better fix
     
     callback(dtSec, elapsedTimeSec);
 
@@ -15,5 +19,5 @@ export function startLoop(callback) {
     window.requestAnimationFrame(loop);
   }
 
-  loop(0);
+  loop(0); // starts loop, with Elapsed time = 0
 }
