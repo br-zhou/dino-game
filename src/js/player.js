@@ -1,6 +1,7 @@
 import { CanvasTools } from "./canvasTools.js";
 import { Entity } from "./Entity.js";
 import { Vector2 } from "./vector2.js";
+import { World } from "./world.js";
 
 export class Player extends Entity {
   constructor() {
@@ -15,6 +16,8 @@ export class Player extends Entity {
   update(dtSec) {
     this.position_.x += this.velocity_.x * dtSec;
     this.position_.y += this.velocity_.y * dtSec;
+
+    this.velocity_.y += World.GRAVITY * dtSec;
   }
 
   /** @override */

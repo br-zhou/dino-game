@@ -1,9 +1,11 @@
 import { startLoop } from "./animationLoop.js";
 import { Foreground } from "./foreground.js";
+import { TileMap } from "./map.js";
 import { Player } from "./player.js";
 import { Scene } from "./scene.js";
 
 const scene = new Scene();
+const map = new TileMap();
 const ground = new Foreground(scene);
 const player = new Player();
 
