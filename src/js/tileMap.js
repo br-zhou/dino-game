@@ -1,6 +1,6 @@
 import { CanvasTools } from "./canvasTools.js";
 
-export const tileWidth = 2;
+export const tileSize = 2;
 const tileColor = "#000000";
 /**
  * TileMap for ground
@@ -23,8 +23,8 @@ export class TileMap {
       const response = await fetch("./assets/map.json");
       this.mapData_ = await response.json()
       this.tileGrid_ = this.mapData_.tileData;
-      this.offsetX_ = - this.mapData_.width * tileWidth / 2;
-      this.offsetY_ = - this.mapData_.height * tileWidth / 2;
+      this.offsetX_ = - this.mapData_.width * tileSize / 2;
+      this.offsetY_ = - this.mapData_.height * tileSize / 2;
       callbackArgument.result = true;
     } catch (err) {
       console.log(err);
@@ -49,27 +49,27 @@ export class TileMap {
    */
   colorGrid({x, y}, color) {
     this.tools.drawRect(
-      x * tileWidth + this.offsetX_,
-      y * tileWidth + this.offsetY_,
-      tileWidth,
-      tileWidth,
+      x * tileSize + this.offsetX_,
+      y * tileSize + this.offsetY_,
+      tileSize,
+      tileSize,
       color
     );
   }
 
-    /**
+  /**
    * @param {x, y} position outlines tile at index {x,y}
    * @param {string} color the specified color
    */
-    outlineGrid({x, y}, color) {
-      this.tools.drawRectOutline(
-        x * tileWidth + this.offsetX_,
-        y * tileWidth + this.offsetY_,
-        tileWidth,
-        tileWidth,
-        color
-      );
-    }
+  outlineGrid({x, y}, color) {
+    this.tools.drawRectOutline(
+      x * tileSize + this.offsetX_,
+      y * tileSize + this.offsetY_,
+      tileSize,
+      tileSize,
+      color
+    );
+  }
 
   get offsetX() {
     return this.offsetX_;
@@ -77,5 +77,34 @@ export class TileMap {
 
   get offsetY() {
     return this.offsetY_;
+  }
+
+  /**
+   * @param {number, number} position world position
+   * @returns {number, number} index in tileGrid
+   */
+  positionToGridIndex({x, y}) {
+    const OffsetPosition = {x: x - this.offsetX_, y: y - this.offsetY_};
+
+    const gridIndex = {
+      x: Math.floor(OffsetPosition.x / tileSize),
+      y: Math.floor(OffsetPosition.y / tileSize)
+    }
+
+    return gridIndex;
+  }
+
+  /**
+   * 
+   * @param {number, number} gridIndex x and y indexes in tileGrid
+   * @returns {number, number} world position of grid
+   */
+  gridIndexToPosition({x, y}) {
+    const worldPosition = {
+      x: x * tileSize + this.offsetX_,
+      y: y * tileSize + this.offsetY_
+    }
+
+    return worldPosition;
   }
 }
