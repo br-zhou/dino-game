@@ -1,22 +1,4 @@
-import { startLoop } from "./animationLoop.js";
-import { CanvasTools } from "./canvasTools.js";
-import { Player } from "./player.js";
-import { Scene } from "./scene.js";
+import { Game } from "./game.js";
 
-/**
- * Main game logic is written here
- */
-
-const scene = new Scene();
-const player = new Player(scene);
-
-const loop = (dtSec, elapsedTimeSec) => {
-  scene.update(dtSec, elapsedTimeSec);
-  scene.render();
-}
-
-scene.load((result) => {
-  if (result === true) {
-    startLoop(loop);
-  }
-});
+/** Starts Game */
+void new Game();
