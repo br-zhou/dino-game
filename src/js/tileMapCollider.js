@@ -33,11 +33,13 @@ export class TileMapCollider {
 
     for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {
       for (let j = -this.entityTileCollisionCheckRadius.y; j <= this.entityTileCollisionCheckRadius.y; j++) {
-
+        
         const boxIndex = new Vector2(
           i + this.playerGridIndex.x,
           j + this.playerGridIndex.y
         )
+
+        if(!this.tileMap.tileGrid_[boxIndex.x][boxIndex.y]) continue;
 
         const gridEntity = this.tileMap.indexToEntity(boxIndex);
 
@@ -69,6 +71,6 @@ export class TileMapCollider {
     }
 
     // draw a circle at entity's center position
-    new CanvasTools().drawCircle(this.playerCenterPosition, .15, "#FFFFFF");
+    new CanvasTools().drawCircle(this.playerCenterPosition, .15, "#0000FF");
   }
 }

@@ -2,8 +2,16 @@ import { startLoop } from "./animationLoop.js";
 import { Player } from "./player.js";
 import { Scene } from "./scene.js";
 
+/**
+ * Contains main game logic
+ * Singleton Instance
+ */
 export class Game {
+  static GRAVITY = 0;
+
   constructor() {
+    if (Game.instance instanceof Game) return Game.instance;
+
     this.scene = new Scene();
     this.player = new Player(this.scene); 
 
@@ -13,10 +21,12 @@ export class Game {
         startLoop(this.loop);
       }
     });
+
+    Game.instance = this;
   }
 
   setup() {
-    // this.scene.setup();
+    
   }
 
   loop = (dtSec, elapsedTimeSec) => {

@@ -1,8 +1,8 @@
 import { CanvasTools } from "./canvasTools.js";
 import { Entity } from "./Entity.js";
+import { Game } from "./game.js";
 import { TileMapCollider } from "./tileMapCollider.js";
 import { Vector2 } from "./vector2.js";
-import { World } from "./world.js";
 
 export class Player extends Entity {
   constructor(scene) {
@@ -11,7 +11,7 @@ export class Player extends Entity {
     this.scene.add(this);
 
     this.position_ = new Vector2(1, -3);
-    this.size_ = new Vector2(3, 7);
+    this.size_ = new Vector2(2, 2);
     this.velocity_ = new Vector2(1, -1);
     this.mapCollider = new TileMapCollider(this);
   }
@@ -21,7 +21,7 @@ export class Player extends Entity {
     this.position_.x += this.velocity_.x * dtSec;
     this.position_.y += this.velocity_.y * dtSec;
 
-    this.velocity_.y -= World.GRAVITY * dtSec;
+    this.velocity_.y -= Game.GRAVITY * dtSec;
 
     this.mapCollider.update();
   }
