@@ -10,8 +10,8 @@ export class Player extends Entity {
     this.scene = scene;
     this.scene.add(this);
 
-    this.position_ = new Vector2(0, -5);
-    this.size_ = new Vector2(2, 2);
+    this.position_ = new Vector2(0, 0);
+    this.size_ = new Vector2(1, 1);
     this.velocity_ = new Vector2(1, -1);
     this.mapCollider = new TileMapCollider(this);
   }

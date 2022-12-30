@@ -12,28 +12,35 @@ export class TileMapCollider {
       y: this.size.y / 2
     }
     this.tileMap = entity.scene.tileMap;
+
+    this.playerTileCollisionCheckRadius = new Vector2(
+      Math.ceil(this.size.x / 4) + 1,
+      Math.ceil(this.size.y / 4) + 1
+    )
+
+    console.log(this.playerTileCollisionCheckRadius);
   }
 
   update() {
-    this.playerGridIndex = this.tileMap.positionToGridIndex(Vector2.add(this.position, this.halfSize));
+    this.playerCenterPosition = {
+      x: this.position.x + this.halfSize.x,
+      y: this.position.y - this.halfSize.y
+    }
+
+    this.playerGridIndex = this.tileMap.positionToGridIndex(this.playerCenterPosition);
   }
 
   render() {
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 3; j++) {
+    for (let i = -this.playerTileCollisionCheckRadius.x; i <= this.playerTileCollisionCheckRadius.x; i++) {
+      for (let j = -this.playerTileCollisionCheckRadius.y; j <= this.playerTileCollisionCheckRadius.y; j++) {
         this.tileMap.outlineGrid({
-          x: this.playerGridIndex.x - 1 + i,
-          y: this.playerGridIndex.y - 1 + j},
+          x: this.playerGridIndex.x + i,
+          y: this.playerGridIndex.y + j},
           "#ffff00"
         );
       }
     }
 
-    let trueCenter = {
-      x: this.position.x + this.halfSize.x,
-      y: this.position.y - this.halfSize.y
-    }
-
-    new CanvasTools().drawCircle(trueCenter, .15, "#FFFFFF");
+    new CanvasTools().drawCircle(this.playerCenterPosition, .15, "#FFFFFF");
   }
 }
