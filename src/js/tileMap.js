@@ -1,4 +1,5 @@
 import { CanvasTools } from "./canvasTools.js";
+import { Vector2 } from "./vector2.js";
 
 export const tileSize = 2;
 const tileColor = "#000000";
@@ -106,5 +107,12 @@ export class TileMap {
     }
 
     return worldPosition;
+  }
+
+  indexToEntity({x, y}) {
+    return {
+      position_: this.gridIndexToPosition(new Vector2(x, y)),
+      size_: new Vector2(tileSize, tileSize)
+    }
   }
 }

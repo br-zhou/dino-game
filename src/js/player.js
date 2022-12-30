@@ -10,8 +10,8 @@ export class Player extends Entity {
     this.scene = scene;
     this.scene.add(this);
 
-    this.position_ = new Vector2(0, 0);
-    this.size_ = new Vector2(1, 1);
+    this.position_ = new Vector2(1, -3);
+    this.size_ = new Vector2(3, 7);
     this.velocity_ = new Vector2(1, -1);
     this.mapCollider = new TileMapCollider(this);
   }
@@ -29,6 +29,8 @@ export class Player extends Entity {
   /** @override */
   render() {
     const tools = new CanvasTools();
+
+    this.mapCollider.render();
     
     tools.drawRect(
       this.position_.x,
@@ -37,7 +39,5 @@ export class Player extends Entity {
       this.size_.y,
       "#FF0000"
     );
-
-    this.mapCollider.render();
   }
 }
