@@ -1,5 +1,6 @@
 import { CanvasTools } from "./canvasTools.js";
 import { Collisions } from "./collisions.js";
+import { tileSize } from "./tileMap.js";
 import { Vector2 } from "./vector2.js";
 
 export class TileMapCollider {
@@ -14,27 +15,56 @@ export class TileMapCollider {
     this.tileMap = entity.scene.tileMap;
 
     this.entityTileCollisionCheckRadius = new Vector2(
-      Math.ceil(this.size.x / 4) + 1,
-      Math.ceil(this.size.y / 4) + 1
-    )
+      Math.ceil(this.size.x / (2 * tileSize)),
+      Math.ceil(this.size.y / (2 * tileSize))
+    );
   }
 
   update() {
-    this.playerCenterPosition = {
-      x: this.position.x + this.halfSize.x,
-      y: this.position.y - this.halfSize.y
+    this.playerTileGridIndex = this.tileMap.positionToGridIndex(this.playerCenterPosition);
+    this.collsionTiles_ = this.getCollidingMapTiles();
+  }
+
+  render() {
+    // Render collision check grids
+    for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {
+      for (let j = -this.entityTileCollisionCheckRadius.y; j <= this.entityTileCollisionCheckRadius.y; j++) {
+        this.tileMap.outlineGrid({
+          x: this.playerTileGridIndex.x + i,
+          y: this.playerTileGridIndex.y + j},
+          "#ffff00"
+        );
+      }
     }
 
-    this.playerGridIndex = this.tileMap.positionToGridIndex(this.playerCenterPosition);
+    // render active collision grids
+    for (const tile of this.collsionTiles_) {
+      this.tileMap.colorGrid(new Vector2(tile.x, tile.y), "rgba(255, 155, 0, 0.7)");
+    }
 
-    this.collsionTiles_ = [];
+    // draw a circle at entity's center position
+    new CanvasTools().drawCircle(this.playerCenterPosition, .15, "#0000FF");
+  }
+
+  get playerCenterPosition() {
+    return new Vector2(
+      this.position.x + this.halfSize.x,
+      this.position.y - this.halfSize.y
+    )
+  }
+
+  /**
+   * @returns a list of all grid indexes that touch enitity hitbox
+   */
+  getCollidingMapTiles() {
+    let collsionTiles = [];
 
     for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {
       for (let j = -this.entityTileCollisionCheckRadius.y; j <= this.entityTileCollisionCheckRadius.y; j++) {
         
         const boxIndex = new Vector2(
-          i + this.playerGridIndex.x,
-          j + this.playerGridIndex.y
+          i + this.playerTileGridIndex.x,
+          j + this.playerTileGridIndex.y
         )
 
         if(this.tileMap.tileGrid_[boxIndex.x] === undefined) continue;
@@ -46,30 +76,11 @@ export class TileMapCollider {
           gridEntity,
           this.entity
           )) {
-            this.collsionTiles_.push(new Vector2(boxIndex.x, boxIndex.y));
+            collsionTiles.push(new Vector2(boxIndex.x, boxIndex.y));
         }
       }
     }
-  }
 
-  render() {
-    // Render collision check grids
-    for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {
-      for (let j = -this.entityTileCollisionCheckRadius.y; j <= this.entityTileCollisionCheckRadius.y; j++) {
-        this.tileMap.outlineGrid({
-          x: this.playerGridIndex.x + i,
-          y: this.playerGridIndex.y + j},
-          "#ffff00"
-        );
-      }
-    }
-
-    // render active collision grids
-    for (const tile of this.collsionTiles_) {
-      this.tileMap.colorGrid(new Vector2(tile.x, tile.y), "rgba(100, 100, 255, 0.7)");
-    }
-
-    // draw a circle at entity's center position
-    new CanvasTools().drawCircle(this.playerCenterPosition, .15, "#0000FF");
+    return collsionTiles;
   }
 }
