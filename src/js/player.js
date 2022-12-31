@@ -12,7 +12,7 @@ export class Player extends Entity {
 
     this.position_ = new Vector2(1, -3);
     this.size_ = new Vector2(2, 2);
-    this.velocity_ = new Vector2(1, -1);
+    this.velocity_ = new Vector2(0, 0);
     this.mapCollider = new TileMapCollider(this);
   }
 

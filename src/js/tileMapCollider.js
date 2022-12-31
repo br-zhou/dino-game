@@ -7,12 +7,13 @@ export class TileMapCollider {
     this.entity = entity;
     this.position = entity.position_;
     this.size = entity.size_;
+    this.tileMap = entity.scene.tileMap;
+
     this.halfSize = {
       x: this.size.x / 2,
       y: this.size.y / 2
     }
-    this.tileMap = entity.scene.tileMap;
-
+    
     this.entityTileCollisionCheckRadius = new Vector2(
       Math.ceil(this.size.x / (2 * tileSize)),
       Math.ceil(this.size.y / (2 * tileSize))

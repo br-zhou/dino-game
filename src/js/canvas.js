@@ -1,9 +1,3 @@
-export const CanvasModes = {
-  HORIZONATAL: Symbol("Horizontal"),
-  VERTICAL: Symbol("Vertical")
-}
-Object.freeze(CanvasModes);
-
 /**
  * 2d canvas for game
  * Singleton class
@@ -59,3 +53,12 @@ export class Canvas {
     return this.canvas_.height;
   }
 }
+
+/**
+ * Enum for the view mode of canvas
+ */
+export const CanvasModes = {
+  HORIZONATAL: Symbol("Horizontal"),
+  VERTICAL: Symbol("Vertical")
+}
+Object.freeze(CanvasModes);
