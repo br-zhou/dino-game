@@ -37,6 +37,7 @@ export class TileMapCollider {
           j + this.playerGridIndex.y
         )
 
+        if(this.tileMap.tileGrid_[boxIndex.x] === undefined) continue;
         if(!this.tileMap.tileGrid_[boxIndex.x][boxIndex.y]) continue;
 
         const gridEntity = this.tileMap.indexToEntity(boxIndex);
