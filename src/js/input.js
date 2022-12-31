@@ -20,20 +20,46 @@ class Input {
     const key = e.key.toLowerCase();
   
     this.activeKeys.add(key);
+    
+    this.dispatchNewInputEvent(key, "down");
   }
 
   onKeyUp = (e) => {
     const key = e.key.toLowerCase();
 
     this.activeKeys.delete(key);
+
+    this.dispatchNewInputEvent(key, "up");
   }
 
   onMouseDown = (e) => {
-    this.activeKeys.add("mouse" + e.button);
+    const mouseButton = "mouse" + e.button;
+    this.activeKeys.add(mouseButton);
+
+    this.dispatchNewInputEvent(mouseButton, "down");
   }
 
   onMouseUp = (e) => {
-    this.activeKeys.delete("mouse" + e.button);
+    const mouseButton = "mouse" + e.button;
+    this.activeKeys.delete(mouseButton);
+
+    this.dispatchNewInputEvent(mouseButton, "up");
+  }
+
+  /**
+   * dispatches custom event detailing 
+   * @param {string} key key being updated (lowercase)
+   * @param {string} type description of event type (down or up)
+   */
+  dispatchNewInputEvent(key, type) {
+    const event = new CustomEvent("update-input", {
+      detail: {
+        key: key,
+        type: type
+      }
+    });
+
+    document.dispatchEvent(event);
   }
 }
 

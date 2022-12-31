@@ -1,4 +1,5 @@
 import { CanvasTools } from "./canvasTools.js";
+import { PlayerController } from "./playerController.js";
 import { Entity } from "./Entity.js";
 import { Game } from "./game.js";
 import { TileMapCollider } from "./tileMapCollider.js";
@@ -14,6 +15,7 @@ export class Player extends Entity {
     this.size_ = new Vector2(2, 2);
     this.velocity_ = new Vector2(0, 0);
     this.mapCollider = new TileMapCollider(this);
+    this.controller = new PlayerController(this);
   }
 
   /** @override */
@@ -24,6 +26,17 @@ export class Player extends Entity {
     this.velocity_.y -= Game.GRAVITY * dtSec;
 
     this.mapCollider.update();
+  }
+
+  jump() {
+    console.log("jump");
+  }
+
+  /**
+   * @param {number} direction a float between -1 and 1 (inclusive), representing the direction the player is moving
+   */
+  move(direction) {
+    
   }
 
   /** @override */
