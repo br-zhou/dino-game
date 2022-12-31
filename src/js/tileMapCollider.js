@@ -1,4 +1,3 @@
-import { CanvasTools } from "./canvasTools.js";
 import { Collisions } from "./collisions.js";
 import { tileSize } from "./tileMap.js";
 import { Vector2 } from "./vector2.js";
@@ -21,7 +20,7 @@ export class TileMapCollider {
   }
 
   update() {
-    this.playerTileGridIndex = this.tileMap.positionToGridIndex(this.playerCenterPosition);
+    this.entityTileGridIndex = this.tileMap.positionToGridIndex(this.entityCenterPosition);
     this.collsionTiles_ = this.getCollidingMapTiles();
   }
 
@@ -30,8 +29,8 @@ export class TileMapCollider {
     for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {
       for (let j = -this.entityTileCollisionCheckRadius.y; j <= this.entityTileCollisionCheckRadius.y; j++) {
         this.tileMap.outlineGrid({
-          x: this.playerTileGridIndex.x + i,
-          y: this.playerTileGridIndex.y + j},
+          x: this.entityTileGridIndex.x + i,
+          y: this.entityTileGridIndex.y + j},
           "#ffff00"
         );
       }
@@ -41,12 +40,12 @@ export class TileMapCollider {
     for (const tile of this.collsionTiles_) {
       this.tileMap.colorGrid(new Vector2(tile.x, tile.y), "rgba(255, 155, 0, 0.7)");
     }
-
-    // draw a circle at entity's center position
-    new CanvasTools().drawCircle(this.playerCenterPosition, .15, "#0000FF");
   }
 
-  get playerCenterPosition() {
+  /**
+   * returns position of the center of entity's collision box
+   */
+  get entityCenterPosition() {
     return new Vector2(
       this.position.x + this.halfSize.x,
       this.position.y - this.halfSize.y
@@ -54,7 +53,7 @@ export class TileMapCollider {
   }
 
   /**
-   * @returns a list of all grid indexes that touch enitity hitbox
+   * @returns a list of all grid indexes that touch enitity collision box
    */
   getCollidingMapTiles() {
     let collsionTiles = [];
@@ -63,8 +62,8 @@ export class TileMapCollider {
       for (let j = -this.entityTileCollisionCheckRadius.y; j <= this.entityTileCollisionCheckRadius.y; j++) {
         
         const boxIndex = new Vector2(
-          i + this.playerTileGridIndex.x,
-          j + this.playerTileGridIndex.y
+          i + this.entityTileGridIndex.x,
+          j + this.entityTileGridIndex.y
         )
 
         if(this.tileMap.tileGrid_[boxIndex.x] === undefined) continue;
