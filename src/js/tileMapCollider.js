@@ -17,8 +17,6 @@ export class TileMapCollider {
       Math.ceil(this.size.x / 4) + 1,
       Math.ceil(this.size.y / 4) + 1
     )
-
-    console.log(this.entityTileCollisionCheckRadius);
   }
 
   update() {
@@ -67,7 +65,7 @@ export class TileMapCollider {
 
     // render active collision grids
     for (const tile of this.collsionTiles_) {
-      this.tileMap.colorGrid(new Vector2(tile.x, tile.y), "#FFFFFF");
+      this.tileMap.colorGrid(new Vector2(tile.x, tile.y), "rgba(100, 100, 255, 0.7)");
     }
 
     // draw a circle at entity's center position

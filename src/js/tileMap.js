@@ -89,7 +89,7 @@ export class TileMap {
 
     const gridIndex = {
       x: Math.floor(OffsetPosition.x / tileSize),
-      y: Math.floor(OffsetPosition.y / tileSize) + 1
+      y: Math.ceil(OffsetPosition.y / tileSize)
     }
 
     return gridIndex;

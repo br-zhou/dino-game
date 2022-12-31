@@ -25,9 +25,7 @@ export class Game {
     Game.instance = this;
   }
 
-  setup() {
-    
-  }
+  setup() { }
 
   loop = (dtSec, elapsedTimeSec) => {
     this.scene.update(dtSec, elapsedTimeSec);
