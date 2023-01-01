@@ -63,7 +63,7 @@ export class TileMapCollider {
     return new Vector2(
       this.position.x + this.halfSize.x,
       this.position.y - this.size.y
-    )
+    );
   }
 
   get feetTileIndex() {

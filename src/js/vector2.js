@@ -18,4 +18,8 @@ export class Vector2 {
       a.y + b.y
     );
   }
+
+  static copy(vector) {
+    return new Vector2(vector.x, vector.y);
+  }
 }

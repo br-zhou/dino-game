@@ -3,6 +3,7 @@ import { PlayerController } from "./playerController.js";
 import { Entity } from "./Entity.js";
 import { TileMapCollider } from "./tileMapCollider.js";
 import { Vector2 } from "./vector2.js";
+import { Collisions } from "./collisions.js";
 
 export class Player extends Entity {
   constructor(scene) {
@@ -15,10 +16,9 @@ export class Player extends Entity {
     this.scene.add(this);
 
     this.position_ = new Vector2(1, -3);
-    this.size_ = new Vector2(2, 2);
+    this.size_ = new Vector2(1.8, 1.8);
     this.velocity_ = new Vector2();
     this.targetVelocity_ = new Vector2();
-    this.isGrounded_ = false;
     this.tileMap = scene.tileMap;
 
 
@@ -34,12 +34,6 @@ export class Player extends Entity {
     this.velocity_.y -= this.gravity * dtSec;
 
     this.mapCollider.update();
-
-    this.isGrounded_ = this.mapCollider.isGrounded();
-
-    if (this.isGrounded_) {
-      this.velocity_.y = 0;
-    }
     
     this.handleControllerCommands_();
 
@@ -60,14 +54,15 @@ export class Player extends Entity {
   }
 
   /**
-   * @param {number} direction a float between -1 and 1 (inclusive), representing the direction the player is facing
+   * @param {number} direction a float between -1 and 1 (inclusive), 
+   * representing the direction the controller wants to move
    */
-  turn(direction) {
+  move(direction) {
     this.targetVelocity_.x = direction * this.speed_;
   }
 
   crouch() { // todo: implement
-    if(this.isGrounded_) {
+    if(false) { // replace with new isgrounded fucntion
       // duck
     } else {
       // fast fall
@@ -101,10 +96,10 @@ export class Player extends Entity {
           this.crouch();
           break;
         case "left":
-          this.turn(-1);
+          this.move(-1);
           break;
         case "right":
-          this.turn(1);
+          this.move(1);
           break;
         default:
           break;
@@ -113,19 +108,79 @@ export class Player extends Entity {
   }
 
   handleTileMapCollisions() {
-    // handle ground collisions;
-    if (this.mapCollider.isGrounded()) {
-      const feetIndex = this.mapCollider.feetTileIndex;
-      const feetTilePosition = this.tileMap.gridIndexToPosition(feetIndex);
+    this.handleTopAndBottomTileCollisions();
+    this.handleLeftAndRightTileCollisions();
+  }
+
+  handleTopAndBottomTileCollisions() {
+    // handle floor collisions
+    const bottomBoundLine = new Entity(
+      Vector2.add(this.position_, new Vector2(0, - this.size_.y)),
+      new Vector2(this.size_.x, 0)
+    );
+    
+    for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
+      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
       
-      this.position_.y = feetTilePosition.y + this.size_.y;
-    }
-
-    // handle wall collisions
-
-    for (const tile of this.mapCollider.collsionTiles) {
-      const tileEntity = this.tileMap.tileIndexToEntity(tile);
+      if(Collisions.rectangleCollisionCheck(bottomBoundLine, tileEntity)) {
+        this.position_.y = tileEntity.position_.y + this.size_.y;
+        this.velocity_.y = 0;
+        break;
+      }
     }
     
+    // // handle ground collisions;
+    // if (this.mapCollider.isGrounded()) {
+    //   const feetIndex = this.mapCollider.feetTileIndex;
+    //   const feetTilePosition = this.tileMap.gridIndexToPosition(feetIndex);
+      
+    //   this.position_.y = feetTilePosition.y + this.size_.y;
+    // }
+
+    // handle roof collisions
+    const topBoundLine = new Entity(
+      Vector2.copy(this.position_),
+      new Vector2(this.size_.x, 0)
+    );
+    
+    for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
+      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
+      
+      if(Collisions.rectangleCollisionCheck(topBoundLine, tileEntity)) {
+        this.position_.y = tileEntity.position_.y - tileEntity.size_.y;
+        this.velocity_.y = 0;
+        break;
+      }
+    }
+  }
+
+  handleLeftAndRightTileCollisions() {
+    // handle left wall collisions
+    const leftBoundLine = new Entity(
+      Vector2.copy(this.position_),
+      new Vector2(0, this.size_.y)
+    );
+
+    for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
+      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
+      
+      if(Collisions.rectangleCollisionCheck(leftBoundLine, tileEntity)) {
+        this.position_.x = tileEntity.position_.x + tileEntity.size_.x;
+        break;
+      }
+    }
+
+    // handle right wall collisions
+    const rightBoundLine = leftBoundLine;
+    rightBoundLine.position_.x += this.size_.x;
+
+    for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
+      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
+      
+      if(Collisions.rectangleCollisionCheck(rightBoundLine, tileEntity)) {
+        this.position_.x = tileEntity.position_.x - this.size_.x;
+        break;
+      }
+    }
   }
 }
