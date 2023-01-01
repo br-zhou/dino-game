@@ -4,6 +4,7 @@ export class PlayerController {
   constructor(player) {
     this.player_ = player;
     this.commands = new Set();
+    this.wantsToMove = false;
 
     this.keyToCommandHash = {
       "w": "up",
@@ -28,16 +29,16 @@ export class PlayerController {
         break;
       case "down":
         this.commands.add(this.keyToCommandHash[key]);
-        this.handleEdgeCases(key);
+        this.handleEdgeCasesDown(key);
         break;
       default:
         break;
     }
 
-    console.log(this.commands)
+    this.wantsToMove = this.commands.has("left") | this.commands.has("right");
   }
 
-  handleEdgeCases(key) {
+  handleEdgeCasesDown(key) {
     const newCommand = this.keyToCommandHash[key]
     if (newCommand == "left") {
       this.commands.delete("right");

@@ -7,8 +7,6 @@ import { Scene } from "./scene.js";
  * Singleton Instance
  */
 export class Game {
-  static GRAVITY = 0;
-
   constructor() {
     if (Game.instance instanceof Game) return Game.instance;
 

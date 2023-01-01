@@ -1,3 +1,4 @@
+import { CanvasTools } from "./canvasTools.js";
 import { Collisions } from "./collisions.js";
 import { tileSize } from "./tileMap.js";
 import { Vector2 } from "./vector2.js";
@@ -41,6 +42,8 @@ export class TileMapCollider {
     for (const tile of this.collsionTiles_) {
       this.tileMap.colorGrid(new Vector2(tile.x, tile.y), "rgba(255, 155, 0, 0.7)");
     }
+
+    new CanvasTools().drawCircle(this.entityFeetPosition, .15, "#000000");
   }
 
   /**
@@ -51,6 +54,24 @@ export class TileMapCollider {
       this.position.x + this.halfSize.x,
       this.position.y - this.halfSize.y
     )
+  }
+
+  /**
+   * returns position of entity's center bottom of collision box
+   */
+  get entityFeetPosition() {
+    return new Vector2(
+      this.position.x + this.halfSize.x,
+      this.position.y - this.size.y
+    )
+  }
+
+  isGrounded() {
+    const feetTileIndex = this.tileMap.positionToGridIndex(this.entityFeetPosition);
+
+    if(this.tileMap.tileGrid_[feetTileIndex.x] === undefined) return false;
+    if(!this.tileMap.tileGrid_[feetTileIndex.x][feetTileIndex.y]) return false;
+    return true;
   }
 
   /**
