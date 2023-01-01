@@ -109,7 +109,7 @@ export class TileMap {
     return worldPosition;
   }
 
-  indexToEntity({x, y}) {
+  tileIndexToEntity({x, y}) {
     return {
       position_: this.gridIndexToPosition(new Vector2(x, y)),
       size_: new Vector2(tileSize, tileSize)

@@ -23,7 +23,7 @@ export class TileMapCollider {
 
   update() {
     this.entityTileGridIndex = this.tileMap.positionToGridIndex(this.entityCenterPosition);
-    this.collsionTiles_ = this.getCollidingMapTiles();
+    this.collsionTiles = this.getCollidingMapTiles();
   }
 
   render() {
@@ -39,7 +39,7 @@ export class TileMapCollider {
     }
 
     // render active collision grids
-    for (const tile of this.collsionTiles_) {
+    for (const tile of this.collsionTiles) {
       this.tileMap.colorGrid(new Vector2(tile.x, tile.y), "rgba(255, 155, 0, 0.7)");
     }
 
@@ -66,11 +66,13 @@ export class TileMapCollider {
     )
   }
 
-  isGrounded() {
-    const feetTileIndex = this.tileMap.positionToGridIndex(this.entityFeetPosition);
+  get feetTileIndex() {
+    return this.tileMap.positionToGridIndex(this.entityFeetPosition);;
+  }
 
-    if(this.tileMap.tileGrid_[feetTileIndex.x] === undefined) return false;
-    if(!this.tileMap.tileGrid_[feetTileIndex.x][feetTileIndex.y]) return false;
+  isGrounded() {
+    if(this.tileMap.tileGrid_[this.feetTileIndex.x] === undefined) return false;
+    if(!this.tileMap.tileGrid_[this.feetTileIndex.x][this.feetTileIndex.y]) return false;
     return true;
   }
 
@@ -91,10 +93,10 @@ export class TileMapCollider {
         if(this.tileMap.tileGrid_[boxIndex.x] === undefined) continue;
         if(!this.tileMap.tileGrid_[boxIndex.x][boxIndex.y]) continue;
 
-        const gridEntity = this.tileMap.indexToEntity(boxIndex);
+        const tileEntity = this.tileMap.tileIndexToEntity(boxIndex);
 
         if(Collisions.rectangleCollisionCheck(
-          gridEntity,
+          tileEntity,
           this.entity
           )) {
             collsionTiles.push(new Vector2(boxIndex.x, boxIndex.y));

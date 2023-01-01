@@ -19,6 +19,7 @@ export class Player extends Entity {
     this.velocity_ = new Vector2();
     this.targetVelocity_ = new Vector2();
     this.isGrounded_ = false;
+    this.tileMap = scene.tileMap;
 
 
     this.mapCollider = new TileMapCollider(this);
@@ -47,6 +48,8 @@ export class Player extends Entity {
     } else {
       this.velocity_.x = 0;
     }
+
+    this.handleTileMapCollisions();
 
   }
 
@@ -109,11 +112,20 @@ export class Player extends Entity {
     });
   }
 
-  /**
-   * applies recognized commands to player
-   * @param {string} command 
-   */
-  handleControllerCommand_(command) {
+  handleTileMapCollisions() {
+    // handle ground collisions;
+    if (this.mapCollider.isGrounded()) {
+      const feetIndex = this.mapCollider.feetTileIndex;
+      const feetTilePosition = this.tileMap.gridIndexToPosition(feetIndex);
+      
+      this.position_.y = feetTilePosition.y + this.size_.y;
+    }
+
+    // handle wall collisions
+
+    for (const tile of this.mapCollider.collsionTiles) {
+      const tileEntity = this.tileMap.tileIndexToEntity(tile);
+    }
     
   }
 }
