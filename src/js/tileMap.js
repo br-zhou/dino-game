@@ -50,8 +50,10 @@ export class TileMap {
    */
   colorGrid({x, y}, color) {
     this.tools.drawRect(
-      x * tileSize + this.offsetX_,
-      y * tileSize + this.offsetY_,
+      {
+        x: x * tileSize + this.offsetX_,
+        y:y * tileSize + this.offsetY_
+      },
       tileSize,
       tileSize,
       color
@@ -64,8 +66,10 @@ export class TileMap {
    */
   outlineGrid({x, y}, color) {
     this.tools.drawRectOutline(
-      x * tileSize + this.offsetX_,
-      y * tileSize + this.offsetY_,
+      {
+        x: x * tileSize + this.offsetX_,
+        y: y * tileSize + this.offsetY_
+      },
       tileSize,
       tileSize,
       color

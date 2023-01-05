@@ -73,8 +73,10 @@ export class Player extends Entity {
     this.mapCollider.render();
     
     tools.drawRect(
-      this.position_.x,
-      this.position_.y,
+      {
+        x: this.position_.x,
+        y: this.position_.y
+      },
       this.size_.x,
       this.size_.y,
       "#FF0000"

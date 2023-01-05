@@ -78,7 +78,7 @@ export class CanvasTools {
    * @param {number} height height of rectangle
    * @param {string} color String in the format '#000000'
    */
-  drawRect(x, y, width, height, color = "#FF0000") {
+  drawRect({x, y}, width, height, color = "#FF0000") {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(
       this.worldToScreenPosX(x),this.worldToScreenPosY(y),
@@ -95,7 +95,7 @@ export class CanvasTools {
    * @param {number} height height of rectangle
    * @param {string} color String in the format '#000000'
    */
-  drawRectOutline(x, y, width, height, color = "#FF0000") {
+  drawRectOutline({x, y}, width, height, color = "#FF0000") {
     this.ctx.strokeStyle = color;
     this.ctx.strokeRect(
       this.worldToScreenPosX(x),this.worldToScreenPosY(y),
@@ -116,4 +116,26 @@ export class CanvasTools {
 
     this.ctx.fill();
   }
+
+  /**
+   * Draws a line from point1 to point2
+   * @param {Vector2} point1 start point of line
+   * @param {Vector2} point2 end point of line
+   */
+    drawLine(startPoint, endPoint, color = "#FF0000", width = 3) {
+      const originalLineWidth = this.ctx.lineWidth;
+      this.ctx.strokeStyle = color;
+      this.ctx.lineWidth = width;
+      this.ctx.beginPath();
+      this.ctx.moveTo(
+        this.worldToScreenPosX(startPoint.x),
+        this.worldToScreenPosY(startPoint.y)
+      );
+      this.ctx.lineTo(
+        this.worldToScreenPosX(endPoint.x),
+        this.worldToScreenPosY(endPoint.y)
+      );
+      this.ctx.stroke();
+      this.ctx.lineWidth = originalLineWidth;
+    }
 }
