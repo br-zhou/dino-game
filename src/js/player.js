@@ -37,20 +37,17 @@ export class Player extends Entity {
     
     this.handleControllerCommands_();
 
-    if (this.controller.wantsToMove) {
-      this.velocity_.x =  this.targetVelocity_.x;
-    } else {
-      this.velocity_.x = 0;
-    }
-
     this.handleTileMapCollisions();
 
   }
 
   jump() {
+    this.velocity_.y = this.jumpVelocity;
+    /*
     if (this.mapCollider.isGrounded()) {
       this.velocity_.y = this.jumpVelocity;
     }
+    */
   }
 
   /**
@@ -105,11 +102,17 @@ export class Player extends Entity {
           break;
       }
     });
+
+    if (this.controller.wantsToMove) {
+      this.velocity_.x = this.targetVelocity_.x;
+    } else {
+      this.velocity_.x = 0;
+    }
   }
 
   handleTileMapCollisions() {
-    this.handleTopAndBottomTileCollisions();
-    this.handleLeftAndRightTileCollisions();
+    // this.handleTopAndBottomTileCollisions();
+    // this.handleLeftAndRightTileCollisions();
   }
 
    handleTopAndBottomTileCollisions() {
