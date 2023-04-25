@@ -113,6 +113,12 @@ export class TileMap {
     return worldPosition;
   }
 
+  /**
+   * 
+   * @param {vector2} gridIndexPosition of block
+   * @returns enitity that represents block
+   * NOTE: altering the enitity does not alter the block
+   */
   tileIndexToEntity({x, y}) {
     return {
       position_: this.gridIndexToPosition(new Vector2(x, y)),

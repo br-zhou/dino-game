@@ -1,6 +1,8 @@
 import { startLoop } from "./animationLoop.js";
 import { CanvasTools } from "./canvasTools.js";
+import { CollisionMath } from "./collisionMath.js";
 import { Entity } from "./Entity.js";
+import { Foreground } from "./foreground.js";
 import { INPUT } from "./input.js";
 import { Player } from "./player.js";
 import { Ray2D } from "./ray2d.js";
@@ -16,15 +18,13 @@ export class Game {
     if (Game.instance instanceof Game) return Game.instance;
 
     this.scene = new Scene();
-    // this.player = new Player(this.scene); 
+    this.player = new Player(this.scene); 
     
     this.block = new Entity(
       new Vector2(0,0),
       new Vector2(5,5)
     )
     
-    this.ray = new Ray2D(new Vector2(0, 0), 145 * Math.PI / 180);
-
     this.scene.load((result) => {
       if (result === true) {
         this.setup();
@@ -33,6 +33,8 @@ export class Game {
     });
 
     Game.instance = this;
+
+    this.ground = new Foreground(this.scene);
   }
 
   setup() {
@@ -43,17 +45,8 @@ export class Game {
     this.scene.update(dtSec, elapsedTimeSec);
     this.scene.render();
 
-    this.ray.render();
-
     const tools = new CanvasTools();
     this.block.position_ = tools.screenToWorld(INPUT.mousePosition);
     tools.drawRect(this.block.position_, this.block.size_.x, this.block.size_.y,"#00FF00");
-
-    // console.log(this.ray.vsRect(this.block).normal);
-    const point = this.ray.vsRect(this.block).point;
-    if (point != undefined) {
-      console.log(point.x)
-      tools.drawCircle(point, 0.35);
-    }
   }
 }

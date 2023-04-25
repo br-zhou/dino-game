@@ -79,7 +79,7 @@ export class TileMapCollider {
   /**
    * @returns a list of all grid indexes that touch enitity collision box
    */
-  getCollidingMapTiles() {
+  getCollidingMapTiles() { // todo update so that this considers velocity as well
     let collsionTiles = [];
 
     for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {

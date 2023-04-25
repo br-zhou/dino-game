@@ -1,3 +1,4 @@
+import { Entity } from "./Entity.js";
 import { CanvasTools } from "./canvasTools.js";
 import { Vector2 } from "./vector2.js";
 
@@ -15,12 +16,12 @@ export class Ray2D {
     this.dxdt_ = Math.cos(this.direction_);
     this.dydt_ = Math.sin(this.direction_);
   }
-
+  
   render() {
     const circleRadius = 0.25;
     const lineWidth = 3;
-    const rayDistance = 50;
-    const color = "#FF0000";
+    const rayDistance = 5;
+    const color = "#FF00FF";
     const endPoint = new Vector2(
       this.position_.x + this.dxdt_ * rayDistance,
       this.position_.y + this.dydt_ * rayDistance
@@ -29,8 +30,14 @@ export class Ray2D {
     this.tools.drawLine(this.position_, endPoint, color, lineWidth);
   }
 
-  // NOTE: Returns true if the start of ray is inside rectangle
-  vsRect(rectangle) {
+  /**
+   * 
+   * @param {Entity} rectangle 
+   * @param {number} maxDist the maximum distance of ray cast 
+   * @returns object with collision point and normal, or false if no collision
+   * NOTE: still returns true if the start of ray is inside rectangle
+   */
+  vsRect(rectangle, maxDist = 0) {
     const rectPosition = rectangle.position_;
     const rectSize = rectangle.size_;
 
@@ -64,6 +71,13 @@ export class Ray2D {
       this.position_.y + this.dydt_ * collisionTime
     );
 
+    if (maxDist != 0) {
+
+      if (Vector2.subtract(collisionPoint, this.position_).magnitude() > maxDist) {
+        return false;
+      }
+    }
+
     const normaldirection = new Vector2();
     
     if (nearTime.x > nearTime.y) {
@@ -71,11 +85,29 @@ export class Ray2D {
     } else {
       normaldirection.y = Math.sign(this.dydt_) * -1;
     }
-
-
+    
     return {
       point: collisionPoint,
       normal: normaldirection
     };
+  }
+
+  /**
+   * 
+   * @param {Entity} dynamicRect 
+   * @param {Entity} staticRect 
+   */
+  static expandRect(dynamicRect, staticRect) {
+    const newPos = new Vector2(
+      staticRect.position_.x - dynamicRect.size_.x/2,
+      staticRect.position_.y + dynamicRect.size_.y/2
+    );
+
+    const newSize = new Vector2(
+      staticRect.size_.x + dynamicRect.size_.x,
+      staticRect.size_.y + dynamicRect.size_.y
+    );
+    
+    return new Entity(newPos,newSize);
   }
 }

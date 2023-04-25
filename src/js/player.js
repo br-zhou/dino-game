@@ -4,13 +4,14 @@ import { Entity } from "./Entity.js";
 import { TileMapCollider } from "./tileMapCollider.js";
 import { Vector2 } from "./vector2.js";
 import { CollisionMath } from "./collisionMath.js";
+import { Ray2D } from "./ray2d.js";
 
 export class Player extends Entity {
   constructor(scene) {
     super();
     this.speed_ = 10;
-    this.gravity = 50;
-    this.jumpVelocity = 25;
+    this.gravity = 65;
+    this.jumpVelocity = 10;
     
     this.scene = scene;
     this.scene.add(this);
@@ -22,7 +23,7 @@ export class Player extends Entity {
     this.tileMap = scene.tileMap;
 
 
-    this.mapCollider = new TileMapCollider(this);
+    // this.mapCollider = new TileMapCollider(this);
     this.controller = new PlayerController(this);
   }
 
@@ -34,11 +35,8 @@ export class Player extends Entity {
     this.velocity_.y -= this.gravity * dtSec;
 
     this.handleControllerCommands_();
-
-    this.mapCollider.update();
-
-    this.handleTileMapCollisions();
-
+    this.handleGroundCollision(dtSec);
+    // this.handleTileMapCollisions();
   }
 
   jump() {
@@ -70,7 +68,7 @@ export class Player extends Entity {
   render() {
     const tools = new CanvasTools();
 
-    this.mapCollider.render();
+    // this.mapCollider.render();
     
     tools.drawRect(
       {
@@ -112,72 +110,54 @@ export class Player extends Entity {
     }
   }
 
+  handleGroundCollision(dtSec) {
+    for (const block of this.scene.groundsBlocks_) {
+
+      const hitInfo = this.vsRect(block, dtSec);
+      if (hitInfo != false) {
+        const point = hitInfo.point;
+        const normal = hitInfo.normal;
+        
+        if (normal.y != 0) { // top and bottom
+          this.velocity_.y = 0;
+          this.position_.y = point.y + this.size_.y/2
+        } else { // left and right
+          this.velocity_.x = 0;
+          this.position_.x = point.x - this.size_.x/2
+        }
+      }
+    }
+  }
+
   handleTileMapCollisions() {
-    this.handleTopAndBottomTileCollisions();
-    // this.handleLeftAndRightTileCollisions();
+    this.mapCollider.update();
+    const playerRay = new Ray2D(this.position_, this.velocity_.toRadians());
   }
 
-   handleTopAndBottomTileCollisions() {
-    // handle floor collisions
-    const bottomBoundLine = new Entity(
-      Vector2.add(this.position_, new Vector2(0, - this.size_.y)),
-      new Vector2(this.size_.x, 0)
-    );
-    
-    for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
-      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
-      
-      if(CollisionMath.rectVsRect(bottomBoundLine, tileEntity) && this.velocity_.y < 0) {
-        this.position_.y = tileEntity.position_.y + this.size_.y;
-        this.velocity_.y = 0;
-        break;
-      }
-    }
+  handleTiles() { // ! not used
+    this.playerRay = new Ray2D(this.position_, this.velocity_.toRadians());
 
-    // handle roof collisions
-    const topBoundLine = new Entity(
-      Vector2.copy(this.position_),
-      new Vector2(this.size_.x, 0)
-    );
-    
-    for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
+    for (const tileIndex of this.mapCollider.collsionTiles) {
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
       
-      if(CollisionMath.rectVsRect(topBoundLine, tileEntity) && this.velocity_.y > 0) {
-        this.position_.y = tileEntity.position_.y - tileEntity.size_.y;
-        this.velocity_.y = 0;
-        break;
+      const hitInfo = this.playerRay.vsRect(Ray2D.expandRect(this, tileEntity));
+      if(hitInfo != false) {
+        return;
       }
     }
   }
 
-  handleLeftAndRightTileCollisions() {
-    // handle left wall collisions
-    const leftBoundLine = new Entity(
-      Vector2.copy(this.position_),
-      new Vector2(0, this.size_.y)
-    );
+  vsRect(rectangle, dtSec) {
+    const playerRay = new Ray2D(
+      Vector2.add(
+        this.position_,
+        new Vector2(this.size_.x/2, -this.size_.y/2)
+        ),
+      this.velocity_.toRadians()
+    ); // ! this is recalculated every function call. Optimize this.
 
-    for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
-      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
-      
-      if(CollisionMath.rectVsRect(leftBoundLine, tileEntity) && this.velocity_.x < 0) {
-        this.position_.x = tileEntity.position_.x + tileEntity.size_.x;
-        break;
-      }
-    }
+    const expandedRect = Ray2D.expandRect(this, rectangle);
 
-    // handle right wall collisions
-    const rightBoundLine = leftBoundLine;
-    rightBoundLine.position_.x += this.size_.x;
-
-    for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
-      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
-      
-      if(CollisionMath.rectVsRect(rightBoundLine, tileEntity) && this.velocity_.x > 0) {
-        this.position_.x = tileEntity.position_.x - this.size_.x;
-        break;
-      }
-    }
+    return playerRay.vsRect(expandedRect, this.velocity_.magnitude() * dtSec);
   }
 }

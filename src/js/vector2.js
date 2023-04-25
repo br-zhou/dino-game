@@ -19,7 +19,29 @@ export class Vector2 {
     );
   }
 
+  /**
+   * @param {Vector2} a 
+   * @param {Vector2} b 
+   * @returns the difference of b from a
+   */
+  static subtract(a, b) {
+    return new Vector2(
+      a.x - b.x,
+      a.y - b.y
+    );
+  }
+
+  
+
   static copy(vector) {
     return new Vector2(vector.x, vector.y);
+  }
+
+  toRadians() {
+    return Math.atan2(this.y, this.x);
+  }
+
+  magnitude() {
+    return Math.sqrt(Math.pow(this.x,2) + Math.pow(this.y, 2));
   }
 }

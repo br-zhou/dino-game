@@ -10,15 +10,16 @@ export class Foreground {
     this.scene_ = scene;
     this.position_ = new Vector2();
     this.size_ = new Vector2(10, 2);
+    this.scene_.addGround(this);
   }
 
   render() {
     const tools = new CanvasTools();
 
     tools.drawRect(
-      this.color_,
-      this.position_.x, this.position_.y,
-      this.size_.x, this.size_.y
+      {x: this.position_.x, y: this.position_.y},
+      this.size_.x, this.size_.y,
+      this.color_
     );
   }
 }

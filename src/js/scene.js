@@ -9,6 +9,7 @@ export class Scene {
   constructor() {
     this.camera_ = new Camera(this);
     this.entities_ = [];
+    this.groundsBlocks_ = [];
     this.backgroundColor_ = '#87CEEB';
     this.tileMap = new TileMap();
     this.sceneLoadedCallback_ = null;
@@ -50,6 +51,10 @@ export class Scene {
     this.entities_.push(entity);
   }
 
+  addGround(block) {
+    this.groundsBlocks_.push(block);
+  }
+
   /**
    * updates all entities in scene
    */
@@ -79,7 +84,10 @@ export class Scene {
   }
 
   renderForeground_() {
-    this.tileMap.render();
+    for (const block of this.groundsBlocks_) {
+      block.render();
+    }
+    // this.tileMap.render(); // !! remove this to render tilemap
   }
 
   get camera() {
