@@ -19,8 +19,8 @@ export class Ray2D {
   render() {
     const circleRadius = 0.25;
     const lineWidth = 3;
-    const rayDistance = 5;
-    const color = "#FFFF00";
+    const rayDistance = 50;
+    const color = "#FF0000";
     const endPoint = new Vector2(
       this.position_.x + this.dxdt_ * rayDistance,
       this.position_.y + this.dydt_ * rayDistance
@@ -29,7 +29,8 @@ export class Ray2D {
     this.tools.drawLine(this.position_, endPoint, color, lineWidth);
   }
 
-  rayVsRect(rectangle) {
+  // NOTE: Returns true if the start of ray is inside rectangle
+  vsRect(rectangle) {
     const rectPosition = rectangle.position_;
     const rectSize = rectangle.size_;
 
@@ -50,8 +51,31 @@ export class Ray2D {
     );
 
 
-    return nearTime.x < farTime.y &&
+    const isColliding = nearTime.x < farTime.y &&
       nearTime.y < farTime.x &&
-      !(nearTime.x < 0 && nearTime.y < 0);
+      !(farTime.x < 0 || farTime.y < 0);
+
+    if (!isColliding) return false;
+    
+    const collisionTime = Math.max(nearTime.x, nearTime.y);
+
+    let collisionPoint = new Vector2(
+      this.position_.x + this.dxdt_ * collisionTime,
+      this.position_.y + this.dydt_ * collisionTime
+    );
+
+    const normaldirection = new Vector2();
+    
+    if (nearTime.x > nearTime.y) {
+      normaldirection.x = Math.sign(this.dxdt_) * -1;
+    } else {
+      normaldirection.y = Math.sign(this.dydt_) * -1;
+    }
+
+
+    return {
+      point: collisionPoint,
+      normal: normaldirection
+    };
   }
 }

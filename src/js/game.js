@@ -20,10 +20,10 @@ export class Game {
     
     this.block = new Entity(
       new Vector2(0,0),
-      new Vector2(2,2)
+      new Vector2(5,5)
     )
     
-    this.ray = new Ray2D(new Vector2(-1, 1), 180 * Math.PI / 180);
+    this.ray = new Ray2D(new Vector2(0, 0), 145 * Math.PI / 180);
 
     this.scene.load((result) => {
       if (result === true) {
@@ -46,8 +46,14 @@ export class Game {
     this.ray.render();
 
     const tools = new CanvasTools();
+    this.block.position_ = tools.screenToWorld(INPUT.mousePosition);
     tools.drawRect(this.block.position_, this.block.size_.x, this.block.size_.y,"#00FF00");
-    
-    console.log(tools.screenToWorld(INPUT.mousePosition));
+
+    // console.log(this.ray.vsRect(this.block).normal);
+    const point = this.ray.vsRect(this.block).point;
+    if (point != undefined) {
+      console.log(point.x)
+      tools.drawCircle(point, 0.35);
+    }
   }
 }
