@@ -1,5 +1,5 @@
 import { CanvasTools } from "./canvasTools.js";
-import { Collisions } from "./collisions.js";
+import { CollisionMath } from "./collisionMath.js";
 import { tileSize } from "./tileMap.js";
 import { Vector2 } from "./vector2.js";
 
@@ -95,7 +95,7 @@ export class TileMapCollider {
 
         const tileEntity = this.tileMap.tileIndexToEntity(boxIndex);
 
-        if(Collisions.rectangleCollisionCheck(
+        if(CollisionMath.rectVsRect(
           tileEntity,
           this.entity
           )) {

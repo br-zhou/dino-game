@@ -3,7 +3,7 @@ import { PlayerController } from "./playerController.js";
 import { Entity } from "./Entity.js";
 import { TileMapCollider } from "./tileMapCollider.js";
 import { Vector2 } from "./vector2.js";
-import { Collisions } from "./collisions.js";
+import { CollisionMath } from "./collisionMath.js";
 
 export class Player extends Entity {
   constructor(scene) {
@@ -15,7 +15,7 @@ export class Player extends Entity {
     this.scene = scene;
     this.scene.add(this);
 
-    this.position_ = new Vector2(1, -3);
+    this.position_ = new Vector2(1, 20);
     this.size_ = new Vector2(1.8, 1.8);
     this.velocity_ = new Vector2();
     this.targetVelocity_ = new Vector2();
@@ -33,9 +33,9 @@ export class Player extends Entity {
 
     this.velocity_.y -= this.gravity * dtSec;
 
-    this.mapCollider.update();
-    
     this.handleControllerCommands_();
+
+    this.mapCollider.update();
 
     this.handleTileMapCollisions();
 
@@ -113,7 +113,7 @@ export class Player extends Entity {
   }
 
   handleTileMapCollisions() {
-    // this.handleTopAndBottomTileCollisions();
+    this.handleTopAndBottomTileCollisions();
     // this.handleLeftAndRightTileCollisions();
   }
 
@@ -127,7 +127,7 @@ export class Player extends Entity {
     for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
       
-      if(Collisions.rectangleCollisionCheck(bottomBoundLine, tileEntity) && this.velocity_.y < 0) {
+      if(CollisionMath.rectVsRect(bottomBoundLine, tileEntity) && this.velocity_.y < 0) {
         this.position_.y = tileEntity.position_.y + this.size_.y;
         this.velocity_.y = 0;
         break;
@@ -143,7 +143,7 @@ export class Player extends Entity {
     for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
       
-      if(Collisions.rectangleCollisionCheck(topBoundLine, tileEntity) && this.velocity_.y > 0) {
+      if(CollisionMath.rectVsRect(topBoundLine, tileEntity) && this.velocity_.y > 0) {
         this.position_.y = tileEntity.position_.y - tileEntity.size_.y;
         this.velocity_.y = 0;
         break;
@@ -161,7 +161,7 @@ export class Player extends Entity {
     for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
       
-      if(Collisions.rectangleCollisionCheck(leftBoundLine, tileEntity) && this.velocity_.x < 0) {
+      if(CollisionMath.rectVsRect(leftBoundLine, tileEntity) && this.velocity_.x < 0) {
         this.position_.x = tileEntity.position_.x + tileEntity.size_.x;
         break;
       }
@@ -174,7 +174,7 @@ export class Player extends Entity {
     for (const tileIndex of this.mapCollider.collsionTiles) { // todo: optimize
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
       
-      if(Collisions.rectangleCollisionCheck(rightBoundLine, tileEntity) && this.velocity_.x > 0) {
+      if(CollisionMath.rectVsRect(rightBoundLine, tileEntity) && this.velocity_.x > 0) {
         this.position_.x = tileEntity.position_.x - this.size_.x;
         break;
       }

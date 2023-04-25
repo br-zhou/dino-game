@@ -1,7 +1,7 @@
 /**
  * Class used to collision detection
  */
-export class Collisions {
+export class CollisionMath {
 
   /**
    * @param {Entity} rect1 
@@ -9,7 +9,7 @@ export class Collisions {
    * @returns true when the rectangles are touching. 
    * NOTE: returns false when only edges are touching
    */
-  static rectangleCollisionCheck(rect1, rect2) {
+  static rectVsRect(rect1, rect2) {
     return rect1.position_.x < rect2.position_.x + rect2.size_.x &&
     rect1.position_.x + rect1.size_.x > rect2.position_.x &&
     rect1.position_.y > rect2.position_.y - rect2.size_.y &&
@@ -22,7 +22,7 @@ export class Collisions {
    * @returns true when a point lies within  given rectangle
    * NOTE: returns false if point is on rectangle's edge
    */
-  static pointInRectangleCheck(point, rect) {
+  static pointVsRect(point, rect) {
     return point.x > rect.position_.x &&
     point.x < rect.position_.x + rect.size_.x &&
     point.y < rect.position_.y &&

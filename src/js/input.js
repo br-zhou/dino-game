@@ -1,3 +1,5 @@
+import { Vector2 } from "./vector2.js";
+
 /**
  * Stores the keys being pressed at any time
  * Singleton Class
@@ -10,8 +12,10 @@ class Input {
     document.addEventListener("keyup", (e) => this.onKeyUp(e), false);
     document.body.onmousedown = (e) => this.onMouseDown(e);
     document.body.onmouseup = (e) => this.onMouseUp(e);
+    document.addEventListener('mousemove', (e) => this.onMouseMove(e));
     this.activeKeys = new Set();
     Input.instance = this;
+    this.mousePosition_ = new Vector2(0, 0); // ! maybe set this to middle of screen instead
   }
 
   onKeyDown = (e) => {
@@ -44,6 +48,15 @@ class Input {
     this.activeKeys.delete(mouseButton);
 
     this.dispatchNewInputEvent(mouseButton, "up");
+  }
+
+  onMouseMove = (e) => {
+    this.mousePosition.x = e.clientX;
+    this.mousePosition.y = e.clientY;
+  }
+
+  get mousePosition() {
+    return this.mousePosition_;
   }
 
   /**

@@ -1,4 +1,5 @@
 import { CanvasModes } from "./canvas.js";
+import { Vector2 } from "./vector2.js";
 
 /**
  * Gives tools needed to draw on canvas
@@ -22,13 +23,13 @@ export class CanvasTools {
    */
   get tools() {
     return {
-      fov: this.fov,
+      fov: this.camFov,
       camPos: this.camPos,
       
     };
   }
 
-  get fov() {
+  get camFov() {
     return this.camera.fov;
   }
 
@@ -45,7 +46,7 @@ export class CanvasTools {
    * @returns the world coordinate positionX converted to the window pixel
    */
   worldToScreenPosX(positionX) {
-    return this.worldToScreen(positionX) + this.windowSize.x / 2;
+    return this.worldToScreenConvert(positionX) + this.windowSize.x / 2;
   }
 
   
@@ -54,18 +55,35 @@ export class CanvasTools {
    * @returns the world coordinate positionY converted to the window pixel
    */
   worldToScreenPosY(positionY) {
-    return - this.worldToScreen(positionY) + this.windowSize.y / 2;
+    return - this.worldToScreenConvert(positionY) + this.windowSize.y / 2;
+  }
+
+  /**
+   * @param {Vector2} position position on screen
+   * @returns position in world coordinates as Vector2
+   */
+  screenToWorld(position) {
+    let referenceLength = 0;
+    if (this.canvas.mode === CanvasModes.HORIZONATAL) {
+      referenceLength = this.windowSize.x;
+    } else {
+      referenceLength = this.windowSize.y;
+    }
+
+    const xWorld = ((position.x / this.windowSize.x) - 0.5) * (this.windowSize.x / referenceLength) * this.camFov + this.camPos.x;
+    const yWorld = (0.5 - (position.y / this.windowSize.y)) * (this.windowSize.y / referenceLength) * this.camFov + this.camPos.y;
+    return new Vector2(xWorld, yWorld);
   }
 
   /**
    * @param {number} length 
    * @returns the world units converted to window pixel length
    */
-  worldToScreen(length) {
+  worldToScreenConvert(length) {
     if (this.canvas.mode === CanvasModes.HORIZONATAL) {
-      return (length - this.camPos.x) / this.fov * this.windowSize.x;
+      return (length - this.camPos.x) / this.camFov * this.windowSize.x;
     } else {
-      return (length - this.camPos.y) / this.fov * this.windowSize.y;
+      return (length - this.camPos.y) / this.camFov * this.windowSize.y;
     }
   }
 
@@ -82,7 +100,7 @@ export class CanvasTools {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(
       this.worldToScreenPosX(x),this.worldToScreenPosY(y),
-      this.worldToScreen(width), this.worldToScreen(height)
+      this.worldToScreenConvert(width), this.worldToScreenConvert(height)
     );
   }
 
@@ -99,7 +117,7 @@ export class CanvasTools {
     this.ctx.strokeStyle = color;
     this.ctx.strokeRect(
       this.worldToScreenPosX(x),this.worldToScreenPosY(y),
-      this.worldToScreen(width), this.worldToScreen(height)
+      this.worldToScreenConvert(width), this.worldToScreenConvert(height)
     );
   }
   
@@ -109,7 +127,7 @@ export class CanvasTools {
     this.ctx.arc(
       this.worldToScreenPosX(x),
       this.worldToScreenPosY(y),
-      this.worldToScreen(radius),
+      this.worldToScreenConvert(radius),
       0,
       2 * Math.PI
     );

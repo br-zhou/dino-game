@@ -1,4 +1,7 @@
 import { startLoop } from "./animationLoop.js";
+import { CanvasTools } from "./canvasTools.js";
+import { Entity } from "./Entity.js";
+import { INPUT } from "./input.js";
 import { Player } from "./player.js";
 import { Ray2D } from "./ray2d.js";
 import { Scene } from "./scene.js";
@@ -13,7 +16,14 @@ export class Game {
     if (Game.instance instanceof Game) return Game.instance;
 
     this.scene = new Scene();
-    this.player = new Player(this.scene); 
+    // this.player = new Player(this.scene); 
+    
+    this.block = new Entity(
+      new Vector2(0,0),
+      new Vector2(2,2)
+    )
+    
+    this.ray = new Ray2D(new Vector2(-1, 1), 180 * Math.PI / 180);
 
     this.scene.load((result) => {
       if (result === true) {
@@ -33,8 +43,11 @@ export class Game {
     this.scene.update(dtSec, elapsedTimeSec);
     this.scene.render();
 
-    const ray = new Ray2D(new Vector2(-2. - 2), 120 * Math.PI / 180);
-    ray.render();
+    this.ray.render();
 
+    const tools = new CanvasTools();
+    tools.drawRect(this.block.position_, this.block.size_.x, this.block.size_.y,"#00FF00");
+    
+    console.log(tools.screenToWorld(INPUT.mousePosition));
   }
 }
