@@ -23,7 +23,7 @@ export class Player extends Entity {
     this.tileMap = scene.tileMap;
 
 
-    // this.mapCollider = new TileMapCollider(this);
+    this.mapCollider = new TileMapCollider(this);
     this.controller = new PlayerController(this);
   }
 
@@ -35,8 +35,8 @@ export class Player extends Entity {
     this.velocity_.y -= this.gravity * dtSec;
 
     this.handleControllerCommands_();
-    this.handleGroundCollision(dtSec);
-    // this.handleTileMapCollisions();
+    this.handleGroundBlockCollisions_(dtSec);
+    this.handleTileMapCollisions_(dtSec);
   }
 
   jump() {
@@ -68,7 +68,7 @@ export class Player extends Entity {
   render() {
     const tools = new CanvasTools();
 
-    // this.mapCollider.render();
+    this.mapCollider.render();
     
     tools.drawRect(
       {
@@ -110,39 +110,45 @@ export class Player extends Entity {
     }
   }
 
-  handleGroundCollision(dtSec) {
+  handleGroundBlockCollisions_(dtSec) {
     for (const block of this.scene.groundsBlocks_) {
 
       const hitInfo = this.vsRect(block, dtSec);
       if (hitInfo != false) {
-        const point = hitInfo.point;
-        const normal = hitInfo.normal;
-        
-        if (normal.y != 0) { // top and bottom
-          this.velocity_.y = 0;
-          this.position_.y = point.y + this.size_.y/2
-        } else { // left and right
-          this.velocity_.x = 0;
-          this.position_.x = point.x - this.size_.x/2
-        }
+        this.fixCollision(hitInfo);
       }
     }
   }
+  
+  fixCollision(hitInfo) {
+    if (hitInfo == false) return;
 
-  handleTileMapCollisions() {
-    this.mapCollider.update();
-    const playerRay = new Ray2D(this.position_, this.velocity_.toRadians());
+    const point = hitInfo.point;
+    const normal = hitInfo.normal;
+    
+    if (normal.y != 0) { // top and bottom
+      this.velocity_.y = 0;
+      this.position_.y = point.y + this.size_.y/2
+    } else { // left and right
+      this.velocity_.x = 0;
+      this.position_.x = point.x - this.size_.x/2
+    }
   }
 
-  handleTiles() { // ! not used
-    this.playerRay = new Ray2D(this.position_, this.velocity_.toRadians());
+  handleTileMapCollisions_(dtSec) {
+    this.mapCollider.update();
+    this.handleTiles(dtSec);
+  }
+
+  handleTiles(dtSec) { // ! not used
+    const playerRay = new Ray2D(this.position_, this.velocity_.toRadians());
 
     for (const tileIndex of this.mapCollider.collsionTiles) {
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
       
-      const hitInfo = this.playerRay.vsRect(Ray2D.expandRect(this, tileEntity));
+      const hitInfo = this.vsRect(tileEntity, dtSec);
       if(hitInfo != false) {
-        return;
+        this.fixCollision(hitInfo);
       }
     }
   }

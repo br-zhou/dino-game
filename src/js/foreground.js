@@ -5,11 +5,16 @@ import { Vector2 } from "./vector2.js";
  * Represents the ground that entities interact with
  */
 export class Foreground {
-  constructor(scene) {
-    this.color_ = '#000000';
+  constructor(
+      scene,
+      position = new Vector2(),
+      size = new Vector2(1, 1),
+      color = "#000000"
+    ) {
+    this.color_ = color;
     this.scene_ = scene;
-    this.position_ = new Vector2();
-    this.size_ = new Vector2(10, 2);
+    this.position_ = position;
+    this.size_ = size;
     this.scene_.addGround(this);
   }
 

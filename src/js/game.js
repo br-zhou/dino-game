@@ -24,6 +24,8 @@ export class Game {
       new Vector2(0,0),
       new Vector2(5,5)
     )
+
+    this.scene.addGround(this.block);
     
     this.scene.load((result) => {
       if (result === true) {
@@ -34,7 +36,8 @@ export class Game {
 
     Game.instance = this;
 
-    this.ground = new Foreground(this.scene);
+    new Foreground(this.scene, new Vector2(35,0), new Vector2(5, 5), "#ffffff");
+    new Foreground(this.scene, new Vector2(40,5), new Vector2(2, 5), "#ffffff");
   }
 
   setup() {
