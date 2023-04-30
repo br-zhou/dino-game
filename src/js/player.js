@@ -3,7 +3,6 @@ import { PlayerController } from "./playerController.js";
 import { Entity } from "./Entity.js";
 import { TileMapCollider } from "./tileMapCollider.js";
 import { Vector2 } from "./vector2.js";
-import { CollisionMath } from "./collisionMath.js";
 import { Ray2D } from "./ray2d.js";
 
 export class Player extends Entity {
@@ -16,7 +15,7 @@ export class Player extends Entity {
     this.scene = scene;
     this.scene.add(this);
 
-    this.position_ = new Vector2(1, 20);
+    this.position_ = new Vector2(10, 20);
     this.size_ = new Vector2(1.8, 1.8);
     this.velocity_ = new Vector2();
     this.targetVelocity_ = new Vector2();
@@ -29,23 +28,18 @@ export class Player extends Entity {
 
   /** @override */
   update(dtSec) {
+    this.handleControllerCommands_();
+    this.handleGroundBlockCollisions_(dtSec);
+    this.handleTileMapCollisions_(dtSec);
+
     this.position_.x += this.velocity_.x * dtSec;
     this.position_.y += this.velocity_.y * dtSec;
 
     this.velocity_.y -= this.gravity * dtSec;
-
-    this.handleControllerCommands_();
-    this.handleGroundBlockCollisions_(dtSec);
-    this.handleTileMapCollisions_(dtSec);
   }
 
   jump() {
     this.velocity_.y = this.jumpVelocity;
-    /*
-    if (this.mapCollider.isGrounded()) {
-      this.velocity_.y = this.jumpVelocity;
-    }
-    */
   }
 
   /**
@@ -77,7 +71,7 @@ export class Player extends Entity {
       },
       this.size_.x,
       this.size_.y,
-      "#FF0000"
+      "rgba(255,0,0,.7)"
     );
   }
 
@@ -112,7 +106,6 @@ export class Player extends Entity {
 
   handleGroundBlockCollisions_(dtSec) {
     for (const block of this.scene.groundsBlocks_) {
-
       const hitInfo = this.vsRect(block, dtSec);
       if (hitInfo != false) {
         this.fixCollision(hitInfo);
@@ -129,7 +122,7 @@ export class Player extends Entity {
     if (normal.y != 0) { // top and bottom
       this.velocity_.y = 0;
       this.position_.y = point.y + this.size_.y/2
-    } else { // left and right
+    } else { // leftas and right
       this.velocity_.x = 0;
       this.position_.x = point.x - this.size_.x/2
     }
@@ -140,10 +133,10 @@ export class Player extends Entity {
     this.handleTiles(dtSec);
   }
 
-  handleTiles(dtSec) { // ! not used
+  handleTiles(dtSec) {
     const playerRay = new Ray2D(this.position_, this.velocity_.toRadians());
 
-    for (const tileIndex of this.mapCollider.collsionTiles) {
+    for (const tileIndex of this.mapCollider.tilesInRange) {
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
       
       const hitInfo = this.vsRect(tileEntity, dtSec);
@@ -154,6 +147,9 @@ export class Player extends Entity {
   }
 
   vsRect(rectangle, dtSec) {
+    if (this.velocity_.x === 0 && this.velocity_.y === 0) return false;
+    // The previoius line is needed since ray is pointed right when x = 0 & y = 0
+    
     const playerRay = new Ray2D(
       Vector2.add(
         this.position_,
@@ -161,6 +157,8 @@ export class Player extends Entity {
         ),
       this.velocity_.toRadians()
     ); // ! this is recalculated every function call. Optimize this.
+
+    const tools = new CanvasTools();
 
     const expandedRect = Ray2D.expandRect(this, rectangle);
 

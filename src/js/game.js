@@ -19,14 +19,7 @@ export class Game {
 
     this.scene = new Scene();
     this.player = new Player(this.scene); 
-    
-    this.block = new Entity(
-      new Vector2(0,0),
-      new Vector2(5,5)
-    )
 
-    this.scene.addGround(this.block);
-    
     this.scene.load((result) => {
       if (result === true) {
         this.setup();
@@ -38,6 +31,19 @@ export class Game {
 
     new Foreground(this.scene, new Vector2(35,0), new Vector2(5, 5), "#ffffff");
     new Foreground(this.scene, new Vector2(40,5), new Vector2(2, 5), "#ffffff");
+    new Foreground(this.scene, new Vector2(35,5), new Vector2(2, 2), "#ffffff");
+    new Foreground(this.scene, new Vector2(10,10), new Vector2(5, 5), "#ffffff");
+
+    // ground tiles
+    new Foreground(this.scene, new Vector2(0,-5), new Vector2(2, 2), "#ffffff");
+    new Foreground(this.scene, new Vector2(2,-5), new Vector2(2, 2), "#ffffff");
+    new Foreground(this.scene, new Vector2(4,-5), new Vector2(2, 2), "#ffffff");
+
+    new Foreground(this.scene, new Vector2(6,-3), new Vector2(2, 2), "#ffffff");
+    new Foreground(this.scene, new Vector2(6,-1), new Vector2(2, 2), "#ffffff");
+    
+    new Foreground(this.scene, new Vector2(-2,-3), new Vector2(2, 2), "#ffffff");
+    new Foreground(this.scene, new Vector2(-2,-1), new Vector2(2, 2), "#ffffff");
   }
 
   setup() {
@@ -49,7 +55,19 @@ export class Game {
     this.scene.render();
 
     const tools = new CanvasTools();
-    this.block.position_ = tools.screenToWorld(INPUT.mousePosition);
-    tools.drawRect(this.block.position_, this.block.size_.x, this.block.size_.y,"#00FF00");
+    
+    const playermidpos = Vector2.add(this.player.position_, new Vector2(this.player.size_.x/2, -this.player.size_.y/2));
+
+    let mousediff = Vector2.subtract(tools.screenToWorld(INPUT.mousePosition), playermidpos);
+    this.pRay = new Ray2D(playermidpos, mousediff.toRadians());
+    this.pRay.length = mousediff.magnitude();
+    this.pRay.render();
+
+    for (const block of this.scene.groundsBlocks_) {
+      const hitInfo = this.pRay.vsRect(block, mousediff.magnitude());
+      if (hitInfo != false) {
+        tools.drawCircle(hitInfo.point, .5);
+      }
+    }
   }
 }

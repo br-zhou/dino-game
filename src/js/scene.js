@@ -87,7 +87,7 @@ export class Scene {
     for (const block of this.groundsBlocks_) {
       block.render();
     }
-    this.tileMap.render(); // !! remove this to render tilemap
+    this.tileMap.render();
   }
 
   get camera() {

@@ -7,12 +7,13 @@ export class Ray2D {
    * 
    * @param {Vector2} position in world units
    * @param {number} direction in radians
+   * @param {number} length of ray
    */
-  constructor(position = new Vector2(), direction = 0) {
+  constructor(position = new Vector2(), direction = 0, length = 2.5) {
     this.position_ = position;
     this.direction_ = direction;
     this.tools = new CanvasTools();
-
+    this.length = length;
     this.dxdt_ = Math.cos(this.direction_);
     this.dydt_ = Math.sin(this.direction_);
   }
@@ -20,11 +21,10 @@ export class Ray2D {
   render() {
     const circleRadius = 0.25;
     const lineWidth = 3;
-    const rayDistance = 5;
     const color = "#FF00FF";
     const endPoint = new Vector2(
-      this.position_.x + this.dxdt_ * rayDistance,
-      this.position_.y + this.dydt_ * rayDistance
+      this.position_.x + this.dxdt_ * this.length,
+      this.position_.y + this.dydt_ * this.length
     )
     this.tools.drawCircle(this.position_, circleRadius, color);
     this.tools.drawLine(this.position_, endPoint, color, lineWidth);
@@ -88,7 +88,8 @@ export class Ray2D {
     
     return {
       point: collisionPoint,
-      normal: normaldirection
+      normal: normaldirection,
+      time: collisionTime
     };
   }
 

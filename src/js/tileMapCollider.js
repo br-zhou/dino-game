@@ -19,10 +19,14 @@ export class TileMapCollider {
       Math.ceil(this.size.x / (2 * tileSize)),
       Math.ceil(this.size.y / (2 * tileSize))
     );
+
+    this.collsionTiles = [];
+    this.tilesInRange = [];
   }
 
   update() {
     this.entityTileGridIndex = this.tileMap.positionToGridIndex(this.entityCenterPosition);
+    this.tilesInRange = this.getMapTilesInRange();
     this.collsionTiles = this.getCollidingMapTiles();
   }
 
@@ -105,5 +109,26 @@ export class TileMapCollider {
     }
 
     return collsionTiles;
+  }
+
+  getMapTilesInRange() { // todo update so that this considers velocity as well
+    let tiles = [];
+
+    for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {
+      for (let j = -this.entityTileCollisionCheckRadius.y; j <= this.entityTileCollisionCheckRadius.y; j++) {
+        
+        const boxIndex = new Vector2(
+          i + this.entityTileGridIndex.x,
+          j + this.entityTileGridIndex.y
+        )
+
+        if(this.tileMap.tileGrid_[boxIndex.x] === undefined) continue;
+        if(!this.tileMap.tileGrid_[boxIndex.x][boxIndex.y]) continue;
+
+        tiles.push(new Vector2(boxIndex.x, boxIndex.y));
+      }
+    }
+
+    return tiles;
   }
 }
