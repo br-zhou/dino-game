@@ -61,9 +61,7 @@ export class Player extends Entity {
   /** @override */
   render() {
     const tools = new CanvasTools();
-
-    this.mapCollider.render();
-    
+        
     tools.drawRect(
       {
         x: this.position_.x,

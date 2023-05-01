@@ -20,34 +20,12 @@ export class TileMapCollider {
       Math.ceil(this.size.y / (2 * tileSize))
     );
 
-    this.collsionTiles = [];
     this.tilesInRange = [];
   }
 
   update() {
     this.entityTileGridIndex = this.tileMap.positionToGridIndex(this.entityCenterPosition);
     this.tilesInRange = this.getMapTilesInRange();
-    this.collsionTiles = this.getCollidingMapTiles();
-  }
-
-  render() {
-    // Render collision check grids
-    for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {
-      for (let j = -this.entityTileCollisionCheckRadius.y; j <= this.entityTileCollisionCheckRadius.y; j++) {
-        this.tileMap.outlineGrid({
-          x: this.entityTileGridIndex.x + i,
-          y: this.entityTileGridIndex.y + j},
-          "#ffff00"
-        );
-      }
-    }
-
-    // render active collision grids
-    for (const tile of this.collsionTiles) {
-      this.tileMap.colorGrid(new Vector2(tile.x, tile.y), "rgba(255, 155, 0, 0.7)");
-    }
-
-    new CanvasTools().drawCircle(this.entityFeetPosition, .15, "#000000");
   }
 
   /**
@@ -81,37 +59,9 @@ export class TileMapCollider {
   }
 
   /**
-   * @returns a list of all grid indexes that touch enitity collision box
+   * @returns a list of all grid indexes that are close to enitity collision box
    */
-  getCollidingMapTiles() { // todo update so that this considers velocity as well
-    let collsionTiles = [];
-
-    for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {
-      for (let j = -this.entityTileCollisionCheckRadius.y; j <= this.entityTileCollisionCheckRadius.y; j++) {
-        
-        const boxIndex = new Vector2(
-          i + this.entityTileGridIndex.x,
-          j + this.entityTileGridIndex.y
-        )
-
-        if(this.tileMap.tileGrid_[boxIndex.x] === undefined) continue;
-        if(!this.tileMap.tileGrid_[boxIndex.x][boxIndex.y]) continue;
-
-        const tileEntity = this.tileMap.tileIndexToEntity(boxIndex);
-
-        if(CollisionMath.rectVsRect(
-          tileEntity,
-          this.entity
-          )) {
-            collsionTiles.push(new Vector2(boxIndex.x, boxIndex.y));
-        }
-      }
-    }
-
-    return collsionTiles;
-  }
-
-  getMapTilesInRange() { // todo update so that this considers velocity as well
+ getMapTilesInRange() { // todo update so that this considers velocity as well
     let tiles = [];
 
     for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {
