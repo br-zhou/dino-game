@@ -11,7 +11,7 @@ export class Player extends Entity {
     super();
     this.speed_ = 12;
     this.gravity = 65;
-    this.jumpVelocity = 12;
+    this.jumpVelocity = 24;
     
     this.scene = scene;
     this.scene.add(this);
@@ -22,6 +22,7 @@ export class Player extends Entity {
     this.targetVelocity_ = new Vector2();
     this.tileMap = scene.tileMap;
 
+    this.isgrounded_ = true;
 
     this.mapCollider = new TileMapCollider(this);
     this.controller = new PlayerController(this);
@@ -35,12 +36,17 @@ export class Player extends Entity {
     this.velocity_.y -= this.gravity * dtSec;
     
     this.handleControllerCommands_();
+    
+    this.isgrounded_ = false;
     this.handleGroundBlockCollisions_(dtSec);
     this.handleTileMapCollisions_(dtSec);
   }
 
   jump() {
-    this.velocity_.y = this.jumpVelocity;
+    if (this.isgrounded_) {
+      this.velocity_.y = this.jumpVelocity;
+      console.log(this.velocity_.y)
+    }
   }
 
   /**
@@ -118,13 +124,15 @@ export class Player extends Entity {
   resolveCollision(hitInfo) {
     if (hitInfo == false) return;
 
-    const displacement = 0.001;
+    const displacement = 0.0001;
     const point = hitInfo.point;
     const normal = hitInfo.normal;
     
     if (normal.y != 0) { // top and bottom
       this.velocity_.y = 0;
       this.position_.y = point.y + this.size_.y/2 + normal.y * displacement; // ! todo: change because sketchy!
+      if (normal.y == 1) this.isgrounded_ = true;
+      console.log(this.isgrounded_)
     } else { // left and right
       this.velocity_.x = 0;
       this.position_.x = point.x - this.size_.x/2 + normal.x * displacement;
