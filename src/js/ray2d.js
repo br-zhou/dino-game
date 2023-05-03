@@ -85,7 +85,7 @@ export class Ray2D {
     } else {
       normaldirection.y = Math.sign(this.dydt_) * -1;
     }
-    
+
     return {
       point: collisionPoint,
       normal: normaldirection,

@@ -10,7 +10,8 @@ export class PlayerController {
       "w": "up",
       "a": "left",
       "s": "down",
-      "d": "right"
+      "d": "right",
+      "mouse0": "l-click"
     }
 
     document.addEventListener("update-input", (e) => this.update(e));

@@ -1,12 +1,9 @@
-import { CanvasTools } from "./canvasTools.js";
-import { CollisionMath } from "./collisionMath.js";
 import { tileSize } from "./tileMap.js";
 import { Vector2 } from "./vector2.js";
 
 export class TileMapCollider {
   constructor(entity) {
     this.entity = entity;
-    this.position = entity.position_;
     this.size = entity.size_;
     this.tileMap = entity.scene.tileMap;
 
@@ -24,7 +21,7 @@ export class TileMapCollider {
   }
 
   update() {
-    this.entityTileGridIndex = this.tileMap.positionToGridIndex(this.entityCenterPosition);
+    this.position = this.entity.position_;
     this.tilesInRange = this.getMapTilesInRange();
   }
 
@@ -62,14 +59,15 @@ export class TileMapCollider {
    * @returns a list of all grid indexes that are close to enitity collision box
    */
  getMapTilesInRange() { // todo update so that this considers velocity as well
+    const currentEntityTileGridIndex = this.tileMap.positionToGridIndex(this.entityCenterPosition);
     let tiles = [];
 
     for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {
       for (let j = -this.entityTileCollisionCheckRadius.y; j <= this.entityTileCollisionCheckRadius.y; j++) {
         
         const boxIndex = new Vector2(
-          i + this.entityTileGridIndex.x,
-          j + this.entityTileGridIndex.y
+          i + currentEntityTileGridIndex.x,
+          j + currentEntityTileGridIndex.y
         )
 
         if(this.tileMap.tileGrid_[boxIndex.x] === undefined) continue;

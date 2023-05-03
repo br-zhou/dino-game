@@ -4,13 +4,14 @@ import { Entity } from "./Entity.js";
 import { TileMapCollider } from "./tileMapCollider.js";
 import { Vector2 } from "./vector2.js";
 import { Ray2D } from "./ray2d.js";
+import { INPUT } from "./input.js";
 
 export class Player extends Entity {
   constructor(scene) {
     super();
-    this.speed_ = 10;
+    this.speed_ = 12;
     this.gravity = 65;
-    this.jumpVelocity = 10;
+    this.jumpVelocity = 12;
     
     this.scene = scene;
     this.scene.add(this);
@@ -28,14 +29,14 @@ export class Player extends Entity {
 
   /** @override */
   update(dtSec) {
-    this.handleControllerCommands_();
-    this.handleGroundBlockCollisions_(dtSec);
-    this.handleTileMapCollisions_(dtSec);
-
     this.position_.x += this.velocity_.x * dtSec;
     this.position_.y += this.velocity_.y * dtSec;
 
     this.velocity_.y -= this.gravity * dtSec;
+    
+    this.handleControllerCommands_();
+    this.handleGroundBlockCollisions_(dtSec);
+    this.handleTileMapCollisions_(dtSec);
   }
 
   jump() {
@@ -61,7 +62,7 @@ export class Player extends Entity {
   /** @override */
   render() {
     const tools = new CanvasTools();
-        
+
     tools.drawRect(
       {
         x: this.position_.x,
@@ -90,6 +91,9 @@ export class Player extends Entity {
         case "right":
           this.move(1);
           break;
+        case "l-click":
+            this.position_ = (new CanvasTools()).screenToWorld(INPUT.mousePosition);
+            break;
         default:
           break;
       }
@@ -106,23 +110,24 @@ export class Player extends Entity {
     for (const block of this.scene.groundsBlocks_) {
       const hitInfo = this.vsRect(block, dtSec);
       if (hitInfo != false) {
-        this.fixCollision(hitInfo);
+        this.resolveCollision(hitInfo);
       }
     }
   }
   
-  fixCollision(hitInfo) {
+  resolveCollision(hitInfo) {
     if (hitInfo == false) return;
 
+    const displacement = 0.001;
     const point = hitInfo.point;
     const normal = hitInfo.normal;
     
     if (normal.y != 0) { // top and bottom
       this.velocity_.y = 0;
-      this.position_.y = point.y + this.size_.y/2
-    } else { // leftas and right
+      this.position_.y = point.y + this.size_.y/2 + normal.y * displacement; // ! todo: change because sketchy!
+    } else { // left and right
       this.velocity_.x = 0;
-      this.position_.x = point.x - this.size_.x/2
+      this.position_.x = point.x - this.size_.x/2 + normal.x * displacement;
     }
   }
 
@@ -132,15 +137,21 @@ export class Player extends Entity {
   }
 
   handleTiles(dtSec) {
-    const playerRay = new Ray2D(this.position_, this.velocity_.toRadians());
+    let hits = [];
 
-    for (const tileIndex of this.mapCollider.tilesInRange) {
-      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
-      
-      const hitInfo = this.vsRect(tileEntity, dtSec);
+    for (const tileIndex of this.mapCollider.tilesInRange) { // gets all tiles in range
+      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex); // turns the tile coords into a rectange for collisions
+      const hitInfo = this.vsRect(tileEntity, dtSec); // tests for collision against the tile
       if(hitInfo != false) {
-        this.fixCollision(hitInfo);
+        hits.push(hitInfo);
       }
+    }
+
+    hits.sort(this.sortHitInfo_); // "sorts" the collisions, but it doesnt actually help the edges case because both tiles are distance 0
+                                  // so result is undeterministic 
+
+    for (const hit of hits) {
+      this.resolveCollision(hit); // just pushes the player out of the collision based on collision point and normal
     }
   }
 
