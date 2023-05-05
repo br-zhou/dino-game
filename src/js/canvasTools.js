@@ -136,6 +136,30 @@ export class CanvasTools {
   }
 
   /**
+   * 
+   * @param {Image} img 
+   * @param {Vector2} spriteIndex 
+   * @param {Vector2} spriteSize 
+   * @param {Vector2} worldPos 
+   * @param {Vector2} worldSize 
+   * Renders sprite at index at world position with given size
+   */
+  drawSpriteMap(img, spriteIndex, spriteSize, worldPos, worldSize) {
+    this.ctx.imageSmoothingEnabled = false;
+    this.ctx.drawImage(
+      img,
+      spriteIndex.x * spriteSize.x,
+      spriteIndex.y * spriteSize.y,
+      spriteSize.x,
+      spriteSize.y,
+      this.worldToScreenPosX(worldPos.x),
+      this.worldToScreenPosY(worldPos.y),
+      this.worldToScreenConvert(worldSize.x),
+      this.worldToScreenConvert(worldSize.y)
+    );
+  }
+
+  /**
    * Draws a line from point1 to point2
    * @param {Vector2} point1 start point of line
    * @param {Vector2} point2 end point of line

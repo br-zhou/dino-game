@@ -1,0 +1,48 @@
+{
+  "spriteSize": {
+    "x": 24,
+    "y": 24
+  },
+  "gameSize": {
+    "x": 4,
+    "y": 4
+  },
+  "framesDuration": 2,
+  "states": {
+    "idle": {
+      "start":{
+        "x": 0,
+        "y":0
+      },
+      "length": 4
+    },
+    "walk": {
+      "start":{
+        "x": 4,
+        "y":0
+      },
+      "length": 6
+    },
+    "kick": {
+      "start":{
+        "x": 10,
+        "y":0
+      },
+      "length": 4
+    },
+    "hurt": {
+      "start":{
+        "x": 14,
+        "y":0
+      },
+      "length": 3
+    },
+    "run": {
+      "start":{
+        "x": 17,
+        "y":0
+      },
+      "length": 7
+    }
+  }
+}

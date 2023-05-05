@@ -5,6 +5,7 @@ import { INPUT } from "./input.js";
 import { Player } from "./player.js";
 import { Ray2D } from "./ray2d.js";
 import { Scene } from "./scene.js";
+import { SpriteMap } from "./spriteMap.js";
 import { Vector2 } from "./vector2.js";
 
 /**
@@ -35,6 +36,10 @@ export class Game {
 
 
     new Foreground(this.scene, new Vector2(-100,-15), new Vector2(200, 2), "#ffffff");
+
+    this.sprite = new SpriteMap("dino", (e) => {
+      console.log(e)
+    });
   }
 
   setup() {
@@ -54,11 +59,6 @@ export class Game {
     this.pRay.length = mousediff.magnitude();
     this.pRay.render();
 
-    for (const block of this.scene.groundsBlocks_) {
-      const hitInfo = this.pRay.vsRect(block, mousediff.magnitude());
-      if (hitInfo != false) {
-        tools.drawCircle(hitInfo.point, .5);
-      }
-    }
+    this.sprite.render();
   }
 }

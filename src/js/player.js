@@ -24,28 +24,29 @@ export class Player extends Entity {
 
     this.isgrounded_ = true;
 
-    this.mapCollider = new TileMapCollider(this);
-    this.controller = new PlayerController(this);
+    this.mapCollider_ = new TileMapCollider(this);
+    this.controller_ = new PlayerController(this);
   }
 
   /** @override */
-  update(dtSec) {
-    this.position_.x += this.velocity_.x * dtSec;
-    this.position_.y += this.velocity_.y * dtSec;
-
-    this.velocity_.y -= this.gravity * dtSec;
-    
-    this.handleControllerCommands_();
-    
+  update(dtSec) {    
+    this.handleControllerInput_();
+    this.handleMovement_(dtSec);
     this.isgrounded_ = false;
     this.handleGroundBlockCollisions_(dtSec);
     this.handleTileMapCollisions_(dtSec);
   }
 
+  handleMovement_(dtSec) {
+    this.position_.x += this.velocity_.x * dtSec;
+    this.position_.y += this.velocity_.y * dtSec;
+
+    this.velocity_.y -= this.gravity * dtSec;
+  }
+
   jump() {
     if (this.isgrounded_) {
       this.velocity_.y = this.jumpVelocity;
-      console.log(this.velocity_.y)
     }
   }
 
@@ -80,8 +81,8 @@ export class Player extends Entity {
     );
   }
 
-  handleControllerCommands_() {
-    const commands = this.controller.commands;
+  handleControllerInput_() {
+    const commands = this.controller_.commands;
 
     commands.forEach((command) => {
       switch (command) {
@@ -105,7 +106,7 @@ export class Player extends Entity {
       }
     });
 
-    if (this.controller.wantsToMove) {
+    if (this.controller_.wantsToMove) {
       this.velocity_.x = this.targetVelocity_.x;
     } else {
       this.velocity_.x = 0;
@@ -124,30 +125,29 @@ export class Player extends Entity {
   resolveCollision(hitInfo) {
     if (hitInfo == false) return;
 
-    const displacement = 0.0001;
+    const resolveDisplacement = 0.0001;
     const point = hitInfo.point;
     const normal = hitInfo.normal;
     
     if (normal.y != 0) { // top and bottom
       this.velocity_.y = 0;
-      this.position_.y = point.y + this.size_.y/2 + normal.y * displacement; // ! todo: change because sketchy!
+      this.position_.y = point.y + this.size_.y/2 + normal.y * resolveDisplacement; // ! todo: change because sketchy!
       if (normal.y == 1) this.isgrounded_ = true;
-      console.log(this.isgrounded_)
     } else { // left and right
       this.velocity_.x = 0;
-      this.position_.x = point.x - this.size_.x/2 + normal.x * displacement;
+      this.position_.x = point.x - this.size_.x/2 + normal.x * resolveDisplacement;
     }
   }
 
   handleTileMapCollisions_(dtSec) {
-    this.mapCollider.update();
+    this.mapCollider_.update();
     this.handleTiles(dtSec);
   }
 
   handleTiles(dtSec) {
     let hits = [];
 
-    for (const tileIndex of this.mapCollider.tilesInRange) { // gets all tiles in range
+    for (const tileIndex of this.mapCollider_.tilesInRange) { // gets all tiles in range
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex); // turns the tile coords into a rectange for collisions
       const hitInfo = this.vsRect(tileEntity, dtSec); // tests for collision against the tile
       if(hitInfo != false) {
@@ -167,7 +167,7 @@ export class Player extends Entity {
     if (this.velocity_.x === 0 && this.velocity_.y === 0) return false;
     // The previoius line is needed since ray is pointed right when x = 0 & y = 0
     
-    const playerRay = new Ray2D(
+    const entityRay = new Ray2D(
       Vector2.add(
         this.position_,
         new Vector2(this.size_.x/2, -this.size_.y/2)
@@ -179,6 +179,6 @@ export class Player extends Entity {
 
     const expandedRect = Ray2D.expandRect(this, rectangle);
 
-    return playerRay.vsRect(expandedRect, this.velocity_.magnitude() * dtSec);
+    return entityRay.vsRect(expandedRect, this.velocity_.magnitude() * dtSec);
   }
 }
