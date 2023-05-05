@@ -29,7 +29,9 @@ export class Player extends Entity {
     this.controller_ = new PlayerController(this);
     this.controller_.clickCB = this.teleportToMouse;
 
-    this.sprite = new SpriteMap("dino", () => {/* todo: require spritemap for player to load */});
+    this.sprite = new SpriteMap("dino", () => {
+      this.sprite.gotoState("idle");
+    });
   }
 
   /** @override */
@@ -152,6 +154,7 @@ export class Player extends Entity {
   handleTileMapCollisions_(dtSec) {
     this.mapCollider_.update();
     this.handleTiles(dtSec);
+    this.sprite.update(dtSec);
   }
 
   handleTiles(dtSec) {

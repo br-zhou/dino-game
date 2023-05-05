@@ -13,12 +13,14 @@ export class SpriteMap {
     this.name_ = name;
 
     this.loaded = false;
+    this.state = null;
     this.imgLoaded = false;
     this.dataLoaded = false;
     this.currentIndex = new Vector2();
 
     this.animElapsedTime = 0;
-    
+    this.frameDuration = 0;
+
     this.loadImg();
     this.loadData();
   }
@@ -40,6 +42,7 @@ export class SpriteMap {
       const response = await fetch(`./assets/${this.name_}/data.json`);
       this.data = await response.json();
       this.dataLoaded = true;
+      this.frameDuration = this.data.frameDuration;
       this.checkLoaded();
     } catch (err) {
       console.log(err);
@@ -71,6 +74,31 @@ export class SpriteMap {
   }
 
   update(dtSec) {
+    if (!this.loaded) return;
 
+    this.animElapsedTime += dtSec;
+
+    const calculatedIndex = Vector2.copy(this.data.states[this.state].start);
+    const maxFrames = this.data.states[this.state].length;
+    const offset = Math.floor(this.animElapsedTime / (this.frameDuration / 60));
+
+    calculatedIndex.x += offset % maxFrames;
+
+    console.log(calculatedIndex)
+
+    console.log(calculatedIndex)
+    this.currentIndex = calculatedIndex;
+  }
+
+  /**
+   * Sets sprite to first frame of state. Assumes state is valid.
+   * @param {String} name of state
+   */
+  gotoState(name) {
+    if (!this.loaded) return;
+    const index = this.data.states[name].start;
+    this.state = name;
+    this.currentIndex = index;
+    this.animElapsedTime = 0;
   }
 }

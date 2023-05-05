@@ -37,9 +37,6 @@ export class PlayerController {
         break;
     }
 
-    
-
-
     this.wantsToMove = this.commands.has("left") | this.commands.has("right");
   }
 
