@@ -5,6 +5,7 @@ import { TileMapCollider } from "./tileMapCollider.js";
 import { Vector2 } from "./vector2.js";
 import { Ray2D } from "./ray2d.js";
 import { INPUT } from "./input.js";
+import { SpriteMap } from "./spriteMap.js";
 
 export class Player extends Entity {
   constructor(scene) {
@@ -26,6 +27,8 @@ export class Player extends Entity {
 
     this.mapCollider_ = new TileMapCollider(this);
     this.controller_ = new PlayerController(this);
+
+    this.sprite = new SpriteMap("dino", () => {/* todo: require spritemap for player to load */});
   }
 
   /** @override */
@@ -35,6 +38,7 @@ export class Player extends Entity {
     this.isgrounded_ = false;
     this.handleGroundBlockCollisions_(dtSec);
     this.handleTileMapCollisions_(dtSec);
+    this.scene.camera.position_ = this.position_;
   }
 
   handleMovement_(dtSec) {
@@ -79,6 +83,8 @@ export class Player extends Entity {
       this.size_.y,
       "rgba(255,0,0,.7)"
     );
+
+    this.sprite.render(this.position_);
   }
 
   handleControllerInput_() {

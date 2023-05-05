@@ -4,8 +4,8 @@
     "y": 24
   },
   "gameSize": {
-    "x": 4,
-    "y": 4
+    "x": 8,
+    "y": 8
   },
   "framesDuration": 2,
   "states": {

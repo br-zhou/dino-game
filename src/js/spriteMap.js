@@ -15,7 +15,10 @@ export class SpriteMap {
     this.loaded = false;
     this.imgLoaded = false;
     this.dataLoaded = false;
+    this.currentIndex = new Vector2();
 
+    this.animElapsedTime = 0;
+    
     this.loadImg();
     this.loadData();
   }
@@ -23,10 +26,13 @@ export class SpriteMap {
   async loadImg() {
     this.img_ = new Image();
     this.img_.src = `./assets/${this.name_}/map.png`;
-    this.img_.onload = (e) => {
+    this.img_.onload = () => {
       this.imgLoaded = true;
       this.checkLoaded();
-    } // !! there is no check if image fails to load
+    } 
+    this.img_.onerror = (err) => {
+      this.callback_(false);
+    }
   }
   
   async loadData() {
@@ -53,14 +59,18 @@ export class SpriteMap {
     }
   }
 
-  render() {
+  render(position) {
     if (!this.loaded) return;
     this.tools.drawSpriteMap(
       this.img_,
-      new Vector2(0, 0),
+      this.currentIndex,
       this.data.spriteSize,
-      new Vector2(0, 0),
+      position,
       this.data.gameSize
     );
+  }
+
+  update(dtSec) {
+
   }
 }

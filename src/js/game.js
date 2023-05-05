@@ -36,10 +36,6 @@ export class Game {
 
 
     new Foreground(this.scene, new Vector2(-100,-15), new Vector2(200, 2), "#ffffff");
-
-    this.sprite = new SpriteMap("dino", (e) => {
-      console.log(e)
-    });
   }
 
   setup() {
@@ -58,7 +54,5 @@ export class Game {
     this.pRay = new Ray2D(playermidpos, mousediff.toRadians());
     this.pRay.length = mousediff.magnitude();
     this.pRay.render();
-
-    this.sprite.render();
   }
 }

@@ -46,7 +46,7 @@ export class CanvasTools {
    * @returns the world coordinate positionX converted to the window pixel
    */
   worldToScreenPosX(positionX) {
-    return this.worldToScreenConvert(positionX) + this.windowSize.x / 2;
+    return this.worldToScreenConvert(positionX) - this.worldToScreenConvert(this.camPos.x) + this.windowSize.x / 2;
   }
 
   
@@ -55,7 +55,7 @@ export class CanvasTools {
    * @returns the world coordinate positionY converted to the window pixel
    */
   worldToScreenPosY(positionY) {
-    return - this.worldToScreenConvert(positionY) + this.windowSize.y / 2;
+    return - this.worldToScreenConvert(positionY) + this.worldToScreenConvert(this.camPos.y) + this.windowSize.y / 2;
   }
 
   /**
@@ -81,9 +81,9 @@ export class CanvasTools {
    */
   worldToScreenConvert(length) {
     if (this.canvas.mode === CanvasModes.HORIZONATAL) {
-      return (length - this.camPos.x) / this.camFov * this.windowSize.x;
+      return (length) / this.camFov * this.windowSize.x;
     } else {
-      return (length - this.camPos.y) / this.camFov * this.windowSize.y;
+      return (length) / this.camFov * this.windowSize.y;
     }
   }
 
