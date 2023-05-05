@@ -1,5 +1,3 @@
-import { INPUT } from "./input.js";
-
 export class PlayerController {
   constructor(player) {
     this.player_ = player;
@@ -10,9 +8,10 @@ export class PlayerController {
       "w": "up",
       "a": "left",
       "s": "down",
-      "d": "right",
-      "mouse0": "l-click"
+      "d": "right"
     }
+
+    this.clickCB = null;
 
     document.addEventListener("update-input", (e) => this.update(e));
   }
@@ -21,6 +20,8 @@ export class PlayerController {
     const details = e.detail;
     const key = details.key;
     const type = details.type;
+
+    if (key == "mouse0" && type == "down" && this.clickCB != null) this.clickCB();
 
     if (this.keyToCommandHash[key] === undefined) return;
 
@@ -35,6 +36,9 @@ export class PlayerController {
       default:
         break;
     }
+
+    
+
 
     this.wantsToMove = this.commands.has("left") | this.commands.has("right");
   }

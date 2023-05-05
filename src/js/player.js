@@ -27,6 +27,7 @@ export class Player extends Entity {
 
     this.mapCollider_ = new TileMapCollider(this);
     this.controller_ = new PlayerController(this);
+    this.controller_.clickCB = this.teleportToMouse;
 
     this.sprite = new SpriteMap("dino", () => {/* todo: require spritemap for player to load */});
   }
@@ -104,9 +105,6 @@ export class Player extends Entity {
         case "right":
           this.move(1);
           break;
-        case "l-click":
-            this.position_ = (new CanvasTools()).screenToWorld(INPUT.mousePosition);
-            break;
         default:
           break;
       }
@@ -117,6 +115,12 @@ export class Player extends Entity {
     } else {
       this.velocity_.x = 0;
     }
+  }
+
+  teleportToMouse = () => { // arrow functions binds method to class
+    console.log("HI")
+    console.log(this)
+    this.position_ = (new CanvasTools()).screenToWorld(INPUT.mousePosition);
   }
 
   handleGroundBlockCollisions_(dtSec) {
