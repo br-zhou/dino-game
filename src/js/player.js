@@ -42,6 +42,20 @@ export class Player extends Entity {
     this.handleGroundBlockCollisions_(dtSec);
     this.handleTileMapCollisions_(dtSec);
     this.scene.camera.position_ = this.position_;
+    this.updateSpriteLogic();
+  }
+
+  updateSpriteLogic() {
+    if (this.isgrounded_) {
+      if (this.velocity_.x == 0) {
+        this.sprite.gotoState("idle");
+      } else {
+        this.sprite.gotoState("run");
+      }
+    } else if (this.velocity_.y != 0) {
+      this.sprite.gotoState("walk");
+    }
+    console.log(this.sprite.state)
   }
 
   handleMovement_(dtSec) {
@@ -120,8 +134,6 @@ export class Player extends Entity {
   }
 
   teleportToMouse = () => { // arrow functions binds method to class
-    console.log("HI")
-    console.log(this)
     this.position_ = (new CanvasTools()).screenToWorld(INPUT.mousePosition);
   }
 

@@ -144,7 +144,7 @@ export class CanvasTools {
    * @param {Vector2} worldSize 
    * Renders sprite at index at world position with given size
    */
-  drawSpriteMap(img, spriteIndex, spriteSize, worldPos, worldSize) {
+  drawSpriteMap(img, spriteIndex, spriteSize, worldPos, worldSize, flipped = false) {
     this.ctx.imageSmoothingEnabled = false;
     this.ctx.drawImage(
       img,
@@ -164,10 +164,10 @@ export class CanvasTools {
    * @param {Vector2} point1 start point of line
    * @param {Vector2} point2 end point of line
    */
-    drawLine(startPoint, endPoint, color = "#FF0000", width = 3) {
+    drawLine(startPoint, endPoint, color = "#FF0000", width = 0.25) {
       const originalLineWidth = this.ctx.lineWidth;
       this.ctx.strokeStyle = color;
-      this.ctx.lineWidth = width;
+      this.ctx.lineWidth = this.worldToScreenConvert(width);
       this.ctx.beginPath();
       this.ctx.moveTo(
         this.worldToScreenPosX(startPoint.x),

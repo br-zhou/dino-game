@@ -14,6 +14,7 @@ export class SpriteMap {
 
     this.loaded = false;
     this.state = null;
+    this.flipped = false;
     this.imgLoaded = false;
     this.dataLoaded = false;
     this.currentIndex = new Vector2();
@@ -69,7 +70,8 @@ export class SpriteMap {
       this.currentIndex,
       this.data.spriteSize,
       position,
-      this.data.gameSize
+      this.data.gameSize,
+      this.flipped
     );
   }
 
@@ -83,10 +85,6 @@ export class SpriteMap {
     const offset = Math.floor(this.animElapsedTime / (this.frameDuration / 60));
 
     calculatedIndex.x += offset % maxFrames;
-
-    console.log(calculatedIndex)
-
-    console.log(calculatedIndex)
     this.currentIndex = calculatedIndex;
   }
 
@@ -96,6 +94,8 @@ export class SpriteMap {
    */
   gotoState(name) {
     if (!this.loaded) return;
+    if (this.state == name) return;
+
     const index = this.data.states[name].start;
     this.state = name;
     this.currentIndex = index;

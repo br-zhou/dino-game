@@ -20,14 +20,13 @@ export class Ray2D {
   
   render() {
     const circleRadius = 0.25;
-    const lineWidth = 3;
     const color = "#FF00FF";
     const endPoint = new Vector2(
       this.position_.x + this.dxdt_ * this.length,
       this.position_.y + this.dydt_ * this.length
     )
     this.tools.drawCircle(this.position_, circleRadius, color);
-    this.tools.drawLine(this.position_, endPoint, color, lineWidth);
+    this.tools.drawLine(this.position_, endPoint, color);
   }
 
   /**
