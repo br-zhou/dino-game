@@ -2,7 +2,7 @@
  * Represents a 2d vector
  */
 export class Vector2 {
-  constructor(x = 0, y = 0) {
+  constructor(x = 0, y = x) {
     this.x = x;
     this.y = y;
   }
@@ -37,7 +37,7 @@ export class Vector2 {
     return new Vector2(vector.x, vector.y);
   }
 
-  copy(vector) {
+  set(vector) {
     this.x = vector.x;
     this.y = vector.y;
   }

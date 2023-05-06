@@ -25,14 +25,18 @@ export class Rigibody {
   }
 
   update(dtSec) {
-    this.position_.x += this.velocity_.x * dtSec;
-    this.position_.y += this.velocity_.y * dtSec;
-
-    this.velocity_.y -= this.gravity * dtSec;
+    this.handleMovement_(dtSec);
 
     this.isgrounded_ = false;
     this.handleGroundBlockCollisions_(dtSec);
     this.handleTileMapCollisions_(dtSec);
+  }
+
+  handleMovement_(dtSec) {
+    this.position_.x += this.velocity_.x * dtSec;
+    this.position_.y += this.velocity_.y * dtSec;
+
+    this.velocity_.y -= this.gravity * dtSec;
   }
 
   handleGroundBlockCollisions_(dtSec) {
