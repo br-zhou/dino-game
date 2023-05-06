@@ -37,6 +37,11 @@ export class Vector2 {
     return new Vector2(vector.x, vector.y);
   }
 
+  copy(vector) {
+    this.x = vector.x;
+    this.y = vector.y;
+  }
+
   toRadians() {
     return Math.atan2(this.y, this.x);
   }

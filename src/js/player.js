@@ -1,6 +1,6 @@
 import { CanvasTools } from "./canvasTools.js";
 import { PlayerController } from "./playerController.js";
-import { Entity } from "./Entity.js";
+import { Entity } from "./entity.js";
 import { TileMapCollider } from "./tileMapCollider.js";
 import { Vector2 } from "./vector2.js";
 import { Ray2D } from "./ray2d.js";
@@ -55,7 +55,6 @@ export class Player extends Entity {
     } else if (this.velocity_.y != 0) {
       this.sprite.gotoState("walk");
     }
-    console.log(this.sprite.state)
   }
 
   handleMovement_(dtSec) {

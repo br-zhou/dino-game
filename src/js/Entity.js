@@ -13,6 +13,7 @@ export class Entity {
   constructor(position = new Vector2(), size = new Vector2()) {
     this.position_ = position;
     this.size_ = size;
+    this.scene = null;
   }
 
   update(dtSec) {}

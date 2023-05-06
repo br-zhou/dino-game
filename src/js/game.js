@@ -1,11 +1,11 @@
 import { startLoop } from "./animationLoop.js";
+import { Block } from "./block.js";
 import { CanvasTools } from "./canvasTools.js";
 import { Foreground } from "./foreground.js";
 import { INPUT } from "./input.js";
 import { Player } from "./player.js";
 import { Ray2D } from "./ray2d.js";
 import { Scene } from "./scene.js";
-import { SpriteMap } from "./spriteMap.js";
 import { Vector2 } from "./vector2.js";
 
 /**
@@ -34,8 +34,13 @@ export class Game {
     new Foreground(this.scene, new Vector2(35,7), new Vector2(2, 2), "#ffffff");
     new Foreground(this.scene, new Vector2(35,9), new Vector2(2, 2), "#ffffff");
 
-
     new Foreground(this.scene, new Vector2(-100,-15), new Vector2(200, 2), "#ffffff");
+
+    new Block(
+      new Vector2(0, 20),
+      this.scene
+    );
+ 
   }
 
   setup() {

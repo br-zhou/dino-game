@@ -1,4 +1,4 @@
-import { Entity } from "./Entity.js";
+import { Entity } from "./entity.js";
 import { CanvasTools } from "./canvasTools.js";
 import { Vector2 } from "./vector2.js";
 
