@@ -24,8 +24,6 @@ export class Player extends Entity {
 
     this.targetVelocity_ = new Vector2();
 
-    this.isgrounded_ = true;
-
     this.controller_ = new PlayerController(this);
     this.controller_.clickCB = this.teleportToMouse;
 
@@ -40,12 +38,12 @@ export class Player extends Entity {
   update(dtSec) {    
     this.handleControllerInput_();
     this.rb.update(dtSec);
-    this.isgrounded_ = this.rb.isgrounded_;
     this.updateSpriteLogic();
+    this.sprite.update(dtSec);
   }
 
   updateSpriteLogic() {
-    if (this.isgrounded_) {
+    if (this.rb.isgrounded_) {
       if (this.rb.velocity_.x == 0) {
         this.sprite.gotoState("idle");
       } else {
@@ -57,7 +55,7 @@ export class Player extends Entity {
   }
 
   jump() {
-    if (this.isgrounded_) {
+    if (this.rb.isgrounded_) {
       this.rb.velocity_.y = this.jumpVelocity;
     }
   }
