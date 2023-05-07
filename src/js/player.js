@@ -105,9 +105,11 @@ export class Player extends Entity {
           break;
         case "left":
           this.move(-1);
+          this.sprite.flipped = true;
           break;
         case "right":
           this.move(1);
+          this.sprite.flipped = false;
           break;
         default:
           break;

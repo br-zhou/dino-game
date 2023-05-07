@@ -29,10 +29,12 @@ export class SpriteMap {
   async loadImg() {
     this.img_ = new Image();
     this.img_.src = `./assets/${this.name_}/map.png`;
+    
     this.img_.onload = () => {
       this.imgLoaded = true;
       this.checkLoaded();
     } 
+    
     this.img_.onerror = (err) => {
       this.callback_(false);
     }
@@ -51,10 +53,11 @@ export class SpriteMap {
     }
   }
 
-  checkLoaded() {
+  async checkLoaded() {
     if(this.loaded) return true;
     
     if (this.imgLoaded && this.dataLoaded) {
+      this.generateFlippedSpriteMap();
       this.loaded = true;
       this.callback_(true);
       return true;
@@ -66,7 +69,7 @@ export class SpriteMap {
   render(position) {
     if (!this.loaded) return;
     this.tools.drawSpriteMap(
-      this.img_,
+      (this.flipped? this.imgR_ : this.img_),
       this.currentIndex,
       this.data.tileSize,
       position,
@@ -100,5 +103,44 @@ export class SpriteMap {
     this.state = name;
     this.currentIndex = index;
     this.animElapsedTime = 0;
+  }
+
+  /**
+   * Generates reverse spritemap of this.img_
+   * Requires both this.imgLoaded and this.dataLoaded to be true;
+   */
+  generateFlippedSpriteMap() {
+    if (!this.dataLoaded || !this.imgLoaded) throw new Error("Error generating reverse image!");
+    
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const tileSize = this.data.tileSize;
+
+    canvas.width = this.img_.width;
+    canvas.height = this.img_.height;
+
+    ctx.scale(-1, 1);
+
+    // this loops draws every tile but flipped
+    for (let i = 0; i < this.img_.width/tileSize.x; i++) { 
+      for (let j = 0; j < this.img_.height/tileSize.y; j++) {
+        ctx.drawImage(
+          this.img_,
+          i * tileSize.x,
+          j * tileSize.y,
+          tileSize.x,
+          tileSize.y,
+          - tileSize.x * (i + 1),
+          tileSize.y * j,
+          tileSize.x,
+          tileSize.y
+        );
+      }
+    }
+
+    const imgR = new Image();
+    imgR.src = canvas.toDataURL();
+    this.imgR_ = imgR;    
+    console.log(imgR.src);
   }
 }
