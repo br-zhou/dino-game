@@ -1,11 +1,11 @@
 {
-  "spriteSize": {
+  "tileSize": {
     "x": 24,
     "y": 24
   },
   "gameSize": {
-    "x": 8,
-    "y": 8
+    "x": 2,
+    "y": 2
   },
   "frameDuration": 10,
   "states": {

@@ -68,7 +68,7 @@ export class SpriteMap {
     this.tools.drawSpriteMap(
       this.img_,
       this.currentIndex,
-      this.data.spriteSize,
+      this.data.tileSize,
       position,
       this.data.gameSize,
       this.flipped

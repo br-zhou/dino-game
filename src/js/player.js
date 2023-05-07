@@ -20,7 +20,6 @@ export class Player extends Entity {
     this.size_ = new Vector2(1.8, 1.8);
     
     this.rb = new Rigibody(this, this.scene);
-    this.rb.gravity = this.gravity;
 
     this.targetVelocity_ = new Vector2();
 

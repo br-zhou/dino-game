@@ -14,15 +14,30 @@ export class Rigibody {
   constructor(entity, scene) {
     this.entity = entity;
     this.scene = scene;
-    this.position_ = entity.position_;
-    this.velocity_ = new Vector2();
+    
     this.gravity = 10;
     this.maxGravity = 100;
     this.mass = 1;
+    
     this.size_ = entity.size_;
     this.mapCollider_ = new TileMapCollider(this);
+    
+    this.position_ = entity.position_;
+    this.velocity_ = new Vector2();
+
     this.tileMap = scene.tileMap;
     this.isgrounded_ = false;
+
+    this.configure_(entity);
+  }
+  
+  /**
+   * Copies configurations from given entity1
+   */
+  configure_(entity) {
+    if (entity.gravity) this.gravity = entity.gravity;
+    if (entity.maxGravity) this.maxGravity = entity.maxGravity;
+    if (entity.mass) this.mass = entity.mass;
   }
 
   update(dtSec) {
