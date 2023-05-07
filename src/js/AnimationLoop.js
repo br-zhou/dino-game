@@ -11,7 +11,7 @@ export function startLoop(callback) {
     let dtSec = (elapsedTimeMillis - lastFrameElapsedTimeMillis) / 1000;
     
     const maxDt = 0.1;
-    if (dtSec > maxDt) dtSec = maxDt; // stops player teleportation // todo: implement better fix
+    if (dtSec > maxDt) dtSec = maxDt;
     
     callback(dtSec, elapsedTimeSec);
 

@@ -82,8 +82,8 @@ export class Rigibody {
       if(hitInfo != false) {
         const neighbourTile = Vector2.add(tileIndex, hitInfo.normal);
         
-        if(!this.tileMap.tileGrid_[neighbourTile.x][neighbourTile.y]) {
-          hits.push(hitInfo); // if there is no tile existing on face of collider
+        if(!this.tileMap.tileGrid_[neighbourTile.x] || !this.tileMap.tileGrid_[neighbourTile.x][neighbourTile.y]) {
+          hits.push(hitInfo); // if there is no tile existing on face of collider, add hit info
         }
       }
     }
