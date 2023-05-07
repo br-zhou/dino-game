@@ -31,8 +31,6 @@ export class Vector2 {
     );
   }
 
-  
-
   static copy(vector) {
     return new Vector2(vector.x, vector.y);
   }
