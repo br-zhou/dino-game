@@ -140,7 +140,6 @@ export class SpriteMap {
 
     const imgR = new Image();
     imgR.src = canvas.toDataURL();
-    this.imgR_ = imgR;    
-    console.log(imgR.src);
+    this.imgR_ = imgR;
   }
 }

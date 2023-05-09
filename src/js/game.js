@@ -1,6 +1,8 @@
 import { startLoop } from "./animationLoop.js";
+import { Ball } from "./ball.js";
 import { Block } from "./block.js";
 import { CanvasTools } from "./canvasTools.js";
+import { CollisionMath } from "./collisionMath.js";
 import { Foreground } from "./foreground.js";
 import { INPUT } from "./input.js";
 import { Player } from "./player.js";
@@ -35,12 +37,21 @@ export class Game {
     new Foreground(this.scene, new Vector2(35,9), new Vector2(2, 2), "#ffffff");
 
     new Foreground(this.scene, new Vector2(-100,-15), new Vector2(200, 2), "#ffffff");
+    new Foreground(this.scene, new Vector2(-100,-5), new Vector2(2, 10), "#ffffff");
+    new Foreground(this.scene, new Vector2(98,-5), new Vector2(2, 10), "#ffffff");
 
-    new Block(
+    this.blk = new Block(
       new Vector2(0, 20),
       this.scene
     );
- 
+
+    this.mouseBlock = new Block(
+      new Vector2(0, 20),
+      this.scene
+    );
+    // this.mouseBlock.size_.set(new Vector2(4,4));
+    // new Ball(new Vector2(10, -5), this.scene);
+    new Ball(new Vector2(10, 25), this.scene);
   }
 
   setup() {
@@ -50,5 +61,10 @@ export class Game {
   loop = (dtSec, elapsedTimeSec) => {
     this.scene.update(dtSec, elapsedTimeSec);
     this.scene.render();
+
+    const mousePos = (new CanvasTools()).screenToWorld(INPUT.mousePosition);
+    this.mouseBlock.position_.set(mousePos);
+
+    // console.log(CollisionMath.rectOverlapNormals(this.mouseBlock, this.blk));
   }
 }

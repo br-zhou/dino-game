@@ -17,6 +17,7 @@ export class Player extends Entity {
     this.scene.add(this);
 
     this.position_ = new Vector2(10, 20);
+    this.spawnPosition = Vector2.copy(this.position_);
     this.size_ = new Vector2(1.8, 1.8);
     
     this.rb = new Rigibody(this, this.scene);
@@ -127,5 +128,9 @@ export class Player extends Entity {
     const mousePos = (new CanvasTools()).screenToWorld(INPUT.mousePosition);
     
     this.position_.set(mousePos);
+  }
+
+  destroy() {
+    this.position_.set(this.spawnPosition);
   }
 }

@@ -1,4 +1,3 @@
-import { CanvasTools } from "./canvasTools.js";
 import { TileMapCollider } from "./tileMapCollider.js";
 import { Ray2D } from "./ray2d.js";
 import { Entity } from "./entity.js";
@@ -41,31 +40,38 @@ export class Rigibody {
   }
 
   update(dtSec) {
-    this.handleMovement_(dtSec);
+    const targetPosition = new Vector2(
+      this.position_.x + this.velocity_.x * dtSec,
+      this.position_.y + this.velocity_.y * dtSec
+    );
+
+    this.updateVelocity(dtSec);
 
     this.isgrounded_ = false;
-    this.handleGroundBlockCollisions_(dtSec);
-    this.handleTileMapCollisions_(dtSec);
+    this.handleGroundBlockCollisions_(dtSec, targetPosition);
+    this.handleTileMapCollisions_(dtSec, targetPosition);
+
+    this.position_.set(targetPosition);
   }
 
-  handleMovement_(dtSec) {
-    this.position_.x += this.velocity_.x * dtSec;
-    this.position_.y += this.velocity_.y * dtSec;
+  updateVelocity(dtSec) {
+    // this.position_.x += this.velocity_.x * dtSec;
+    // this.position_.y += this.velocity_.y * dtSec;
 
     this.velocity_.y -= this.gravity * dtSec;
     if (this.velocity_.y < -this.maxGravity) this.velocity_.y = -this.maxGravity;
   }
 
-  handleGroundBlockCollisions_(dtSec) {
+  handleGroundBlockCollisions_(dtSec, targetPosition) {
     for (const block of this.scene.groundsBlocks_) {
       const hitInfo = this.vsRect(block, dtSec);
       if (hitInfo != false) {
-        this.resolveCollision_(hitInfo);
+        this.resolveCollision_(hitInfo, targetPosition);
       }
     }
   }
   
-  resolveCollision_(hitInfo) {
+  resolveCollision_(hitInfo, targetPosition) {
     if (hitInfo == false) return;
 
     const RESOLVE_DISPLACEMENT = 0.0001;
@@ -75,20 +81,20 @@ export class Rigibody {
     
     if (normal.y != 0) { // top and bottom
       this.velocity_.y = 0;
-      this.position_.y = point.y + this.size_.y/2 + normal.y * RESOLVE_DISPLACEMENT;
+      targetPosition.y = point.y + this.size_.y/2 + normal.y * RESOLVE_DISPLACEMENT;
       if (normal.y == 1) this.isgrounded_ = true;
     } else { // left and right
       this.velocity_.x = 0;
-      this.position_.x = point.x - this.size_.x/2 + normal.x * RESOLVE_DISPLACEMENT;
+      targetPosition.x = point.x - this.size_.x/2 + normal.x * RESOLVE_DISPLACEMENT;
     }
   }
 
-  handleTileMapCollisions_(dtSec) {
-    this.mapCollider_.update();
-    this.handleTiles(dtSec);
+  handleTileMapCollisions_(dtSec, targetPosition) {
+    this.mapCollider_.update(dtSec, targetPosition);
+    this.handleTiles(dtSec, targetPosition);
   }
 
-  handleTiles(dtSec) {
+  handleTiles(dtSec, targetPosition) {
     let hits = [];
 
     for (const tileIndex of this.mapCollider_.tilesInRange) {
@@ -106,7 +112,7 @@ export class Rigibody {
     hits.sort(this.sortHitInfo_);
 
     for (const hit of hits) {
-      this.resolveCollision_(hit);
+      this.resolveCollision_(hit, targetPosition);
     }
   }
 

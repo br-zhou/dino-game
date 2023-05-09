@@ -20,9 +20,10 @@ export class TileMapCollider {
     this.tilesInRange = [];
   }
 
-  update() {
-    this.position = this.entity.position_;
-    this.tilesInRange = this.getMapTilesInRange();
+  update(dtSec, targetPosition) {
+    this.position = Vector2.copy(this.entity.position_);
+    this.targetPosition = Vector2.copy(targetPosition);
+    this.tilesInRange = this.getMapTilesInRange_V2();
   }
 
   /**
@@ -74,6 +75,34 @@ export class TileMapCollider {
         if(!this.tileMap.tileGrid_[boxIndex.x][boxIndex.y]) continue;
 
         tiles.push(new Vector2(boxIndex.x, boxIndex.y));
+      }
+    }
+
+    return tiles;
+  }
+
+  getMapTilesInRange_V2() {
+    let tiles = [];
+
+    const topLeft = new Vector2(
+      Math.min(this.position.x, this.targetPosition.x),
+      Math.max(this.position.y, this.targetPosition.y)
+    );
+    const botRight = new Vector2(
+      Math.max(this.position.x + this.size.x, this.targetPosition.x + this.size.x),
+      Math.min(this.position.y - this.size.y, this.targetPosition.y - this.size.x)
+    );
+
+    const tlgi = this.tileMap.positionToGridIndex(topLeft);
+    const brgi = this.tileMap.positionToGridIndex(botRight);
+    const ecr = Vector2.copy(this.entityTileCollisionCheckRadius);
+    
+    for (let i = tlgi.x - ecr.x; i <= brgi.x + ecr.x; i++) {
+      for (let j = tlgi.y + ecr.y; j >= brgi.y - ecr.y; j--) {
+        if(this.tileMap.tileGrid_[i] === undefined) continue;
+        if(!this.tileMap.tileGrid_[i][j]) continue;
+
+        tiles.push(new Vector2(i, j));
       }
     }
 

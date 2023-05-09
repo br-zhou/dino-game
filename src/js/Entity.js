@@ -10,7 +10,7 @@ export class Entity {
    * @param {Vector2} position 
    * @param {Vector2} size 
    */
-  constructor(position = new Vector2(), size = new Vector2()) {
+  constructor(position = new Vector2(), size = new Vector2(1, 1)) {
     this.position_ = position;
     this.size_ = size;
     this.scene = null;
@@ -18,4 +18,5 @@ export class Entity {
 
   update(dtSec) {}
   render() {}
+  destroy() {}
 }
