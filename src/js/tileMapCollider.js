@@ -59,25 +59,30 @@ export class TileMapCollider {
   /**
    * @returns a list of all grid indexes that are close to enitity collision box
    */
- getMapTilesInRange() { // todo update so that this considers velocity as well
-    const currentEntityTileGridIndex = this.tileMap.positionToGridIndex(this.entityCenterPosition);
+  getMapTilesInRange_V2() {
     let tiles = [];
 
-    for (let i = -this.entityTileCollisionCheckRadius.x; i <= this.entityTileCollisionCheckRadius.x; i++) {
-      for (let j = -this.entityTileCollisionCheckRadius.y; j <= this.entityTileCollisionCheckRadius.y; j++) {
-        
-        const boxIndex = new Vector2(
-          i + currentEntityTileGridIndex.x,
-          j + currentEntityTileGridIndex.y
-        )
+    const topLeft = new Vector2(
+      Math.min(this.position.x, this.targetPosition.x),
+      Math.max(this.position.y, this.targetPosition.y)
+    );
+    const botRight = new Vector2(
+      Math.max(this.position.x + this.size.x, this.targetPosition.x + this.size.x),
+      Math.min(this.position.y - this.size.y, this.targetPosition.y - this.size.x)
+    );
 
-        if(this.tileMap.tileGrid_[boxIndex.x] === undefined) continue;
-        if(!this.tileMap.tileGrid_[boxIndex.x][boxIndex.y]) continue;
+    const tlgi = this.tileMap.positionToGridIndex(topLeft);
+    const brgi = this.tileMap.positionToGridIndex(botRight);
+    const ecr = Vector2.copy(this.entityTileCollisionCheckRadius);
+    
+    for (let i = tlgi.x - ecr.x; i <= brgi.x + ecr.x; i++) {
+      for (let j = tlgi.y + ecr.y; j >= brgi.y - ecr.y; j--) {
+        if(this.tileMap.tileGrid_[i] === undefined) continue;
+        if(!this.tileMap.tileGrid_[i][j]) continue;
 
-        tiles.push(new Vector2(boxIndex.x, boxIndex.y));
+        tiles.push(new Vector2(i, j));
       }
     }
-
     return tiles;
   }
 

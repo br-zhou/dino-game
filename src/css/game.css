@@ -1,6 +1,22 @@
+:root {
+    --corner-margins: 10px;
+}
+
 body {
   position: absolute;
   margin: 0;
   overflow: hidden;
   background-color: white;
+}
+
+#top-left {
+    background-color: rgba(0,0,0,.5);
+    position: absolute;
+    top: 0 px;
+    margin: var(--corner-margins);
+}
+
+#fps-counter {
+  color: white;
+  user-select: none;
 }

@@ -6,8 +6,8 @@ import { CollisionMath } from "./collisionMath.js";
 import { Foreground } from "./foreground.js";
 import { INPUT } from "./input.js";
 import { Player } from "./player.js";
-import { Ray2D } from "./ray2d.js";
 import { Scene } from "./scene.js";
+import { UI } from "./userInterface.js";
 import { Vector2 } from "./vector2.js";
 
 /**
@@ -20,7 +20,7 @@ export class Game {
 
     this.scene = new Scene();
     this.player = new Player(this.scene); 
-
+    this.ui = new UI();
     this.scene.load((result) => {
       if (result === true) {
         this.setup();
@@ -65,6 +65,6 @@ export class Game {
     const mousePos = (new CanvasTools()).screenToWorld(INPUT.mousePosition);
     this.mouseBlock.position_.set(mousePos);
 
-    // console.log(CollisionMath.rectOverlapNormals(this.mouseBlock, this.blk));
+    this.ui.updateFPSCounter(dtSec, elapsedTimeSec);
   }
 }
