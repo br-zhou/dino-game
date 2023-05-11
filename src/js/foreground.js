@@ -1,5 +1,5 @@
-import { CanvasTools } from "./canvasTools.js";
-import { Vector2 } from "./vector2.js";
+import { CanvasTools } from "./engine/canvasTools.js";
+import { Vector2 } from "./engine/vector2.js";
 
 /**
  * Represents the ground that entities interact with

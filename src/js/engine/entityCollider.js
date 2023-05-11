@@ -1,5 +1,5 @@
 import { CollisionMath } from "./collisionMath.js";
-import { Entity } from "./entity.js";
+import { Entity } from "./Entity.js";
 import { Rigibody } from "./rigibody.js";
 import { Vector2 } from "./vector2.js";
 

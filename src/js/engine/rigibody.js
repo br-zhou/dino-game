@@ -1,6 +1,6 @@
 import { TileMapCollider } from "./tileMapCollider.js";
 import { Ray2D } from "./ray2d.js";
-import { Entity } from "./entity.js";
+import { Entity } from "./Entity.js";
 import { Scene } from "./scene.js";
 import { Vector2 } from "./vector2.js";
 

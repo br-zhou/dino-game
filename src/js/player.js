@@ -1,10 +1,10 @@
-import { CanvasTools } from "./canvasTools.js";
+import { CanvasTools } from "./engine/canvasTools.js";
 import { PlayerController } from "./playerController.js";
-import { Entity } from "./entity.js";
-import { Vector2 } from "./vector2.js";
-import { INPUT } from "./input.js";
-import { SpriteMap } from "./spriteMap.js";
-import { Rigibody } from "./rigibody.js";
+import { Entity } from "./engine/Entity.js";
+import { Vector2 } from "./engine/vector2.js";
+import { INPUT } from "./engine/input.js";
+import { SpriteMap } from "./engine/spriteMap.js";
+import { Rigibody } from "./engine/rigibody.js";
 
 export class Player extends Entity {
   constructor(scene) {

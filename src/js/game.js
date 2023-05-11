@@ -1,14 +1,14 @@
-import { startLoop } from "./animationLoop.js";
+import { startLoop } from "./engine/animationLoop.js";
 import { Ball } from "./ball.js";
 import { Block } from "./block.js";
-import { CanvasTools } from "./canvasTools.js";
-import { CollisionMath } from "./collisionMath.js";
+import { CanvasTools } from "./engine/canvasTools.js";
+import { CollisionMath } from "./engine/collisionMath.js";
 import { Foreground } from "./foreground.js";
-import { INPUT } from "./input.js";
+import { INPUT } from "./engine/input.js";
 import { Player } from "./player.js";
-import { Scene } from "./scene.js";
+import { Scene } from "./engine/scene.js";
 import { UI } from "./userInterface.js";
-import { Vector2 } from "./vector2.js";
+import { Vector2 } from "./engine/vector2.js";
 
 /**
  * Contains main game logic

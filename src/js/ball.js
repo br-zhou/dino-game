@@ -1,9 +1,9 @@
-import { CanvasTools } from "./canvasTools.js";
-import { Entity } from "./entity.js";
-import { EntityCollider } from "./entityCollider.js";
-import { Rigibody } from "./rigibody.js";
-import { Scene } from "./scene.js";
-import { Vector2 } from "./vector2.js";
+import { CanvasTools } from "./engine/canvasTools.js";
+import { Entity } from "./engine/Entity.js";
+import { EntityCollider } from "./engine/entityCollider.js";
+import { Rigibody } from "./engine/rigibody.js";
+import { Scene } from "./engine/scene.js";
+import { Vector2 } from "./engine/vector2.js";
 
 export class Ball extends Entity {
   /**
