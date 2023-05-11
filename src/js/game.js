@@ -45,10 +45,6 @@ export class Game {
       this.scene
     );
 
-    this.mouseBlock = new Block(
-      new Vector2(0, 20),
-      this.scene
-    );
     // this.mouseBlock.size_.set(new Vector2(4,4));
     // new Ball(new Vector2(10, -5), this.scene);
     new Ball(new Vector2(10, 25), this.scene);
@@ -61,9 +57,6 @@ export class Game {
   loop = (dtSec, elapsedTimeSec) => {
     this.scene.update(dtSec, elapsedTimeSec);
     this.scene.render();
-
-    const mousePos = (new CanvasTools()).screenToWorld(INPUT.mousePosition);
-    this.mouseBlock.position_.set(mousePos);
 
     this.ui.updateFPSCounter(dtSec, elapsedTimeSec);
   }

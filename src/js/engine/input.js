@@ -1,3 +1,4 @@
+import { CanvasTools } from "./canvasTools.js";
 import { Vector2 } from "./vector2.js";
 
 /**
@@ -57,6 +58,11 @@ class Input {
 
   get mousePosition() {
     return this.mousePosition_;
+  }
+
+  get mousePositionWorld() {
+    const tools = new CanvasTools();
+    return tools.screenToWorld(this.mousePosition);
   }
 
   /**

@@ -25,7 +25,9 @@ export class Player extends Entity {
     this.targetVelocity_ = new Vector2();
 
     this.controller_ = new PlayerController(this);
-    this.controller_.clickCB = this.teleportToMouse;
+    this.controller_.clickCB = () => {
+      this.position_.set(INPUT.mousePositionWorld);
+    }
 
     this.sprite = new SpriteMap("dino", () => {
       this.sprite.gotoState("idle");
@@ -122,12 +124,6 @@ export class Player extends Entity {
     } else {
       this.rb.velocity_.x = 0;
     }
-  }
-
-  teleportToMouse = () => { // arrow functions binds method to class
-    const mousePos = (new CanvasTools()).screenToWorld(INPUT.mousePosition);
-    
-    this.position_.set(mousePos);
   }
 
   destroy() {
