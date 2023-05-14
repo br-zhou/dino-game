@@ -45,9 +45,10 @@ export class Game {
       this.scene
     );
 
-    // this.mouseBlock.size_.set(new Vector2(4,4));
-    // new Ball(new Vector2(10, -5), this.scene);
+    new Ball(new Vector2(15, 17), this.scene);
     new Ball(new Vector2(10, 25), this.scene);
+    const b2 = new Ball(new Vector2(10, 17), this.scene);
+    b2.rb.velocity_.x = 10;
   }
 
   setup() {

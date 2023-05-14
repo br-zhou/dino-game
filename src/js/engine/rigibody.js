@@ -19,6 +19,7 @@ export class Rigibody {
     this.maxGravity = 100;
     this.mass = 1;
     this.pushable = false;
+    this.bounce = 0;
 
     this.size_ = entity.size_;
     this.mapCollider_ = new TileMapCollider(this);
@@ -40,6 +41,7 @@ export class Rigibody {
     if (entity.maxGravity) this.maxGravity = entity.maxGravity;
     if (entity.mass) this.mass = entity.mass;
     if (entity.pushable) this.pushable = entity.pushable;
+    if (entity.bounce) this.bounce = entity.bounce;
   }
 
   update(dtSec) {
@@ -120,16 +122,19 @@ export class Rigibody {
     if (hitInfo == false) return;
 
     const RESOLVE_DISPLACEMENT = 0.0001;
+    const MIN_IMPULSE_TO_BOUNCE = 2.5;
     
     const point = hitInfo.point;
     const normal = hitInfo.normal;
     
     if (normal.y != 0) { // top and bottom
-      this.velocity_.y = 0;
+      this.velocity_.y *= -this.bounce;
+      if (Math.abs(this.velocity_.y) < MIN_IMPULSE_TO_BOUNCE) this.velocity_.y = 0;
       targetPosition.y = point.y + this.size_.y/2 + normal.y * RESOLVE_DISPLACEMENT;
       if (normal.y == 1) this.isgrounded_ = true;
     } else { // left and right
-      this.velocity_.x = 0;
+      this.velocity_.x *= -this.bounce;
+      if (Math.abs(this.velocity_.x) < MIN_IMPULSE_TO_BOUNCE) this.velocity_.x = 0;
       targetPosition.x = point.x - this.size_.x/2 + normal.x * RESOLVE_DISPLACEMENT;
     }
   }
