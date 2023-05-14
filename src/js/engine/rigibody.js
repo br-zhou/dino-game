@@ -15,11 +15,12 @@ export class Rigibody {
     this.entity = entity;
     this.scene = scene;
     
-    this.gravity = 10;
+    this.gravity = 50;
     this.maxGravity = 100;
     this.mass = 1;
     this.pushable = false;
     this.bounce = 0;
+    this.groundFriction = 150;
 
     this.size_ = entity.size_;
     this.mapCollider_ = new TileMapCollider(this);
@@ -58,11 +59,22 @@ export class Rigibody {
     this.handleOtherEntities_(dtSec, targetPosition);
 
     this.position_.set(targetPosition);
+    this.applyFriction(dtSec);
   }
 
   updateVelocity(dtSec) {
     if (!this.isgrounded_) this.velocity_.y -= this.gravity * dtSec;
     if (this.velocity_.y < -this.maxGravity) this.velocity_.y = -this.maxGravity;
+  }
+
+  applyFriction(dtSec) {
+    const vx_sign = Math.sign(this.velocity_.x);
+    const dvdt = Math.min(
+      this.groundFriction * dtSec,
+      Math.abs(this.velocity_.x)
+    );
+
+    if (this.isgrounded_) this.velocity_.x -= vx_sign * dvdt;
   }
 
   handleGroundBlockCollisions_(dtSec, targetPosition) {
@@ -109,7 +121,7 @@ export class Rigibody {
       a.velocity_.x = av_f.x;
       b.velocity_.x = bv_f.x;
     } else if (mainNormal == 'y') {
-      a.velocity_.y = av_f.y * 1.01;
+      a.velocity_.y = av_f.y;
       b.velocity_.y = bv_f.y;
     }
   }

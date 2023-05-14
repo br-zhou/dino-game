@@ -40,15 +40,11 @@ export class Game {
     new Foreground(this.scene, new Vector2(-100,-5), new Vector2(2, 10), "#ffffff");
     new Foreground(this.scene, new Vector2(98,-5), new Vector2(2, 10), "#ffffff");
 
-    this.blk = new Block(
-      new Vector2(0, 20),
-      this.scene
-    );
+    new Block(new Vector2(13, 20),this.scene);
 
-    new Ball(new Vector2(15, 17), this.scene);
-    new Ball(new Vector2(10, 25), this.scene);
-    const b2 = new Ball(new Vector2(10, 17), this.scene);
-    b2.rb.velocity_.x = 10;
+    // new Ball(new Vector2(10, 25), this.scene);
+    // new Ball(new Vector2(20, 20), this.scene);
+    // new Ball(new Vector2(15, 20), this.scene);
   }
 
   setup() {

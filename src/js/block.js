@@ -11,15 +11,17 @@ export class Block extends Entity {
    * @param {Scene} scene 
    */
   constructor(position, scene) {
-    super(position);
+    super(position, new Vector2(2,2));
     scene.add(this);
     this.scene = scene;
     
+    this.mass = 1;
+    this.pushable = true;
     this.rb = new Rigibody(this, scene);
   }
 
   update(dtSec) {
-    // this.rb.update(dtSec);
+    this.rb.update(dtSec);
   }
 
   render() {
