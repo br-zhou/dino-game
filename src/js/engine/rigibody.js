@@ -50,7 +50,7 @@ export class Rigibody {
       this.position_.y + this.velocity_.y * dtSec
     );
 
-    this.updateVelocity(dtSec);
+    this.applyGravity(dtSec);
 
     this.isgrounded_ = false;
     this.handleGroundBlockCollisions_(dtSec, targetPosition);
@@ -61,11 +61,19 @@ export class Rigibody {
     this.applyFriction(dtSec);
   }
 
-  updateVelocity(dtSec) {
+  /**
+   * Applies Gravity to rigibody
+   * @param {Number} dtSec 
+   */
+  applyGravity(dtSec) {
     if (!this.isgrounded_) this.velocity_.y -= this.gravity * dtSec;
     if (this.velocity_.y < -this.maxGravity) this.velocity_.y = -this.maxGravity;
   }
 
+  /**
+   * Slows down velocity when grounded
+   * @param {Number} dtSec 
+   */
   applyFriction(dtSec) {
     const vx_sign = Math.sign(this.velocity_.x);
     const dvdt = Math.min(
@@ -80,7 +88,7 @@ export class Rigibody {
     for (const block of this.scene.groundsBlocks_) {
       const hitInfo = this.vsRect(block, dtSec);
       if (hitInfo != false) {
-        this.resolveCollision_(hitInfo, targetPosition);
+        this.resolveWallCollision_(hitInfo, targetPosition);
       }
     }
   }
@@ -93,65 +101,13 @@ export class Rigibody {
         if (otherEnt.rb.pushable) {
           this.vsRigibodyResponse(otherEnt.rb, hitInfo);
         }
-        this.resolveCollision_(hitInfo, targetPosition);
+        this.resolveWallCollision_(hitInfo, targetPosition);
       }
-    }
-  }
-
-  vsRigibodyResponse(other, hitInfo) {
-    let av_i = Vector2.copy(this.velocity_);
-    let bv_i = Vector2.copy(other.velocity_);
-    let a_mass = this.mass;
-    let b_mass = other.mass;
-
-    const av_f = new Vector2(
-      av_i.x * (a_mass - b_mass) + 2 * b_mass * bv_i.x / (a_mass + b_mass),
-      av_i.y * (a_mass - b_mass) + 2 * b_mass * bv_i.y / (a_mass + b_mass)
-    )
-
-    const bv_f = new Vector2(
-      bv_i.x * (b_mass - a_mass) + 2 * a_mass * av_i.x / (a_mass + b_mass),
-      bv_i.y * (b_mass - a_mass) + 2 * a_mass * av_i.y / (a_mass + b_mass)
-    )
-    
-    const colliisonType = (hitInfo.normal.y == 0) ? 'x' : 'y';
-    
-    if (colliisonType === 'x') {
-      this.velocity_.x = av_f.x;
-      other.velocity_.x = bv_f.x;
-    } else if (colliisonType === 'y') {
-      this.velocity_.y = av_f.y;
-      other.velocity_.y = bv_f.y;
-    }
-  }
-  
-  resolveCollision_(hitInfo, targetPosition) {
-    if (hitInfo == false) return;
-
-    const RESOLVE_DISPLACEMENT = 0.0001;
-    const MIN_IMPULSE_TO_BOUNCE = 2.5;
-    
-    const point = hitInfo.point;
-    const normal = hitInfo.normal;
-    
-    if (normal.y != 0) { // top and bottom
-      this.velocity_.y *= -this.bounce;
-      if (Math.abs(this.velocity_.y) < MIN_IMPULSE_TO_BOUNCE) this.velocity_.y = 0;
-      targetPosition.y = point.y + this.size_.y/2 + normal.y * RESOLVE_DISPLACEMENT;
-      if (normal.y == 1) this.isgrounded_ = true;
-    } else { // left and right
-      this.velocity_.x *= -this.bounce;
-      if (Math.abs(this.velocity_.x) < MIN_IMPULSE_TO_BOUNCE) this.velocity_.x = 0;
-      targetPosition.x = point.x - this.size_.x/2 + normal.x * RESOLVE_DISPLACEMENT;
     }
   }
 
   handleTileMapCollisions_(dtSec, targetPosition) {
     this.mapCollider_.update(dtSec, targetPosition);
-    this.handleTiles(dtSec, targetPosition);
-  }
-
-  handleTiles(dtSec, targetPosition) {
     let hits = [];
 
     for (const tileIndex of this.mapCollider_.tilesInRange) {
@@ -169,7 +125,7 @@ export class Rigibody {
     hits.sort(this.sortHitInfo_);
 
     for (const hit of hits) {
-      this.resolveCollision_(hit, targetPosition);
+      this.resolveWallCollision_(hit, targetPosition);
     }
   }
 
@@ -195,5 +151,53 @@ export class Rigibody {
     const expandedRect = Ray2D.expandRect(this, rectangle);
 
     return entityRay.vsRect(expandedRect, this.velocity_.magnitude() * dtSec);
+  }
+
+  resolveWallCollision_(hitInfo, targetPosition) {
+    if (hitInfo == false) return;
+
+    const RESOLVE_DISPLACEMENT = 0.0001;
+    const MIN_IMPULSE_TO_BOUNCE = 2.5;
+    
+    const point = hitInfo.point;
+    const normal = hitInfo.normal;
+    
+    if (normal.y != 0) { // top and bottom
+      this.velocity_.y *= -this.bounce;
+      if (Math.abs(this.velocity_.y) < MIN_IMPULSE_TO_BOUNCE) this.velocity_.y = 0;
+      targetPosition.y = point.y + this.size_.y/2 + normal.y * RESOLVE_DISPLACEMENT;
+      if (normal.y == 1) this.isgrounded_ = true;
+    } else { // left and right
+      this.velocity_.x *= -this.bounce;
+      if (Math.abs(this.velocity_.x) < MIN_IMPULSE_TO_BOUNCE) this.velocity_.x = 0;
+      targetPosition.x = point.x - this.size_.x/2 + normal.x * RESOLVE_DISPLACEMENT;
+    }
+  }
+  
+  vsRigibodyResponse(other, hitInfo) {
+    let av_i = Vector2.copy(this.velocity_);
+    let bv_i = Vector2.copy(other.velocity_);
+    let a_mass = this.mass;
+    let b_mass = other.mass;
+
+    const av_f = new Vector2(
+      av_i.x * (a_mass - b_mass) + 2 * b_mass * bv_i.x / (a_mass + b_mass),
+      av_i.y * (a_mass - b_mass) + 2 * b_mass * bv_i.y / (a_mass + b_mass)
+    )
+
+    const bv_f = new Vector2(
+      bv_i.x * (b_mass - a_mass) + 2 * a_mass * av_i.x / (a_mass + b_mass),
+      bv_i.y * (b_mass - a_mass) + 2 * a_mass * av_i.y / (a_mass + b_mass)
+    )
+    
+    const colliisonType = (hitInfo.normal.y == 0) ? 'x' : 'y';
+    
+    if (colliisonType === 'x') {
+      this.velocity_.x = av_f.x;
+      other.velocity_.x = bv_f.x;
+    } else if (colliisonType === 'y') {
+      this.velocity_.y = av_f.y;
+      other.velocity_.y = bv_f.y;
+    }
   }
 }

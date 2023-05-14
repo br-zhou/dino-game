@@ -121,6 +121,12 @@ export class CanvasTools {
     );
   }
   
+  /**
+   * Draws a circle at world position, with given radius and color
+   * @param {Vector2} position
+   * @param {Number} radius 
+   * @param {String} color 
+   */
   drawCircle({x, y}, radius, color = "#FF0000") {
     this.ctx.fillStyle = color;
     this.ctx.beginPath();
