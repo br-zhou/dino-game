@@ -3,6 +3,7 @@ import { Ray2D } from "./ray2d.js";
 import { Entity } from "./Entity.js";
 import { Scene } from "./scene.js";
 import { Vector2 } from "./vector2.js";
+import { CollisionMath } from "./collisionMath.js";
 
 export class Rigibody {
   /**
@@ -17,7 +18,8 @@ export class Rigibody {
     this.gravity = 10;
     this.maxGravity = 100;
     this.mass = 1;
-    
+    this.pushable = false;
+
     this.size_ = entity.size_;
     this.mapCollider_ = new TileMapCollider(this);
     
@@ -37,6 +39,7 @@ export class Rigibody {
     if (entity.gravity) this.gravity = entity.gravity;
     if (entity.maxGravity) this.maxGravity = entity.maxGravity;
     if (entity.mass) this.mass = entity.mass;
+    if (entity.pushable) this.pushable = entity.pushable;
   }
 
   update(dtSec) {
@@ -50,15 +53,13 @@ export class Rigibody {
     this.isgrounded_ = false;
     this.handleGroundBlockCollisions_(dtSec, targetPosition);
     this.handleTileMapCollisions_(dtSec, targetPosition);
+    this.handleOtherEntities_(dtSec, targetPosition);
 
     this.position_.set(targetPosition);
   }
 
   updateVelocity(dtSec) {
-    // this.position_.x += this.velocity_.x * dtSec;
-    // this.position_.y += this.velocity_.y * dtSec;
-
-    this.velocity_.y -= this.gravity * dtSec;
+    if (!this.isgrounded_) this.velocity_.y -= this.gravity * dtSec;
     if (this.velocity_.y < -this.maxGravity) this.velocity_.y = -this.maxGravity;
   }
 
@@ -69,6 +70,50 @@ export class Rigibody {
         this.resolveCollision_(hitInfo, targetPosition);
       }
     }
+  }
+
+  handleOtherEntities_(dtSec, targetPosition) {
+    for (const otherEnt of this.scene.entities_) {
+      if (otherEnt === this.entity) continue;
+      const hitInfo = this.vsRect(otherEnt, dtSec);
+      if (hitInfo != false) {
+        if (otherEnt.rb.pushable) {
+          Rigibody.RBvsRBResponse(this, otherEnt.rb, hitInfo);
+        }
+        this.resolveCollision_(hitInfo, targetPosition);
+      }
+    }
+  }
+
+  static RBvsRBResponse(a, b, hitInfo) {
+    let av_i = Vector2.copy(a.velocity_);
+    let bv_i = Vector2.copy(b.velocity_);
+    let a_mass = a.mass;
+    let b_mass = b.mass;
+
+    const av_f = new Vector2(
+      av_i.x * (a_mass - b_mass) + 2 * b_mass * bv_i.x / (a_mass + b_mass),
+      av_i.y * (a_mass - b_mass) + 2 * b_mass * bv_i.y / (a_mass + b_mass)
+    )
+
+    const bv_f = new Vector2(
+      bv_i.x * (b_mass - a_mass) + 2 * a_mass * av_i.x / (a_mass + b_mass),
+      bv_i.y * (b_mass - a_mass) + 2 * a_mass * av_i.y / (a_mass + b_mass)
+    )
+    
+    const mainNormal = Rigibody.getMainNormal(hitInfo);
+    
+    if (mainNormal == 'x') {
+      a.velocity_.x = av_f.x;
+      b.velocity_.x = bv_f.x;
+    } else if (mainNormal == 'y') {
+      a.velocity_.y = av_f.y * 1.01;
+      b.velocity_.y = bv_f.y;
+    }
+  }
+
+  static getMainNormal(hitInfo) {
+    return (hitInfo.normal.y == 0) ? 'x' : 'y';
   }
   
   resolveCollision_(hitInfo, targetPosition) {

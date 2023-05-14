@@ -1,6 +1,5 @@
 import { CanvasTools } from "./engine/canvasTools.js";
 import { Entity } from "./engine/Entity.js";
-import { EntityCollider } from "./engine/entityCollider.js";
 import { Rigibody } from "./engine/rigibody.js";
 import { Scene } from "./engine/scene.js";
 import { Vector2 } from "./engine/vector2.js";
@@ -18,14 +17,13 @@ export class Ball extends Entity {
 
     this.radius = 0.5;
     this.gravity = 65;
+    this.pushable = true;
 
     this.rb = new Rigibody(this, scene);
-    this.entityCollider_ = new EntityCollider(this, this.rb);
   }
 
   update(dtSec) {
     this.rb.update(dtSec);
-    this.entityCollider_.update(dtSec);
   }
 
   render() {
