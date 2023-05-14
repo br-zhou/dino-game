@@ -3,7 +3,6 @@ import { Ray2D } from "./ray2d.js";
 import { Entity } from "./Entity.js";
 import { Scene } from "./scene.js";
 import { Vector2 } from "./vector2.js";
-import { CollisionMath } from "./collisionMath.js";
 
 export class Rigibody {
   /**
@@ -92,18 +91,18 @@ export class Rigibody {
       const hitInfo = this.vsRect(otherEnt, dtSec);
       if (hitInfo != false) {
         if (otherEnt.rb.pushable) {
-          Rigibody.RBvsRBResponse(this, otherEnt.rb, hitInfo);
+          this.vsRigibodyResponse(otherEnt.rb, hitInfo);
         }
         this.resolveCollision_(hitInfo, targetPosition);
       }
     }
   }
 
-  static RBvsRBResponse(a, b, hitInfo) {
-    let av_i = Vector2.copy(a.velocity_);
-    let bv_i = Vector2.copy(b.velocity_);
-    let a_mass = a.mass;
-    let b_mass = b.mass;
+  vsRigibodyResponse(other, hitInfo) {
+    let av_i = Vector2.copy(this.velocity_);
+    let bv_i = Vector2.copy(other.velocity_);
+    let a_mass = this.mass;
+    let b_mass = other.mass;
 
     const av_f = new Vector2(
       av_i.x * (a_mass - b_mass) + 2 * b_mass * bv_i.x / (a_mass + b_mass),
@@ -115,19 +114,15 @@ export class Rigibody {
       bv_i.y * (b_mass - a_mass) + 2 * a_mass * av_i.y / (a_mass + b_mass)
     )
     
-    const mainNormal = Rigibody.getMainNormal(hitInfo);
+    const colliisonType = (hitInfo.normal.y == 0) ? 'x' : 'y';
     
-    if (mainNormal == 'x') {
-      a.velocity_.x = av_f.x;
-      b.velocity_.x = bv_f.x;
-    } else if (mainNormal == 'y') {
-      a.velocity_.y = av_f.y;
-      b.velocity_.y = bv_f.y;
+    if (colliisonType === 'x') {
+      this.velocity_.x = av_f.x;
+      other.velocity_.x = bv_f.x;
+    } else if (colliisonType === 'y') {
+      this.velocity_.y = av_f.y;
+      other.velocity_.y = bv_f.y;
     }
-  }
-
-  static getMainNormal(hitInfo) {
-    return (hitInfo.normal.y == 0) ? 'x' : 'y';
   }
   
   resolveCollision_(hitInfo, targetPosition) {
