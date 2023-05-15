@@ -42,6 +42,7 @@ export class Rigibody {
     if (entity.mass) this.mass = entity.mass;
     if (entity.pushable) this.pushable = entity.pushable;
     if (entity.bounce) this.bounce = entity.bounce;
+    if (entity.groundFriction != null) this.groundFriction = entity.groundFriction;
   }
 
   update(dtSec) {
@@ -81,7 +82,8 @@ export class Rigibody {
       Math.abs(this.velocity_.x)
     );
 
-    if (this.isgrounded_) this.velocity_.x -= vx_sign * dvdt;
+    if (this.isgrounded_) this.velocity_.x -= vx_sign * dvdt; 
+    // todo: only apply friction when not being pushed, to remove visual errors
   }
 
   handleGroundBlockCollisions_(dtSec, targetPosition) {
@@ -157,7 +159,7 @@ export class Rigibody {
     if (hitInfo == false) return;
 
     const RESOLVE_DISPLACEMENT = 0.0001;
-    const MIN_IMPULSE_TO_BOUNCE = 2.5;
+    const MIN_IMPULSE_TO_BOUNCE = 4;
     
     const point = hitInfo.point;
     const normal = hitInfo.normal;
@@ -181,13 +183,13 @@ export class Rigibody {
     let b_mass = other.mass;
 
     const av_f = new Vector2(
-      av_i.x * (a_mass - b_mass) + 2 * b_mass * bv_i.x / (a_mass + b_mass),
-      av_i.y * (a_mass - b_mass) + 2 * b_mass * bv_i.y / (a_mass + b_mass)
+      (av_i.x * (a_mass - b_mass) + 2 * b_mass * bv_i.x) / (a_mass + b_mass),
+      (av_i.y * (a_mass - b_mass) + 2 * b_mass * bv_i.y) / (a_mass + b_mass)
     )
 
     const bv_f = new Vector2(
-      bv_i.x * (b_mass - a_mass) + 2 * a_mass * av_i.x / (a_mass + b_mass),
-      bv_i.y * (b_mass - a_mass) + 2 * a_mass * av_i.y / (a_mass + b_mass)
+      (bv_i.x * (b_mass - a_mass) + 2 * a_mass * av_i.x) / (a_mass + b_mass),
+      (bv_i.y * (b_mass - a_mass) + 2 * a_mass * av_i.y) / (a_mass + b_mass)
     )
     
     const colliisonType = (hitInfo.normal.y == 0) ? 'x' : 'y';

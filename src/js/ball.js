@@ -16,9 +16,9 @@ export class Ball extends Entity {
     this.scene = scene;
 
     this.radius = 0.5;
-    this.gravity = 65;
     this.pushable = true;
     this.bounce = .5;
+    this.groundFriction = 0;
 
     this.rb = new Rigibody(this, scene);
   }

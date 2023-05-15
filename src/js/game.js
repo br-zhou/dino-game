@@ -42,9 +42,9 @@ export class Game {
 
     new Block(new Vector2(13, 20),this.scene);
 
-    // new Ball(new Vector2(10, 25), this.scene);
-    // new Ball(new Vector2(20, 20), this.scene);
-    // new Ball(new Vector2(15, 20), this.scene);
+    new Ball(new Vector2(10, 25), this.scene);
+    new Ball(new Vector2(20, 20), this.scene);
+    new Ball(new Vector2(15, 20), this.scene);
   }
 
   setup() {

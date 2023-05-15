@@ -15,7 +15,7 @@ export class Block extends Entity {
     scene.add(this);
     this.scene = scene;
     
-    this.mass = 1;
+    this.mass = 2;
     this.pushable = true;
     this.rb = new Rigibody(this, scene);
   }
