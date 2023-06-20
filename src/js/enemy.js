@@ -6,44 +6,35 @@ import { INPUT } from "./engine/input.js";
 import { SpriteMap } from "./engine/spriteMap.js";
 import { Rigibody } from "./engine/rigibody.js";
 
-export class Player extends Entity {
-  constructor(scene, variant = false) {
+export class Enemy extends Entity {
+  constructor(scene) {
     super();
     this.speed_ = 12;
     this.gravity = 65;
     this.jumpVelocity = 24;
-
+    
     this.scene = scene;
     this.scene.add(this);
 
     this.position_ = new Vector2(10, 20);
     this.spawnPosition = Vector2.copy(this.position_);
     this.size_ = new Vector2(1.8, 1.8);
-
+    
     this.rb = new Rigibody(this, this.scene);
 
     this.targetVelocity_ = new Vector2();
 
-    this.sprite = new SpriteMap({ name: "dino", variant: variant }, () => {
+    this.controller_ = new PlayerController(this);
+
+    this.sprite = new SpriteMap({name: "dino", variant: 1}, () => {
       this.sprite.gotoState("idle");
     });
-  }
 
-  /**
-   *
-   * @param {*} controller
-   */
-  bindControls(controls) {
-    this.controller_ = new PlayerController(controls);
-
-    this.controller_.clickCB = () => {
-      this.position_.set(INPUT.mousePositionWorld);
-    };
+    this.scene.camera.position_ = this.position_;
   }
 
   /** @override */
-  update(dtSec) {
-    this.handleControllerInput_();
+  update(dtSec) {    
     this.rb.update(dtSec);
     this.updateSpriteLogic();
     this.sprite.update(dtSec);
@@ -68,17 +59,15 @@ export class Player extends Entity {
   }
 
   /**
-   * @param {number} direction a float between -1 and 1 (inclusive),
+   * @param {number} direction a float between -1 and 1 (inclusive), 
    * representing the direction the controller wants to move
    */
   move(direction) {
     this.targetVelocity_.x = direction * this.speed_;
   }
 
-  crouch() {
-    // todo: implement
-    if (false) {
-      // replace with new isgrounded fucntion
+  crouch() { // todo: implement
+    if(false) { // replace with new isgrounded fucntion
       // duck
     } else {
       // fast fall
@@ -92,7 +81,7 @@ export class Player extends Entity {
     tools.drawRect(
       {
         x: this.position_.x,
-        y: this.position_.y,
+        y: this.position_.y
       },
       this.size_.x,
       this.size_.y,
@@ -100,39 +89,6 @@ export class Player extends Entity {
     );
 
     this.sprite.render(this.position_);
-  }
-
-  handleControllerInput_() {
-    if (!this.controller_) return;
-
-    const commands = this.controller_.commands;
-
-    commands.forEach((command) => {
-      switch (command) {
-        case "up":
-          this.jump();
-          break;
-        case "down":
-          this.crouch();
-          break;
-        case "left":
-          this.move(-1);
-          this.sprite.flipped = true;
-          break;
-        case "right":
-          this.move(1);
-          this.sprite.flipped = false;
-          break;
-        default:
-          break;
-      }
-    });
-
-    if (this.controller_.wantsToMove) {
-      this.rb.velocity_.x = this.targetVelocity_.x;
-    } else {
-      this.rb.velocity_.x = 0;
-    }
   }
 
   destroy() {

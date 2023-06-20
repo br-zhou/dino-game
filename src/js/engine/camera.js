@@ -22,4 +22,8 @@ export class Camera {
   get position() {
     return this.position_;
   }
+
+  bind(entity) {
+    this.position_ = entity.position_;
+  }
 }

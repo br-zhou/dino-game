@@ -7,11 +7,11 @@ export class SpriteMap {
    * @param {string} name of image
    * @param {callback} cb callback when image loads
    */
-  constructor(name, cb) {
+  constructor({name, variant}, cb) {
     this.tools = new CanvasTools();
     this.callback_ = cb;
     this.name_ = name;
-
+    this.variant_ = variant;
     this.loaded = false;
     this.state = null;
     this.flipped = false;
@@ -28,7 +28,7 @@ export class SpriteMap {
 
   async loadImg() {
     this.img_ = new Image();
-    this.img_.src = `./assets/${this.name_}/map.png`;
+    this.img_.src = `./assets/${this.name_}/${this.variant_ || "map"}.png`;
     
     this.img_.onload = () => {
       this.imgLoaded = true;

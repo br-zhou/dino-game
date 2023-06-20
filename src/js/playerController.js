@@ -1,17 +1,10 @@
 export class PlayerController {
-  constructor(player) {
-    this.player_ = player;
+  constructor(keybinds) {
     this.commands = new Set();
     this.wantsToMove = false;
 
-    this.keyToCommandHash = {
-      "w": "up",
-      "a": "left",
-      "s": "down",
-      "d": "right"
-    }
-
     this.clickCB = null;
+    this.keyToCommandHash = keybinds;
 
     document.addEventListener("update-input", (e) => this.update(e));
   }
@@ -21,11 +14,12 @@ export class PlayerController {
     const key = details.key;
     const type = details.type;
 
-    if (key == "mouse0" && type == "down" && this.clickCB != null) this.clickCB();
+    if (key == "mouse0" && type == "down" && this.clickCB != null)
+      this.clickCB();
 
     if (this.keyToCommandHash[key] === undefined) return;
 
-    switch(type) {
+    switch (type) {
       case "up":
         this.commands.delete(this.keyToCommandHash[key]);
         break;
@@ -41,7 +35,7 @@ export class PlayerController {
   }
 
   handleEdgeCasesDown(key) {
-    const newCommand = this.keyToCommandHash[key]
+    const newCommand = this.keyToCommandHash[key];
     if (newCommand == "left") {
       this.commands.delete("right");
     } else if (newCommand == "right") {
