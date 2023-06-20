@@ -9,7 +9,6 @@ const tileColor = "#000000";
 export class TileMap {
   constructor() {
     this.mapData_ = null;
-    this.tileGrid_ = null;
     this.tools = new CanvasTools();
 
     this.mapData_ = {
@@ -19,7 +18,6 @@ export class TileMap {
       tileData: {},
     };
 
-    this.tileGrid_ = this.mapData_.tileData;
     this.offsetX_ = 0;
     this.offsetY_ = 0;
   }
@@ -31,10 +29,10 @@ export class TileMap {
       this.mapData_.height * TILE_SIZE
     );
 
-    if (this.tileGrid_ != null) {
+    if (this.mapData_.tileData != null) {
       // todo: optimize rendering to only show tiles visible to camera
-      for (const gridX of Object.keys(this.tileGrid_)) {
-        for (const gridY of Object.keys(this.tileGrid_[gridX])) {
+      for (const gridX of Object.keys(this.mapData_.tileData)) {
+        for (const gridY of Object.keys(this.mapData_.tileData[gridX])) {
           this.colorGrid({ x: gridX, y: gridY }, tileColor);
         }
       }
