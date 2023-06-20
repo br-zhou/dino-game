@@ -18,29 +18,6 @@ export class Scene {
   }
 
   /**
-   * loads scene and all entities added to it. 
-   * @param {function(boolean)} callback
-   * @returns result as boolean to callback
-   */
-  load(callback) {
-    this.sceneLoadedCallback_ = callback;
-  }
-
-  /**
-   * If every object in scene is loaded, calls sceneLoadedCallback
-   * function with result
-   * @param {string, boolean} result name of object loaded and result
-   */
-  objectLoaded_ = ({object, result}) => {
-    this.unloadedObjects_.delete(object);
-
-    if (this.unloadedObjects_.size === 0) {
-      this.loaded_ = true;
-      this.sceneLoadedCallback_(result);
-    }
-  }
-
-  /**
    * renders background, foreground, the entities onto canvas
    */
   render() {

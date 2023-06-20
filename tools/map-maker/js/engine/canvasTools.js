@@ -25,7 +25,6 @@ export class CanvasTools {
     return {
       fov: this.camFov,
       camPos: this.camPos,
-      
     };
   }
 
@@ -38,24 +37,31 @@ export class CanvasTools {
   }
 
   get windowSize() {
-    return {x: window.innerWidth, y: window.innerHeight};
+    return { x: window.innerWidth, y: window.innerHeight };
   }
 
   /**
-   * @param {number} positionX 
+   * @param {number} positionX
    * @returns the world coordinate positionX converted to the window pixel
    */
   worldToScreenPosX(positionX) {
-    return this.worldToScreenConvert(positionX) - this.worldToScreenConvert(this.camPos.x) + this.windowSize.x / 2;
+    return (
+      this.worldToScreenConvert(positionX) -
+      this.worldToScreenConvert(this.camPos.x) +
+      this.windowSize.x / 2
+    );
   }
 
-  
   /**
    * @param {number} positionY
    * @returns the world coordinate positionY converted to the window pixel
    */
   worldToScreenPosY(positionY) {
-    return - this.worldToScreenConvert(positionY) + this.worldToScreenConvert(this.camPos.y) + this.windowSize.y / 2;
+    return (
+      -this.worldToScreenConvert(positionY) +
+      this.worldToScreenConvert(this.camPos.y) +
+      this.windowSize.y / 2
+    );
   }
 
   /**
@@ -70,21 +76,42 @@ export class CanvasTools {
       referenceLength = this.windowSize.y;
     }
 
-    const xWorld = ((position.x / this.windowSize.x) - 0.5) * (this.windowSize.x / referenceLength) * this.camFov + this.camPos.x;
-    const yWorld = (0.5 - (position.y / this.windowSize.y)) * (this.windowSize.y / referenceLength) * this.camFov + this.camPos.y;
+    const xWorld =
+      (position.x / this.windowSize.x - 0.5) *
+        (this.windowSize.x / referenceLength) *
+        this.camFov +
+      this.camPos.x;
+    const yWorld =
+      (0.5 - position.y / this.windowSize.y) *
+        (this.windowSize.y / referenceLength) *
+        this.camFov +
+      this.camPos.y;
     return new Vector2(xWorld, yWorld);
   }
 
   /**
-   * @param {number} length 
+   * @param {number} length
    * @returns the world units converted to window pixel length
    */
   worldToScreenConvert(length) {
     if (this.canvas.mode === CanvasModes.HORIZONATAL) {
-      return (length) / this.camFov * this.windowSize.x;
+      return (length / this.camFov) * this.windowSize.x;
     } else {
-      return (length) / this.camFov * this.windowSize.y;
+      return (length / this.camFov) * this.windowSize.y;
     }
+  }
+
+  /**
+   * @param {number} length
+   * @returns the world units converted to window pixel length
+   */
+  screenToWorldConvert(length) {
+    let referenceLength =
+      this.canvas.mode === CanvasModes.HORIZONATAL
+        ? this.windowSize.x
+        : this.windowSize.y;
+    
+    return length / referenceLength * this.camFov;
   }
 
   /**
@@ -96,15 +123,17 @@ export class CanvasTools {
    * @param {number} height height of rectangle
    * @param {string} color String in the format '#000000'
    */
-  drawRect({x, y}, width, height, color = "#FF0000") {
+  drawRect({ x, y }, width, height, color = "#FF0000") {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(
-      this.worldToScreenPosX(x),this.worldToScreenPosY(y),
-      this.worldToScreenConvert(width), this.worldToScreenConvert(height)
+      this.worldToScreenPosX(x),
+      this.worldToScreenPosY(y),
+      this.worldToScreenConvert(width),
+      this.worldToScreenConvert(height)
     );
   }
 
-    /**
+  /**
    * Draws a write rectangle of given width and height,
    * with the top left corner at the world postion x and y
    * @param {number} x x world position
@@ -113,21 +142,23 @@ export class CanvasTools {
    * @param {number} height height of rectangle
    * @param {string} color String in the format '#000000'
    */
-  drawRectOutline({x, y}, width, height, color = "#FF0000") {
+  drawRectOutline({ x, y }, width, height, color = "#FF0000") {
     this.ctx.strokeStyle = color;
     this.ctx.strokeRect(
-      this.worldToScreenPosX(x),this.worldToScreenPosY(y),
-      this.worldToScreenConvert(width), this.worldToScreenConvert(height)
+      this.worldToScreenPosX(x),
+      this.worldToScreenPosY(y),
+      this.worldToScreenConvert(width),
+      this.worldToScreenConvert(height)
     );
   }
-  
+
   /**
    * Draws a circle at world position, with given radius and color
    * @param {Vector2} position
-   * @param {Number} radius 
-   * @param {String} color 
+   * @param {Number} radius
+   * @param {String} color
    */
-  drawCircle({x, y}, radius, color = "#FF0000") {
+  drawCircle({ x, y }, radius, color = "#FF0000") {
     this.ctx.fillStyle = color;
     this.ctx.beginPath();
     this.ctx.arc(
@@ -142,15 +173,22 @@ export class CanvasTools {
   }
 
   /**
-   * 
-   * @param {Image} img 
-   * @param {Vector2} spriteIndex 
-   * @param {Vector2} spriteSize 
-   * @param {Vector2} worldPos 
-   * @param {Vector2} worldSize 
+   *
+   * @param {Image} img
+   * @param {Vector2} spriteIndex
+   * @param {Vector2} spriteSize
+   * @param {Vector2} worldPos
+   * @param {Vector2} worldSize
    * Renders sprite at index at world position with given size
    */
-  drawSpriteMap(img, spriteIndex, spriteSize, worldPos, worldSize, flipped = false) {
+  drawSpriteMap(
+    img,
+    spriteIndex,
+    spriteSize,
+    worldPos,
+    worldSize,
+    flipped = false
+  ) {
     this.ctx.imageSmoothingEnabled = false;
     this.ctx.drawImage(
       img,
@@ -170,20 +208,20 @@ export class CanvasTools {
    * @param {Vector2} point1 start point of line
    * @param {Vector2} point2 end point of line
    */
-    drawLine(startPoint, endPoint, color = "#FF0000", width = 0.25) {
-      const originalLineWidth = this.ctx.lineWidth;
-      this.ctx.strokeStyle = color;
-      this.ctx.lineWidth = this.worldToScreenConvert(width);
-      this.ctx.beginPath();
-      this.ctx.moveTo(
-        this.worldToScreenPosX(startPoint.x),
-        this.worldToScreenPosY(startPoint.y)
-      );
-      this.ctx.lineTo(
-        this.worldToScreenPosX(endPoint.x),
-        this.worldToScreenPosY(endPoint.y)
-      );
-      this.ctx.stroke();
-      this.ctx.lineWidth = originalLineWidth;
-    }
+  drawLine(startPoint, endPoint, color = "#FF0000", width = 0.25) {
+    const originalLineWidth = this.ctx.lineWidth;
+    this.ctx.strokeStyle = color;
+    this.ctx.lineWidth = this.worldToScreenConvert(width);
+    this.ctx.beginPath();
+    this.ctx.moveTo(
+      this.worldToScreenPosX(startPoint.x),
+      this.worldToScreenPosY(startPoint.y)
+    );
+    this.ctx.lineTo(
+      this.worldToScreenPosX(endPoint.x),
+      this.worldToScreenPosY(endPoint.y)
+    );
+    this.ctx.stroke();
+    this.ctx.lineWidth = originalLineWidth;
+  }
 }

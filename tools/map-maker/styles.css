@@ -16,6 +16,15 @@ background-color: white;
   margin: var(--corner-margins);
 }
 
+#left-bar {
+  background-color: rgba(0,0,0,.5);
+  position: absolute;
+  top: 0 px;
+  margin: 0;
+  width: 75px;
+  height: 100%;
+}
+
 #bot-right {
   background-color: rgba(255,255,255,.5);
   position: absolute;

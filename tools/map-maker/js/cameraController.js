@@ -1,7 +1,7 @@
 import { CanvasTools } from "./engine/canvasTools.js";
 import { Vector2 } from "./engine/vector2.js";
 
-export default class InputHandler {
+export default class CameraController {
   constructor(scene) {
     this.scene = scene;
     this.camera = scene.camera_;
@@ -9,10 +9,20 @@ export default class InputHandler {
     this.mousePos = new Vector2();
 
     document.addEventListener("keydown", this.onKeyDown, false);
-    document.body.onmousedown = this.onMouseDown;
-    document.body.onmouseup = this.onMouseUp;
+    document.addEventListener("mousedown", this.onMouseDown);
+    document.addEventListener("mouseup", this.onMouseUp);
     document.addEventListener("mousemove", this.onMouseMove);
+    document.addEventListener("mousewheel", this.onScroll);
+    // document.addEventListener("DOMMouseScroll", this.onScroll); // todo: add firefox compatibility
   }
+
+  onScroll = (e) => {
+    const scrollSpeed = 25;
+    const originalFov = this.camera.fov_;
+    const direction = Math.sign(e.wheelDelta);
+
+    this.camera.setFov(originalFov - direction * scrollSpeed);
+  };
 
   onKeyDown = (e) => {
     if (e.repeat) return;
@@ -25,7 +35,6 @@ export default class InputHandler {
         initMousePos: Vector2.copy(this.mousePos),
         initCamPos: Vector2.copy(this.camera.position_),
       };
-      console.log(this.camera.position_);
     }
   };
 
@@ -46,11 +55,21 @@ export default class InputHandler {
   };
 
   handleCameraDrag = (e) => {
-    const fov = this.camera.fov_;
     const tools = new CanvasTools();
-    const dMouse = Vector2.subtract(this.mousePos, this.camDragData.initMousePos);
-    
-    console.log(tools.screenToWorld(this.mousePos));
 
+    const dMouse = Vector2.subtract(
+      this.mousePos,
+      this.camDragData.initMousePos
+    );
+
+    const dWorldPos = new Vector2(
+      tools.screenToWorldConvert(dMouse.x),
+      tools.screenToWorldConvert(dMouse.y)
+    );
+
+    this.camera.position_ = new Vector2(
+      this.camDragData.initCamPos.x - dWorldPos.x,
+      this.camDragData.initCamPos.y + dWorldPos.y
+    );
   };
 }
