@@ -51,9 +51,19 @@ export default class Brush {
 
   handlePainting() {
     const tileData = this.tileMap.mapData_.tileData;
-    if (!tileData[this.mouseGridIndex.x]) tileData[this.mouseGridIndex.x] = {}
+    if (!this.isPaintable(this.mouseGridIndex)) return;
+
+    if (!tileData[this.mouseGridIndex.x]) tileData[this.mouseGridIndex.x] = {};
     tileData[this.mouseGridIndex.x][this.mouseGridIndex.y] = 1;
-    console.log(this.mouseGridIndex)
+    console.log(this.mouseGridIndex);
+  }
+
+  isPaintable(gridIndex) {
+    const mapData = this.tileMap.mapData_;
+    return !(gridIndex.x < 0) &&
+      !(gridIndex.y < 0) &&
+      gridIndex.x < mapData.width &&
+      gridIndex.y < mapData.height;
   }
 
   render() {

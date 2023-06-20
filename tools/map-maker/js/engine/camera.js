@@ -10,8 +10,9 @@ export class Camera {
     this.canvas_ = new Canvas();
     this.ctx_ = this.canvas_.getContext();
     this.position_ = new Vector2();
-    this.fov_ = 100;
-    this.minFov = 5
+    this.fov_ = 75;
+    this.minFov = 15
+    this.maxFov = 500;
 
     void new CanvasTools(this);
   }
@@ -32,5 +33,6 @@ export class Camera {
     this.fov_ = fov;
     Math.clamp
     if (this.fov_ < this.minFov) this.fov_ = this.minFov;
+    if (this.fov_ > this.maxFov) this.fov_ = this.maxFov;
   }
 }

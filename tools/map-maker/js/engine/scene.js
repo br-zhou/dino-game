@@ -10,11 +10,6 @@ export class Scene {
     this.camera_ = new Camera(this);
     this.backgroundColor_ = '#87CEEB';
     this.tileMap = new TileMap();
-    this.sceneLoadedCallback_ = null;
-    this.unloadedObjects_ = new Set();
-    this.loaded_ = false;
-
-    this.unloadedObjects_.add(this.tileMap);
   }
 
   /**

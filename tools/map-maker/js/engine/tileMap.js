@@ -26,7 +26,7 @@ export class TileMap {
 
   render() {
     this.tools.drawRectOutline(
-      new Vector2(0, this.mapData_.height * TILE_SIZE),
+      new Vector2(0, (this.mapData_.height - 1) * TILE_SIZE),
       this.mapData_.width * TILE_SIZE,
       this.mapData_.height * TILE_SIZE
     );
