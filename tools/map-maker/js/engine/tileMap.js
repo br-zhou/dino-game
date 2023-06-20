@@ -25,7 +25,11 @@ export class TileMap {
   }
 
   render() {
-    this.tools.drawRectOutline(new Vector2(0, this.mapData_.height * TILE_SIZE), this.mapData_.width * TILE_SIZE, this.mapData_.height * TILE_SIZE)
+    this.tools.drawRectOutline(
+      new Vector2(0, this.mapData_.height * TILE_SIZE),
+      this.mapData_.width * TILE_SIZE,
+      this.mapData_.height * TILE_SIZE
+    );
 
     if (this.tileGrid_ != null) {
       // todo: optimize rendering to only show tiles visible to camera

@@ -8,6 +8,9 @@ export default class Brush {
     this.mousePos = new Vector2();
     this.tools = new CanvasTools();
     this.tileMap = scene.tileMap;
+    this.mouseDrag = false;
+    this.mouseWorldPos = null;
+    this.mouseGridIndex = null;
 
     document.addEventListener("keydown", this.onKeyDown, false);
     document.addEventListener("mousedown", this.onMouseDown);
@@ -25,11 +28,12 @@ export default class Brush {
 
   onMouseDown = (e) => {
     const btn = e.button;
+    if (btn === 0) this.mouseDrag = true;
   };
 
   onMouseUp = (e) => {
     const btn = e.button;
-    console.log(btn);
+    if (btn === 0) this.mouseDrag = false;
   };
 
   onMouseMove = (e) => {
@@ -38,15 +42,28 @@ export default class Brush {
   };
 
   update() {
-    
+    this.mouseWorldPos = this.tools.screenToWorld(this.mousePos);
+    this.mouseGridIndex = this.tileMap.positionToGridIndex(this.mouseWorldPos);
+    this.render();
+
+    if (this.mouseDrag) this.handlePainting();
+  }
+
+  handlePainting() {
+    const tileData = this.tileMap.mapData_.tileData;
+    if (!tileData[this.mouseGridIndex.x]) tileData[this.mouseGridIndex.x] = {}
+    tileData[this.mouseGridIndex.x][this.mouseGridIndex.y] = 1;
+    console.log(this.mouseGridIndex)
   }
 
   render() {
-    const mouseWorldPos = this.tools.screenToWorld(this.mousePos);
-    const gridIndex = this.tileMap.positionToGridIndex(mouseWorldPos);
-    const tileEntity = this.tileMap.tileIndexToEntity(gridIndex);
+    const tileEntity = this.tileMap.tileIndexToEntity(this.mouseGridIndex);
 
-    this.tools.drawRectOutline(tileEntity.position_, tileEntity.size_.x, tileEntity.size_.y, "#FFFFFF")
-
+    this.tools.drawRectOutline(
+      tileEntity.position_,
+      tileEntity.size_.x,
+      tileEntity.size_.y,
+      "#FFFFFF"
+    );
   }
 }

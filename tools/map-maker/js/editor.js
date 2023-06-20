@@ -27,6 +27,6 @@ export class Editor {
 
   loop = (dtSec, elapsedTimeSec) => {
     this.scene.render();
-    this.brush.render();
+    this.brush.update();
   };
 }
