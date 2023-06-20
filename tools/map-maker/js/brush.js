@@ -60,20 +60,26 @@ export default class Brush {
 
   isPaintable(gridIndex) {
     const mapData = this.tileMap.mapData_;
-    return !(gridIndex.x < 0) &&
+    return (
+      !(gridIndex.x < 0) &&
       !(gridIndex.y < 0) &&
       gridIndex.x < mapData.width &&
-      gridIndex.y < mapData.height;
+      gridIndex.y < mapData.height
+    );
   }
 
-  render() {
+  render = () => {
     const tileEntity = this.tileMap.tileIndexToEntity(this.mouseGridIndex);
 
-    this.tools.drawRectOutline(
+    const paintable = this.isPaintable(this.mouseGridIndex);
+    const brushRenderFunc = paintable
+      ? this.tools.drawRectOutline
+      : this.tools.drawRect;
+    brushRenderFunc(
       tileEntity.position_,
       tileEntity.size_.x,
       tileEntity.size_.y,
-      "#FFFFFF"
+      paintable ? "#FFFFFF" : "rgba(255,0,0,0.5)"
     );
-  }
+  };
 }

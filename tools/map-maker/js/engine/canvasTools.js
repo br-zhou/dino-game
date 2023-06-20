@@ -123,7 +123,7 @@ export class CanvasTools {
    * @param {number} height height of rectangle
    * @param {string} color String in the format '#000000'
    */
-  drawRect({ x, y }, width, height, color = "#FF0000") {
+  drawRect = ({ x, y }, width, height, color = "#FF0000") => {
     this.ctx.fillStyle = color;
     this.ctx.fillRect(
       this.worldToScreenPosX(x),
@@ -142,7 +142,7 @@ export class CanvasTools {
    * @param {number} height height of rectangle
    * @param {string} color String in the format '#000000'
    */
-  drawRectOutline({ x, y }, width, height, color = "#FF0000") {
+  drawRectOutline = ({ x, y }, width, height, color = "#FF0000") => {
     this.ctx.strokeStyle = color;
     this.ctx.strokeRect(
       this.worldToScreenPosX(x),
