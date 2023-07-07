@@ -35,7 +35,7 @@ export class Vector2 {
     return new Vector2(vector.x, vector.y);
   }
 
-  set(vector) {
+  set = (vector) => {
     this.x = vector.x;
     this.y = vector.y;
   }

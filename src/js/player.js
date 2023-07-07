@@ -35,10 +35,6 @@ export class Player extends Entity {
    */
   bindControls(controls) {
     this.controller_ = new PlayerController(controls);
-
-    this.controller_.clickCB = () => {
-      this.position_.set(INPUT.mousePositionWorld);
-    };
   }
 
   /** @override */
