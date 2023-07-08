@@ -1,10 +1,11 @@
 import { startLoop } from "./engine/animationLoop.js";
-import { Foreground } from "./foreground.js";
 import { Player } from "./player.js";
 import { Scene } from "./engine/scene.js";
 import { UI } from "./userInterface.js";
 import { Vector2 } from "./engine/vector2.js";
-import { PRIMARY_KEYBINDS, SECONDARY_KEYBINDS } from "./keybinds.js";
+import { PRIMARY_KEYBINDS } from "./keybinds.js";
+import GameServer from "./server/GameServer.js";
+import OnlinePlayersHandler from "./server/OnlinePlayersHandler.js";
 
 /**
  * Contains main game logic
@@ -13,15 +14,11 @@ import { PRIMARY_KEYBINDS, SECONDARY_KEYBINDS } from "./keybinds.js";
 export class Game {
   constructor() {
     if (Game.instance instanceof Game) return Game.instance;
+    else Game.instance = this;
 
     this.scene = new Scene();
-    this.player = new Player(this.scene);
+    this.player = new Player(this.scene, 0);
     this.player.bindControls(PRIMARY_KEYBINDS);
-    this.player.position_.set(new Vector2(-5, 0))
-
-    this.player2 = new Player(this.scene, 2);
-    this.player2.bindControls(SECONDARY_KEYBINDS);
-    this.player2.position_.set(new Vector2(5, 0))
 
     this.scene.camera.bind(this.player);
 
@@ -33,7 +30,8 @@ export class Game {
       }
     });
 
-    Game.instance = this;
+    this.gameServer = new GameServer(this.scene);
+    this.playersHandler = this.gameServer.playersHandler;
   }
 
   setup() {
@@ -41,9 +39,10 @@ export class Game {
   }
 
   loop = (dtSec, elapsedTimeSec) => {
+    this.playersHandler.update();
     this.scene.update(dtSec, elapsedTimeSec);
     this.scene.render();
 
-    this.ui.updateFPSCounter(dtSec, elapsedTimeSec);
+    this.ui.update(dtSec, elapsedTimeSec);
   };
 }

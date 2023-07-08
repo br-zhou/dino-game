@@ -16,7 +16,7 @@ body {
     margin: var(--corner-margins);
 }
 
-#fps-counter {
+.ui-text {
   color: white;
   user-select: none;
 }
