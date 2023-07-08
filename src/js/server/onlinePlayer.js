@@ -13,7 +13,8 @@ export class OnlinePlayer extends Entity {
     this.position_ = new Vector2(0, 0);
     this.spawnPosition = Vector2.copy(this.position_);
     this.size_ = new Vector2(1.8, 1.8);
-
+    this.ghost = true;
+    
     this.rb = new Rigibody(this, this.scene);
 
     this.sprite = new SpriteMap({ name: "dino", variant: variant }, () => {

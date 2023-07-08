@@ -24,9 +24,14 @@ class OnlinePlayersHandler {
     this.onlinePlayers[id] = newPlayer;
   }
 
+  deletePlayer(id) {
+    const enitity = this.onlinePlayers[id];
+    this.scene.remove(enitity);
+  }
+
   update() {
     for (const id in this.onlinePlayers) {
-      this.onlinePlayers[id].render();
+      // todo: update to match real position
     }
   }
 }

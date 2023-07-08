@@ -51,6 +51,15 @@ export class Scene {
     this.entities_.push(entity);
   }
 
+  remove(enitity) {
+    const index = this.entities_.findIndex((item) => item === enitity);
+    const lastElmIndex = this.entities_.length - 1;
+    // replaces element with last element in array
+    this.entities_[index] = this.entities_[lastElmIndex];
+    //pops last element
+    this.entities_.pop();
+  }
+
   addGround(block) {
     this.groundsBlocks_.push(block);
   }

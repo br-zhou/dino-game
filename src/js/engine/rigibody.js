@@ -20,6 +20,7 @@ export class Rigibody {
     this.pushable = false;
     this.bounce = 0;
     this.groundFriction = 150;
+    this.ghost = false;
 
     this.size_ = entity.size_;
     this.mapCollider_ = new TileMapCollider(this);
@@ -43,6 +44,7 @@ export class Rigibody {
     if (entity.pushable) this.pushable = entity.pushable;
     if (entity.bounce) this.bounce = entity.bounce;
     if (entity.groundFriction != null) this.groundFriction = entity.groundFriction;
+    if (entity.ghost) this.ghost = entity.ghost;
   }
 
   update(dtSec) {
@@ -99,7 +101,7 @@ export class Rigibody {
     for (const otherEnt of this.scene.entities_) {
       if (otherEnt === this.entity) continue;
       const hitInfo = this.vsRect(otherEnt, dtSec);
-      if (hitInfo != false) {
+      if (hitInfo != false && !otherEnt.rb.ghost) {
         if (otherEnt.rb.pushable) {
           this.vsRigibodyResponse(otherEnt.rb, hitInfo);
         }

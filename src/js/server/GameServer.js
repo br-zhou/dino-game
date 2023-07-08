@@ -24,6 +24,8 @@ class GameServer {
       for (const id in players) {
         const data = players[id];
         this.players[id] = data;
+
+        // if (id != this.socket.id)
         this.playersHandler.addPlayer(id);
       }
     });
@@ -35,6 +37,7 @@ class GameServer {
     });
 
     this.socket.on("removePlayer", (id) => {
+      this.playersHandler.deletePlayer(id);
       delete this.players[id];
       console.log(`removed ${id}`);
     });

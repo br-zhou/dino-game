@@ -18,7 +18,7 @@ class GameState {
   addPlayer(socketId) {
     this.players[socketId] = {
       position: { x:  Math.random() * 10, y: Math.random() * 10 },
-      skin: "2",
+      skin: "3",
     };
     console.log(`${socketId} added!`);
   }
