@@ -28,6 +28,7 @@ class OnlinePlayersHandler {
   deletePlayer(id) {
     const enitity = this.onlinePlayers[id];
     this.scene.remove(enitity);
+    delete this.onlinePlayers[id];
   }
 
   /**
