@@ -8,6 +8,8 @@ const io = new Server(httpServer, {
   cors: {
     origin: "*",
   },
+  pingInterval: 2000,
+  pingTimeout: 5000,
 });
 
 class GameState {
@@ -17,10 +19,15 @@ class GameState {
 
   addPlayer(socketId) {
     this.players[socketId] = {
-      position: { x:  Math.random() * 10, y: Math.random() * 10 },
+      position: { x: 0, y: 0 },
       skin: "3",
     };
     console.log(`${socketId} added!`);
+  }
+
+  updatePlayerdata(id, newData) {
+    this.players[id].position.x = newData.x;
+    this.players[id].position.y = newData.y;
   }
 
   removePlayer(socketId) {
@@ -31,21 +38,33 @@ class GameState {
 
 const game = new GameState();
 
+const TICK_RATE = 5;
+
+const onTick = () => {
+  io.emit("updatePlayerData", game.players);
+};
+
+setInterval(onTick, 1000 / TICK_RATE);
+
 io.on("connection", (socket) => {
   const id = socket.id;
   game.addPlayer(id);
 
   // Broadcast Event
-  socket.broadcast.emit('addPlayer', {id, data: game.players[id]});
+  socket.broadcast.emit("addPlayer", { id, data: game.players[id] });
 
   socket.emit("getInitialPlayers", game.players);
 
   socket.on("disconnect", (reason) => {
     game.removePlayer(id);
-    io.emit('removePlayer', id);
+    io.emit("removePlayer", id);
   });
 
-  console.log(game.players)
+  socket.on("updatePlayer", (data) => {
+    game.updatePlayerdata(id, data);
+  });
+
+  console.log(game.players);
 });
 
 httpServer.listen(PORT);

@@ -15,6 +15,7 @@ export class Player extends Entity {
 
     this.scene = scene;
     this.scene.add(this);
+    if (this.scene.localPlayer === null) this.scene.localPlayer = this;
 
     this.position_ = new Vector2(0, 0);
     this.spawnPosition = Vector2.copy(this.position_);

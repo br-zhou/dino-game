@@ -15,6 +15,7 @@ export class Scene {
     this.sceneLoadedCallback_ = null;
     this.unloadedObjects_ = new Set();
     this.loaded_ = false;
+    this.localPlayer = null;
 
     this.unloadedObjects_.add(this.tileMap);
   }

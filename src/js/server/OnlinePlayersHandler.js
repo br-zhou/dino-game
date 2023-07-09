@@ -10,6 +10,7 @@ class OnlinePlayersHandler {
    */
   constructor(scene, gameServer) {
     this.scene = scene;
+    this.localPlayer = this.scene.player;
     this.gameServer = gameServer;
 
     this.onlinePlayers = {};
@@ -29,9 +30,15 @@ class OnlinePlayersHandler {
     this.scene.remove(enitity);
   }
 
+  /**
+   * called every frame to update online players' positions
+   */
   update() {
     for (const id in this.onlinePlayers) {
-      // todo: update to match real position
+      const playerData = this.gameServer.players[id];
+      const playerEntity = this.onlinePlayers[id];
+
+      playerEntity.position_.set(playerData.position);
     }
   }
 }
