@@ -6,14 +6,14 @@ import { Vector2 } from "./vector2.js";
 
 export class Rigibody {
   /**
-   * 
-   * @param {Entity} entity 
-   * @param {Scene} scene 
+   *
+   * @param {Entity} entity
+   * @param {Scene} scene
    */
   constructor(entity, scene) {
     this.entity = entity;
     this.scene = scene;
-    
+
     this.gravity = 50;
     this.maxGravity = 100;
     this.mass = 1;
@@ -24,7 +24,7 @@ export class Rigibody {
 
     this.size_ = entity.size_;
     this.mapCollider_ = new TileMapCollider(this);
-    
+
     this.position_ = entity.position_;
     this.velocity_ = new Vector2();
 
@@ -33,17 +33,18 @@ export class Rigibody {
 
     this.configure_(entity);
   }
-  
+
   /**
    * Copies configurations from given entity1
    */
   configure_(entity) {
-    if (entity.gravity) this.gravity = entity.gravity;
-    if (entity.maxGravity) this.maxGravity = entity.maxGravity;
+    if (entity.gravity != null) this.gravity = entity.gravity;
+    if (entity.maxGravity != null) this.maxGravity = entity.maxGravity;
     if (entity.mass) this.mass = entity.mass;
     if (entity.pushable) this.pushable = entity.pushable;
     if (entity.bounce) this.bounce = entity.bounce;
-    if (entity.groundFriction != null) this.groundFriction = entity.groundFriction;
+    if (entity.groundFriction != null)
+      this.groundFriction = entity.groundFriction;
     if (entity.ghost) this.ghost = entity.ghost;
   }
 
@@ -58,7 +59,7 @@ export class Rigibody {
     this.isgrounded_ = false;
     this.handleGroundBlockCollisions_(dtSec, targetPosition);
     this.handleTileMapCollisions_(dtSec, targetPosition);
-    this.handleOtherEntities_(dtSec, targetPosition);
+    if (!this.ghost) this.handleOtherEntities_(dtSec, targetPosition);
 
     this.position_.set(targetPosition);
     this.applyFriction(dtSec);
@@ -66,16 +67,17 @@ export class Rigibody {
 
   /**
    * Applies Gravity to rigibody
-   * @param {Number} dtSec 
+   * @param {Number} dtSec
    */
   applyGravity(dtSec) {
     if (!this.isgrounded_) this.velocity_.y -= this.gravity * dtSec;
-    if (this.velocity_.y < -this.maxGravity) this.velocity_.y = -this.maxGravity;
+    if (this.velocity_.y < -this.maxGravity)
+      this.velocity_.y = -this.maxGravity;
   }
 
   /**
    * Slows down velocity when grounded
-   * @param {Number} dtSec 
+   * @param {Number} dtSec
    */
   applyFriction(dtSec) {
     const vx_sign = Math.sign(this.velocity_.x);
@@ -84,7 +86,7 @@ export class Rigibody {
       Math.abs(this.velocity_.x)
     );
 
-    if (this.isgrounded_) this.velocity_.x -= vx_sign * dvdt; 
+    if (this.isgrounded_) this.velocity_.x -= vx_sign * dvdt;
     // todo: only apply friction when not being pushed, to remove visual errors
   }
 
@@ -115,12 +117,15 @@ export class Rigibody {
     let hits = [];
 
     for (const tileIndex of this.mapCollider_.tilesInRange) {
-      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex); 
+      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
       const hitInfo = this.vsRect(tileEntity, dtSec);
-      if(hitInfo != false) {
+      if (hitInfo != false) {
         const neighbourTile = Vector2.add(tileIndex, hitInfo.normal);
-        
-        if(!this.tileMap.tileGrid_[neighbourTile.x] || !this.tileMap.tileGrid_[neighbourTile.x][neighbourTile.y]) {
+
+        if (
+          !this.tileMap.tileGrid_[neighbourTile.x] ||
+          !this.tileMap.tileGrid_[neighbourTile.x][neighbourTile.y]
+        ) {
           hits.push(hitInfo); // if there is no tile existing on face of collider, add hit info
         }
       }
@@ -136,19 +141,19 @@ export class Rigibody {
   /**
    * Checks if this rigibody will collide with given rectange, and returns hit information or false, depending
    * on if there is a collision
-   * @param {Entity} rectangle 
-   * @param {number} dtSec 
-   * @returns 
+   * @param {Entity} rectangle
+   * @param {number} dtSec
+   * @returns
    */
   vsRect(rectangle, dtSec) {
     if (this.velocity_.x === 0 && this.velocity_.y === 0) return false;
     // The previoius line is needed since ray is pointed right when x = 0 & y = 0
-    
+
     const entityRay = new Ray2D(
       Vector2.add(
         this.position_,
-        new Vector2(this.size_.x/2, -this.size_.y/2)
-        ),
+        new Vector2(this.size_.x / 2, -this.size_.y / 2)
+      ),
       this.velocity_.toRadians()
     ); // ! this is recalculated every function call. Optimize this.
 
@@ -162,22 +167,28 @@ export class Rigibody {
 
     const RESOLVE_DISPLACEMENT = 0.0001;
     const MIN_IMPULSE_TO_BOUNCE = 4;
-    
+
     const point = hitInfo.point;
     const normal = hitInfo.normal;
-    
-    if (normal.y != 0) { // top and bottom
+
+    if (normal.y != 0) {
+      // top and bottom
       this.velocity_.y *= -this.bounce;
-      if (Math.abs(this.velocity_.y) < MIN_IMPULSE_TO_BOUNCE) this.velocity_.y = 0;
-      targetPosition.y = point.y + this.size_.y/2 + normal.y * RESOLVE_DISPLACEMENT;
+      if (Math.abs(this.velocity_.y) < MIN_IMPULSE_TO_BOUNCE)
+        this.velocity_.y = 0;
+      targetPosition.y =
+        point.y + this.size_.y / 2 + normal.y * RESOLVE_DISPLACEMENT;
       if (normal.y == 1) this.isgrounded_ = true;
-    } else { // left and right
+    } else {
+      // left and right
       this.velocity_.x *= -this.bounce;
-      if (Math.abs(this.velocity_.x) < MIN_IMPULSE_TO_BOUNCE) this.velocity_.x = 0;
-      targetPosition.x = point.x - this.size_.x/2 + normal.x * RESOLVE_DISPLACEMENT;
+      if (Math.abs(this.velocity_.x) < MIN_IMPULSE_TO_BOUNCE)
+        this.velocity_.x = 0;
+      targetPosition.x =
+        point.x - this.size_.x / 2 + normal.x * RESOLVE_DISPLACEMENT;
     }
   }
-  
+
   vsRigibodyResponse(other, hitInfo) {
     let av_i = Vector2.copy(this.velocity_);
     let bv_i = Vector2.copy(other.velocity_);
@@ -187,19 +198,19 @@ export class Rigibody {
     const av_f = new Vector2(
       (av_i.x * (a_mass - b_mass) + 2 * b_mass * bv_i.x) / (a_mass + b_mass),
       (av_i.y * (a_mass - b_mass) + 2 * b_mass * bv_i.y) / (a_mass + b_mass)
-    )
+    );
 
     const bv_f = new Vector2(
       (bv_i.x * (b_mass - a_mass) + 2 * a_mass * av_i.x) / (a_mass + b_mass),
       (bv_i.y * (b_mass - a_mass) + 2 * a_mass * av_i.y) / (a_mass + b_mass)
-    )
-    
-    const colliisonType = (hitInfo.normal.y == 0) ? 'x' : 'y';
-    
-    if (colliisonType === 'x') {
+    );
+
+    const colliisonType = hitInfo.normal.y == 0 ? "x" : "y";
+
+    if (colliisonType === "x") {
       this.velocity_.x = av_f.x;
       other.velocity_.x = bv_f.x;
-    } else if (colliisonType === 'y') {
+    } else if (colliisonType === "y") {
       this.velocity_.y = av_f.y;
       other.velocity_.y = bv_f.y;
     }

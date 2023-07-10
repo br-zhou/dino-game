@@ -1,8 +1,8 @@
 import "https://cdn.socket.io/4.7.1/socket.io.min.js";
 import OnlinePlayersHandler from "./OnlinePlayersHandler.js";
 
-const SERVER_ADDRESS = "localhost:8000";
-export const TICK_RATE = 5;
+const SERVER_ADDRESS = "localhost:8000"; // ! will not work with other computers because localhost is different!
+export const TICK_RATE = 32;
 
 class GameServer {
   constructor(scene) {
@@ -23,8 +23,9 @@ class GameServer {
       setInterval(this.onTick, 1000 / TICK_RATE);
     });
 
-    this.socket.on("updatePlayerData", (newPlayerData) => {
+    this.socket.on("updateOnlinePlayers", (newPlayerData) => {
       this.players = newPlayerData;
+      this.playersHandler.onTick();
       // todo: update so it sets the new data instead of replacing
     });
 
@@ -57,7 +58,7 @@ class GameServer {
     const localPlayer = this.scene.localPlayer;
     if (!localPlayer) return;
 
-    this.socket.emit("updatePlayer", localPlayer.position_);
+    this.socket.emit("updateLocalPlayer", localPlayer.position_);
   };
 }
 

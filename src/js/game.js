@@ -2,10 +2,8 @@ import { startLoop } from "./engine/animationLoop.js";
 import { Player } from "./player.js";
 import { Scene } from "./engine/scene.js";
 import { UI } from "./userInterface.js";
-import { Vector2 } from "./engine/vector2.js";
 import { PRIMARY_KEYBINDS } from "./keybinds.js";
 import GameServer from "./server/GameServer.js";
-import OnlinePlayersHandler from "./server/OnlinePlayersHandler.js";
 
 /**
  * Contains main game logic
@@ -39,7 +37,6 @@ export class Game {
   }
 
   loop = (dtSec, elapsedTimeSec) => {
-    this.playersHandler.update();
     this.scene.update(dtSec, elapsedTimeSec);
     this.scene.render();
 

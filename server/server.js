@@ -2,6 +2,7 @@ const { createServer } = require("http");
 const { Server } = require("socket.io");
 
 const PORT = 8000;
+const TICK_RATE = 32;
 
 const httpServer = createServer();
 const io = new Server(httpServer, {
@@ -38,10 +39,8 @@ class GameState {
 
 const game = new GameState();
 
-const TICK_RATE = 5;
-
 const onTick = () => {
-  io.emit("updatePlayerData", game.players);
+  io.emit("updateOnlinePlayers", game.players);
 };
 
 setInterval(onTick, 1000 / TICK_RATE);
@@ -60,7 +59,7 @@ io.on("connection", (socket) => {
     io.emit("removePlayer", id);
   });
 
-  socket.on("updatePlayer", (data) => {
+  socket.on("updateLocalPlayer", (data) => {
     game.updatePlayerdata(id, data);
   });
 

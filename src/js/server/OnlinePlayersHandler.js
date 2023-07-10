@@ -1,5 +1,6 @@
 import { Scene } from "../engine/scene.js";
-import GameServer from "./GameServer.js";
+import { Vector2 } from "../engine/vector2.js";
+import GameServer, { TICK_RATE } from "./GameServer.js";
 import { OnlinePlayer } from "./onlinePlayer.js";
 
 class OnlinePlayersHandler {
@@ -13,7 +14,9 @@ class OnlinePlayersHandler {
     this.localPlayer = this.scene.player;
     this.gameServer = gameServer;
 
-    this.onlinePlayers = {};
+    this.onlineEnitities = {};
+    this.dataLastTick = {};
+    this.firstTick = true;
   }
 
   addPlayer(id) {
@@ -22,25 +25,48 @@ class OnlinePlayersHandler {
     const newPlayer = new OnlinePlayer(this.scene, playerData.skin);
     newPlayer.position_.set(playerData.position);
 
-    this.onlinePlayers[id] = newPlayer;
+    this.onlineEnitities[id] = newPlayer;
   }
 
   deletePlayer(id) {
-    const enitity = this.onlinePlayers[id];
+    const enitity = this.onlineEnitities[id];
     this.scene.remove(enitity);
-    delete this.onlinePlayers[id];
+    delete this.onlineEnitities[id];
   }
 
   /**
-   * called every frame to update online players' positions
+   * called every tick to update online players' positions
    */
-  update() {
-    for (const id in this.onlinePlayers) {
-      const playerData = this.gameServer.players[id];
-      const playerEntity = this.onlinePlayers[id];
+  onTick() {
+    for (const id in this.onlineEnitities) {
+      const newPlayerdata = this.gameServer.players[id];
+      if (!newPlayerdata) return;
 
-      playerEntity.position_.set(playerData.position);
+      const playerEntity = this.onlineEnitities[id];
+      let oldPlayerData = this.dataLastTick[id];
+      if (!oldPlayerData) {
+        oldPlayerData = newPlayerdata;
+      }
+
+      this.onlinePlayerMovementHandler(
+        playerEntity,
+        newPlayerdata,
+        oldPlayerData
+      );
+
+      this.dataLastTick[id] = newPlayerdata;
     }
+  }
+
+  onlinePlayerMovementHandler(enitity, newData, oldData) {
+    enitity.position_.set(oldData.position);
+
+    const velocity = new Vector2(
+      (newData.position.x - oldData.position.x) * TICK_RATE,
+      (newData.position.y - oldData.position.y) * TICK_RATE
+    );
+
+    enitity.rb.velocity_.set(velocity);
   }
 }
 

@@ -9,14 +9,14 @@ export class OnlinePlayer extends Entity {
     super();
     this.scene = scene;
     this.scene.add(this);
+    this.gravity = 65;
 
     this.position_ = new Vector2(0, 0);
     this.spawnPosition = Vector2.copy(this.position_);
     this.size_ = new Vector2(1.8, 1.8);
     this.ghost = true;
-    
-    this.rb = new Rigibody(this, this.scene);
 
+    this.rb = new Rigibody(this, this.scene);
     this.sprite = new SpriteMap({ name: "dino", variant: variant }, () => {
       this.sprite.gotoState("idle");
     });
@@ -25,6 +25,7 @@ export class OnlinePlayer extends Entity {
   /** @override */
   update(dtSec) {
     this.sprite.update(dtSec);
+    this.rb.update(dtSec);
   }
 
   setPosition(newPosition) {
