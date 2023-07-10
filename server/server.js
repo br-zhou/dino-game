@@ -52,7 +52,10 @@ io.on("connection", (socket) => {
   // Broadcast Event
   socket.broadcast.emit("addPlayer", { id, data: game.players[id] });
 
-  socket.emit("getInitialPlayers", game.players);
+  socket.emit("getInitialData", {
+    tickRate: TICK_RATE,
+    playerData: game.players,
+  });
 
   socket.on("disconnect", (reason) => {
     game.removePlayer(id);

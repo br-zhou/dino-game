@@ -1,6 +1,6 @@
 import { Scene } from "../engine/scene.js";
 import { Vector2 } from "../engine/vector2.js";
-import GameServer, { TICK_RATE } from "./GameServer.js";
+import GameServer from "./GameServer.js";
 import { OnlinePlayer } from "./onlinePlayer.js";
 
 class OnlinePlayersHandler {
@@ -60,8 +60,8 @@ class OnlinePlayersHandler {
     enitity.position_.set(oldData.position);
 
     const velocity = new Vector2(
-      (newData.position.x - oldData.position.x) * TICK_RATE,
-      (newData.position.y - oldData.position.y) * TICK_RATE
+      (newData.position.x - oldData.position.x) * GameServer.TICK_RATE,
+      (newData.position.y - oldData.position.y) * GameServer.TICK_RATE
     );
 
     enitity.rb.velocity_.set(velocity);

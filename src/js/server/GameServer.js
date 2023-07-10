@@ -16,11 +16,9 @@ class GameServer {
     this.players = {};
 
     this.socket = io(SERVER_ADDRESS);
-
+    
     this.socket.on("connect", () => {
       this.socketId = this.socket.id;
-      console.log(this.socketId);
-      setInterval(this.onTick, 1000 / TICK_RATE);
     });
 
     this.socket.on("updateOnlinePlayers", (newPlayerData) => {
@@ -29,14 +27,17 @@ class GameServer {
       // todo: update so it sets the new data instead of replacing
     });
 
-    this.socket.on("getInitialPlayers", (players) => {
-      for (const id in players) {
-        const data = players[id];
-        this.players[id] = data;
+    this.socket.on("getInitialData", ({tickRate, playerData: receivedData}) => {
+      GameServer.TICK_RATE = tickRate;
 
-        // if (id != this.socket.id)
+      for (const id in receivedData) {
+        const data = receivedData[id];
+        this.players[id] = data;
+        
         this.playersHandler.addPlayer(id);
       }
+
+      setInterval(this.onTick, 1000 / GameServer.TICK_RATE);
     });
 
     this.socket.on("addPlayer", ({ id, data }) => {
