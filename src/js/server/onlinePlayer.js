@@ -26,6 +26,22 @@ export class OnlinePlayer extends Entity {
   update(dtSec) {
     this.sprite.update(dtSec);
     this.rb.update(dtSec);
+    this.updateSpriteLogic();
+  }
+
+  updateSpriteLogic() {
+    if (this.rb.isgrounded_) {
+      if (this.rb.velocity_.x == 0) {
+        this.sprite.gotoState("idle");
+      } else {
+        this.sprite.gotoState("run");
+      }
+    } else if (this.rb.velocity_.y != 0) {
+      this.sprite.gotoState("walk");
+    }
+
+    if (this.rb.velocity_.x < 0) this.sprite.flipped = true;
+    else if (this.rb.velocity_.x !== 0) this.sprite.flipped = false;
   }
 
   setPosition(newPosition) {

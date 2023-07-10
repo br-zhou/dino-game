@@ -48,17 +48,15 @@ class OnlinePlayersHandler {
         oldPlayerData = newPlayerdata;
       }
 
-      this.onlinePlayerMovementHandler(
-        playerEntity,
-        newPlayerdata,
-        oldPlayerData
-      );
+      this.movementHandler(playerEntity, newPlayerdata, oldPlayerData);
+
+      this.stateHandler();
 
       this.dataLastTick[id] = newPlayerdata;
     }
   }
 
-  onlinePlayerMovementHandler(enitity, newData, oldData) {
+  movementHandler(enitity, newData, oldData) {
     enitity.position_.set(oldData.position);
 
     const velocity = new Vector2(
@@ -68,6 +66,8 @@ class OnlinePlayersHandler {
 
     enitity.rb.velocity_.set(velocity);
   }
+
+  stateHandler() {}
 }
 
 export default OnlinePlayersHandler;
