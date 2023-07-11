@@ -4,6 +4,7 @@ import { Scene } from "./engine/scene.js";
 import { UI } from "./userInterface.js";
 import { PRIMARY_KEYBINDS } from "./keybinds.js";
 import GameServer from "./server/GameServer.js";
+import Arrow from "./arrow.js";
 
 /**
  * Contains main game logic
@@ -30,6 +31,8 @@ export class Game {
 
     this.gameServer = new GameServer(this.scene);
     this.playersHandler = this.gameServer.playersHandler;
+
+    this.arrow = new Arrow();
   }
 
   setup() {
@@ -39,6 +42,9 @@ export class Game {
   loop = (dtSec, elapsedTimeSec) => {
     this.scene.update(dtSec, elapsedTimeSec);
     this.scene.render();
+
+    this.arrow.update(dtSec);
+    this.arrow.render();
 
     this.ui.update(dtSec, elapsedTimeSec);
   };

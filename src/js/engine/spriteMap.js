@@ -3,11 +3,11 @@ import { Vector2 } from "./vector2.js";
 
 export class SpriteMap {
   /**
-   * 
+   *
    * @param {string} name of image
    * @param {callback} cb callback when image loads
    */
-  constructor({name, variant}, cb) {
+  constructor({ name, variant }, cb) {
     this.tools = new CanvasTools();
     this.callback_ = cb;
     this.name_ = name;
@@ -29,17 +29,17 @@ export class SpriteMap {
   async loadImg() {
     this.img_ = new Image();
     this.img_.src = `./assets/${this.name_}/${this.variant_ || "map"}.png`;
-    
+
     this.img_.onload = () => {
       this.imgLoaded = true;
       this.checkLoaded();
-    } 
-    
+    };
+
     this.img_.onerror = (err) => {
       this.callback_(false);
-    }
+    };
   }
-  
+
   async loadData() {
     try {
       const response = await fetch(`./assets/${this.name_}/data.json`);
@@ -54,8 +54,8 @@ export class SpriteMap {
   }
 
   async checkLoaded() {
-    if(this.loaded) return true;
-    
+    if (this.loaded) return true;
+
     if (this.imgLoaded && this.dataLoaded) {
       this.generateFlippedSpriteMap();
       this.loaded = true;
@@ -69,12 +69,11 @@ export class SpriteMap {
   render(position) {
     if (!this.loaded) return;
     this.tools.drawSpriteMap(
-      (this.flipped? this.imgR_ : this.img_),
+      this.flipped ? this.imgR_ : this.img_,
       this.currentIndex,
       this.data.tileSize,
       position,
-      this.data.gameSize,
-      this.flipped
+      this.data.gameSize
     );
   }
 
@@ -110,8 +109,9 @@ export class SpriteMap {
    * Requires both this.imgLoaded and this.dataLoaded to be true;
    */
   generateFlippedSpriteMap() {
-    if (!this.dataLoaded || !this.imgLoaded) throw new Error("Error generating reverse image!");
-    
+    if (!this.dataLoaded || !this.imgLoaded)
+      throw new Error("Error generating reverse image!");
+
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
     const tileSize = this.data.tileSize;
@@ -122,15 +122,15 @@ export class SpriteMap {
     ctx.scale(-1, 1);
 
     // this loops draws every tile but flipped
-    for (let i = 0; i < this.img_.width/tileSize.x; i++) { 
-      for (let j = 0; j < this.img_.height/tileSize.y; j++) {
+    for (let i = 0; i < this.img_.width / tileSize.x; i++) {
+      for (let j = 0; j < this.img_.height / tileSize.y; j++) {
         ctx.drawImage(
           this.img_,
           i * tileSize.x,
           j * tileSize.y,
           tileSize.x,
           tileSize.y,
-          - tileSize.x * (i + 1),
+          -tileSize.x * (i + 1),
           tileSize.y * j,
           tileSize.x,
           tileSize.y

@@ -15,7 +15,7 @@ class GameServer {
 
     this.players = {};
 
-    this.socket = io(SERVER_ADDRESS);
+    this.socket = io(SERVER_ADDRESS, {'reconnection': false}); // !! re-enable reconnection
     
     this.socket.on("connect", () => {
       this.socketId = this.socket.id;
