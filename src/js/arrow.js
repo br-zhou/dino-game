@@ -10,10 +10,12 @@ class Arrow extends Entity {
       this.loaded = result;
     });
     this.sprite.size = 2;
-    this.rotation = 45 * Math.PI / 180;
+    this.rotation = 0;
   }
   /** @override */
-  update(dtSec) {}
+  update(dtSec) {
+    this.rotation += Math.PI * 2 * dtSec;
+  }
 
   /** @override */
   render() {

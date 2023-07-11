@@ -7,6 +7,9 @@ export class UI {
 
     this.fpsCounter = document.getElementById("fps-counter");
     this.playerCounter = document.getElementById("online-players-counter");
+    
+    this.lastFpsValue = null;
+    this.lastPlayerCountValue = null;
   }
 
   update(dtSec, elapsedTimeSec) {
@@ -16,7 +19,7 @@ export class UI {
 
   updateFPSCounter(dtSec, elapsedTimeSec) {
     const fps = Math.floor(1 / dtSec);
-    const LOG_INTERVAL = 0.15;
+    const LOG_INTERVAL = 1;
 
     if (
       this.fpsLogTime_ == undefined ||
@@ -36,6 +39,9 @@ export class UI {
   updatePlayerCount() {
     const server = new GameServer();
     const playerCount = Object.keys(server.players).length;
+    if (playerCount === this.lastPlayerCountValue) return;
+    
     this.playerCounter.innerText = `Online: ${playerCount}`;
+    this.lastPlayerCountValue = playerCount;
   }
 }

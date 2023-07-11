@@ -14,9 +14,22 @@ export class CanvasTools {
     this.camera = camera;
     this.canvas = this.camera.canvas_;
     this.ctx = this.canvas.getContext();
+    this.windowSize = new Vector2(window.innerWidth, window.innerHeight);
 
     CanvasTools.instance = this;
+    this.handleEvents();
   }
+
+  handleEvents = () => {
+    window.addEventListener(
+      "resize",
+      () => {
+        this.windowSize.x = window.innerWidth;
+        this.windowSize.y = window.innerHeight;
+      },
+      false
+    );
+  };
 
   /**
    * gives tools needed for rendering
@@ -34,10 +47,6 @@ export class CanvasTools {
 
   get camPos() {
     return this.camera.position;
-  }
-
-  get windowSize() {
-    return { x: window.innerWidth, y: window.innerHeight };
   }
 
   /**
@@ -219,7 +228,7 @@ export class CanvasTools {
       this.worldToScreenPosY(worldPos.y)
     );
 
-    this.ctx.rotate(rotation)
+    this.ctx.rotate(rotation);
 
     this.ctx.drawImage(
       img,
