@@ -15,7 +15,7 @@ export class Rigibody {
     this.scene = scene;
 
     this.gravity = 50;
-    this.maxGravity = 100;
+    this.maxGravity = 30;
     this.mass = 1;
     this.pushable = false;
     this.bounce = 0;

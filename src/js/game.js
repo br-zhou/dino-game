@@ -5,6 +5,8 @@ import { UI } from "./userInterface.js";
 import { PRIMARY_KEYBINDS } from "./keybinds.js";
 import GameServer from "./server/GameServer.js";
 import Arrow from "./arrow.js";
+import { Foreground } from "./foreground.js";
+import { Vector2 } from "./engine/vector2.js";
 
 /**
  * Contains main game logic
@@ -32,11 +34,34 @@ export class Game {
     this.gameServer = new GameServer(this.scene);
     this.playersHandler = this.gameServer.playersHandler;
 
-    this.arrow = new Arrow();
+    this.arrow = new Arrow(this.scene);
   }
 
   setup() {
-    // nothing
+    new Foreground(
+      this.scene,
+      new Vector2(-16, -17),
+      new Vector2(32, 1),
+      "white"
+    );
+    new Foreground(
+      this.scene,
+      new Vector2(-16, 14),
+      new Vector2(32, 1),
+      "white"
+    );
+    new Foreground(
+      this.scene,
+      new Vector2(-16, 14),
+      new Vector2(1, 32),
+      "white"
+    );
+    new Foreground(
+      this.scene,
+      new Vector2(15, 14),
+      new Vector2(1, 32),
+      "white"
+    );
   }
 
   loop = (dtSec, elapsedTimeSec) => {

@@ -16,7 +16,9 @@ export class Entity {
     this.scene = null;
   }
 
-  update(dtSec) {}
+  update(dtSec) {
+
+  }
   render() {}
   destroy() {}
 }
