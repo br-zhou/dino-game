@@ -7,6 +7,9 @@ import GameServer from "./server/GameServer.js";
 import Arrow from "./arrow.js";
 import { Foreground } from "./foreground.js";
 import { Vector2 } from "./engine/vector2.js";
+import { CanvasTools } from "./engine/canvasTools.js";
+import { INPUT } from "./engine/input.js";
+import { Ray2D } from "./engine/ray2d.js";
 
 /**
  * Contains main game logic
@@ -33,8 +36,6 @@ export class Game {
 
     this.gameServer = new GameServer(this.scene);
     this.playersHandler = this.gameServer.playersHandler;
-
-    this.arrow = new Arrow(this.scene);
   }
 
   setup() {
@@ -68,9 +69,14 @@ export class Game {
     this.scene.update(dtSec, elapsedTimeSec);
     this.scene.render();
 
-    this.arrow.update(dtSec);
-    this.arrow.render();
-
     this.ui.update(dtSec, elapsedTimeSec);
+
+    const playermidpos = Vector2.add(this.player.position_, new Vector2(this.player.size_.x/2, -this.player.size_.y/2));
+    
+    const tools = new CanvasTools();
+    let mousediff = Vector2.subtract(tools.screenToWorld(INPUT.mousePosition), playermidpos);
+    this.pRay = new Ray2D(playermidpos, mousediff.toRadians());
+    this.pRay.length = mousediff.magnitude();
+    this.pRay.render();
   };
 }

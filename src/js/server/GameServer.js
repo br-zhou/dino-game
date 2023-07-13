@@ -1,7 +1,7 @@
 import "https://cdn.socket.io/4.7.1/socket.io.min.js";
 import OnlinePlayersHandler from "./OnlinePlayersHandler.js";
 
-const SERVER_ADDRESS = "localhost:8000"; // ! will not work with other computers because localhost is different!
+const SERVER_ADDRESS = "localhost:8000";
 export const TICK_RATE = 32;
 
 class GameServer {

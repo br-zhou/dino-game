@@ -5,6 +5,7 @@ import { Vector2 } from "./engine/vector2.js";
 import { INPUT } from "./engine/input.js";
 import { SpriteMap } from "./engine/spriteMap.js";
 import { Rigibody } from "./engine/rigibody.js";
+import Arrow from "./arrow.js";
 
 export class Player extends Entity {
   constructor(scene, variant = false) {
@@ -20,7 +21,7 @@ export class Player extends Entity {
     this.position_ = new Vector2(0, 0);
     this.spawnPosition = Vector2.copy(this.position_);
     this.size_ = new Vector2(1.8, 1.8);
-
+    this.tools = new CanvasTools();
     this.rb = new Rigibody(this, this.scene);
 
     this.targetVelocity_ = new Vector2();
@@ -36,7 +37,17 @@ export class Player extends Entity {
    */
   bindControls(controls) {
     this.controller_ = new PlayerController(controls);
+    this.controller_.clickCB = () => {
+      this.shootArrow();
+    };
   }
+
+  shootArrow = () => {
+    const playerMidPos = Vector2.add(this.position_, new Vector2(this.size_.x/2, -this.size_.y/2));
+    let mousediff = Vector2.subtract(this.tools.screenToWorld(INPUT.mousePosition), playerMidPos);
+
+    new Arrow(this.scene, playerMidPos, mousediff.toRadians(), 30);
+  };
 
   /** @override */
   update(dtSec) {

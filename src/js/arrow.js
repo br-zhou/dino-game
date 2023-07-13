@@ -1,44 +1,56 @@
 import { Entity } from "./engine/Entity.js";
 import { CanvasTools } from "./engine/canvasTools.js";
+import { Ray2D } from "./engine/ray2d.js";
 import { Rigibody } from "./engine/rigibody.js";
 import { Sprite } from "./engine/sprite.js";
 import { Vector2 } from "./engine/vector2.js";
 
 class Arrow extends Entity {
-  constructor(scene) {
-    super(new Vector2(0, 0), new Vector2(0, 0));
+  constructor(scene, position, rotation, speed) {
+    super(Vector2.copy(position), new Vector2(0, 0));
     this.scene = scene;
+    this.scene.addProjectile(this);
+    this.tools = new CanvasTools();
+
     this.loaded = false;
+    this.stuck = false;
 
     this.sprite = new Sprite(
       { name: "arrow", variant: "horizontal" },
-      (result) => this.loaded = result
+      (result) => (this.loaded = result)
     );
-    
+
     this.sprite.size = 2;
-    this.rotation = 0;
-    this.tools = new CanvasTools();
+    this.rotation = rotation;
 
-    this.bounce = 1;
-    this.groundFriction = 0;
-    this.gravity = 30;
-    this.maxGravity = 15;
-
+    this.gravity = 65;
+    this.ghost = true;
     this.rb = new Rigibody(this, this.scene);
-    this.rb.velocity_.x = 15;
+    this.rb.velocity_.x = Math.cos(rotation) * speed;
+    this.rb.velocity_.y = Math.sin(rotation) * speed;
+    
+    this.setup()
   }
+  
+  setup() {
+    this.ray = new Ray2D(this.position_, this.rotation);
+    this.ray.color = "#ffffff80";
+    this.ray.render();
+  }
+
   /** @override */
   update(dtSec) {
-    this.rb.update(dtSec);
-    this.rotation = this.rb.velocity_.toRadians() - Math.PI / 4;
+    if (!this.stuck) this.rotation = this.rb.velocity_.toRadians();
+    if (!this.stuck) this.rb.update(dtSec);
+    if (this.rb.velocity_.x === 0 || this.rb.velocity_.y === 0) this.stuck = true;
   }
 
   /** @override */
   render() {
     if (!this.loaded) return;
 
-    this.sprite.render(this.position_, this.rotation);
-    this.tools.drawCircle(this.position_, 0.25, "#ffff00");
+    this.sprite.render(this.position_, this.rotation - (Math.PI * 3) / 4);
+
   }
 }
 

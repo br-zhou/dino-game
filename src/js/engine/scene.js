@@ -10,6 +10,7 @@ export class Scene {
     this.camera_ = new Camera(this);
     this.entities_ = [];
     this.groundsBlocks_ = [];
+    this.projectiles_ = [];
     this.backgroundColor_ = '#87CEEB';
     this.tileMap = new TileMap();
     this.sceneLoadedCallback_ = null;
@@ -61,6 +62,10 @@ export class Scene {
     this.entities_.pop();
   }
 
+  addProjectile(arrow) {
+    this.projectiles_.push(arrow);
+  }
+
   addGround(block) {
     this.groundsBlocks_.push(block);
   }
@@ -71,6 +76,10 @@ export class Scene {
   update(dtSec, elapsedTimeSec) {
     for (const entitiy of this.entities_) {
       entitiy.update(dtSec, elapsedTimeSec);
+    }
+    
+    for (const projectile of this.projectiles_) {
+      projectile.update(dtSec, elapsedTimeSec);
     }
   }
 
@@ -83,6 +92,10 @@ export class Scene {
 
     for (const entitiy of this.entities_) {
       entitiy.render();
+    }
+
+    for (const projectile of this.projectiles_) {
+      projectile.render();
     }
   }
 

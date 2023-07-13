@@ -45,7 +45,7 @@ export class Sprite {
       this.flipped ? this.imgR_ : this.img_,
       position,
       new Vector2(this.size, this.size * this.heightWidthRatio),
-      rotation
+      - rotation
     );
   }
 
@@ -68,7 +68,6 @@ export class Sprite {
 
     const imgR = new Image();
     imgR.src = canvas.toDataURL();
-    console.log(imgR.src);
     this.imgR_ = imgR;
   }
 

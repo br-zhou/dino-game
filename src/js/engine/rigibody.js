@@ -57,9 +57,9 @@ export class Rigibody {
     this.applyGravity(dtSec);
 
     this.isgrounded_ = false;
+    if (!this.ghost) this.handleOtherEntities_(dtSec, targetPosition);
     this.handleGroundBlockCollisions_(dtSec, targetPosition);
     this.handleTileMapCollisions_(dtSec, targetPosition);
-    if (!this.ghost) this.handleOtherEntities_(dtSec, targetPosition);
 
     this.position_.set(targetPosition);
     this.applyFriction(dtSec);
@@ -102,6 +102,7 @@ export class Rigibody {
   handleOtherEntities_(dtSec, targetPosition) {
     for (const otherEnt of this.scene.entities_) {
       if (otherEnt === this.entity) continue;
+      if (otherEnt.ghost) continue;
       const hitInfo = this.vsRect(otherEnt, dtSec);
       if (hitInfo != false && !otherEnt.rb.ghost) {
         if (otherEnt.rb.pushable) {

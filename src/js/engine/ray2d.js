@@ -14,19 +14,19 @@ export class Ray2D {
     this.direction_ = direction;
     this.tools = new CanvasTools();
     this.length = length;
+    this.color = "#FF00FF";
+    this.circleRadius = 0.25;
     this.dxdt_ = Math.cos(this.direction_);
     this.dydt_ = Math.sin(this.direction_);
   }
   
   render() {
-    const circleRadius = 0.25;
-    const color = "#FF00FF";
     const endPoint = new Vector2(
       this.position_.x + this.dxdt_ * this.length,
       this.position_.y + this.dydt_ * this.length
     )
-    this.tools.drawCircle(this.position_, circleRadius, color);
-    this.tools.drawLine(this.position_, endPoint, color);
+    this.tools.drawCircle(this.position_, this.circleRadius, this.color);
+    this.tools.drawLine(this.position_, endPoint, this.color);
   }
 
   /**
