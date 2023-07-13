@@ -132,7 +132,7 @@ export class Rigibody {
       }
     }
 
-    hits.sort(this.sortHitInfo_);
+    // hits.sort(this.sortHitInfo_); // ! removed because I don't think it was necessary.
 
     for (const hit of hits) {
       this.resolveWallCollision_(hit, targetPosition);
@@ -166,7 +166,7 @@ export class Rigibody {
   resolveWallCollision_(hitInfo, targetPosition) {
     if (hitInfo == false) return;
 
-    const RESOLVE_DISPLACEMENT = 0.0001;
+    const RESOLVE_DISPLACEMENT = 0.001;
     const MIN_IMPULSE_TO_BOUNCE = 4;
 
     const point = hitInfo.point;
@@ -215,5 +215,39 @@ export class Rigibody {
       this.velocity_.y = av_f.y;
       other.velocity_.y = bv_f.y;
     }
+  }
+
+  // !! hacky code. refactor in the future.
+  checkDashTileCollision(targetPosition, deltaPosition) {
+    const velocityCopy = this.velocity_;
+    this.velocity_ = deltaPosition;
+
+    this.mapCollider_.update(0, targetPosition);
+    let hits = [];  
+
+    for (const tileIndex of this.mapCollider_.tilesInRange) {
+      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
+      const hitInfo = this.vsRect(tileEntity, 1);
+      if (hitInfo != false) {
+        const neighbourTile = Vector2.add(tileIndex, hitInfo.normal);
+
+        if (
+          !this.tileMap.tileGrid_[neighbourTile.x] ||
+          !this.tileMap.tileGrid_[neighbourTile.x][neighbourTile.y]
+        ) {
+          hits.push(hitInfo); // if there is no tile existing on face of collider, add hit info
+        }
+      }
+    }
+
+    hits.sort(this.sortHitInfo_);
+    console.log(hits)
+    
+    for (const hit of hits) {
+      this.resolveWallCollision_(hit, targetPosition);
+    }
+
+    this.velocity_ = velocityCopy;
+    console.log("DASHED")
   }
 }

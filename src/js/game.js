@@ -70,13 +70,5 @@ export class Game {
     this.scene.render();
 
     this.ui.update(dtSec, elapsedTimeSec);
-
-    const playermidpos = Vector2.add(this.player.position_, new Vector2(this.player.size_.x/2, -this.player.size_.y/2));
-    
-    const tools = new CanvasTools();
-    let mousediff = Vector2.subtract(tools.screenToWorld(INPUT.mousePosition), playermidpos);
-    this.pRay = new Ray2D(playermidpos, mousediff.toRadians());
-    this.pRay.length = mousediff.magnitude();
-    this.pRay.render();
   };
 }

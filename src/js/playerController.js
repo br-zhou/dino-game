@@ -4,6 +4,7 @@ export class PlayerController {
     this.wantsToMove = false;
 
     this.clickCB = null;
+    this.rightClickCB = null;
     this.keyToCommandHash = keybinds;
 
     document.addEventListener("update-input", (e) => this.update(e));
@@ -16,6 +17,10 @@ export class PlayerController {
 
     if (key == "mouse0" && type == "down" && this.clickCB != null)
       this.clickCB();
+    
+    if (key == "mouse2" && type == "down" && this.rightClickCB != null)
+      this.rightClickCB();
+
 
     if (this.keyToCommandHash[key] === undefined) return;
 

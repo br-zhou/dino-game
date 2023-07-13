@@ -23,12 +23,13 @@ export class Player extends Entity {
     this.size_ = new Vector2(1.8, 1.8);
     this.tools = new CanvasTools();
     this.rb = new Rigibody(this, this.scene);
-
     this.targetVelocity_ = new Vector2();
 
     this.sprite = new SpriteMap({ name: "dino", variant: variant }, () => {
       this.sprite.gotoState("idle");
     });
+
+    this.specialState = "none";
   }
 
   /**
@@ -37,16 +38,43 @@ export class Player extends Entity {
    */
   bindControls(controls) {
     this.controller_ = new PlayerController(controls);
+
     this.controller_.clickCB = () => {
       this.shootArrow();
+    };
+
+    this.controller_.rightClickCB = () => {
+      this.dash();
     };
   }
 
   shootArrow = () => {
-    const playerMidPos = Vector2.add(this.position_, new Vector2(this.size_.x/2, -this.size_.y/2));
-    let mousediff = Vector2.subtract(this.tools.screenToWorld(INPUT.mousePosition), playerMidPos);
+    let mousediff = Vector2.subtract(
+      this.tools.screenToWorld(INPUT.mousePosition),
+      this.playerMidPos
+    );
 
-    new Arrow(this.scene, playerMidPos, mousediff.toRadians(), 30);
+    new Arrow(this.scene, this.playerMidPos, mousediff.toRadians(), 50);
+  };
+
+  dash = () => {
+    const DASH_DISTANCE = 6;
+
+    const mousediff = Vector2.subtract(
+      this.tools.screenToWorld(INPUT.mousePosition),
+      this.playerMidPos
+    );
+    const pointingDirection = mousediff.toRadians();
+    const deltaPosition = new Vector2(
+      Math.cos(pointingDirection) * DASH_DISTANCE,
+      Math.sin(pointingDirection) * DASH_DISTANCE
+    );
+    const targetPosition = Vector2.add(this.position_, deltaPosition);
+
+    this.rb.velocity_.set(new Vector2());
+
+    this.rb.checkDashTileCollision(targetPosition, deltaPosition);
+    this.position_.set(targetPosition);
   };
 
   /** @override */
@@ -145,5 +173,12 @@ export class Player extends Entity {
 
   destroy() {
     this.position_.set(this.spawnPosition);
+  }
+
+  get playerMidPos() {
+    return Vector2.add(
+      this.position_,
+      new Vector2(this.size_.x / 2, -this.size_.y / 2)
+    );
   }
 }
