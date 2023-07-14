@@ -56,12 +56,8 @@ export class Rigibody {
 
     this.isgrounded_ = false;
     this.applyGravity(dtSec);
-
-    const entityHits = this.getEntitiesCollisions_(dtSec, targetPosition);
-    const blockHits = this.getGroundBlockCollisions_(dtSec);
-    const tileHits = this.getTileMapCollisions_(dtSec, targetPosition);
-
-    const hits = [...blockHits, ...tileHits, ...entityHits];
+    
+    const hits = this.getAllHitCollisions(dtSec, targetPosition);
     this.handleHitCollisions(hits, targetPosition);
 
     this.position_.set(targetPosition);
@@ -284,51 +280,25 @@ export class Rigibody {
     }
   }
 
-  // !! hacky code. refactor in the future.
-  checkDashTileCollision(targetPosition, deltaPosition) {
-    const velocityCopy = this.velocity_;
-    this.velocity_ = deltaPosition;
-
-    this.mapCollider_.update(targetPosition);
-    let hits = [];
-
-    for (const tileIndex of this.mapCollider_.tilesInRange) {
-      const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
-      const hitInfo = this.vsRect(tileEntity, 1);
-      if (hitInfo != false) {
-        const neighbourTile = Vector2.add(tileIndex, hitInfo.normal);
-
-        if (
-          !this.tileMap.tileGrid_[neighbourTile.x] ||
-          !this.tileMap.tileGrid_[neighbourTile.x][neighbourTile.y]
-        ) {
-          hits.push(hitInfo); // if there is no tile existing on face of collider, add hit info
-        }
-      }
-    }
-
-    hits.sort(this.hitInfoSortFn_);
-
-    for (const hit of hits) {
-      this.resolveWallCollision_(hit, targetPosition);
-    }
-
-    this.velocity_ = velocityCopy;
-  }
-
   handleDashCollision(deltaPosition, targetPosition) {
     const dtSec = 1;
     this.velocity_.set(deltaPosition);
 
-    const entityHits = this.getEntitiesCollisions_(dtSec, targetPosition);
-    const blockHits = this.getGroundBlockCollisions_(dtSec);
-    const tileHits = this.getTileMapCollisions_(dtSec, targetPosition);
-
-    const hits = [...blockHits, ...tileHits, ...entityHits];
+    const hits = this.getAllHitCollisions(dtSec, targetPosition);
     this.handleHitCollisions(hits, targetPosition);
 
     this.position_.set(targetPosition);
 
     this.velocity_.set(new Vector2(0));
+  }
+
+  getAllHitCollisions(dtSec, targetPosition) {
+    const entityHits = this.getEntitiesCollisions_(dtSec);
+    const blockHits = this.getGroundBlockCollisions_(dtSec);
+    const tileHits = this.getTileMapCollisions_(dtSec, targetPosition);
+
+    const hits = [...blockHits, ...tileHits, ...entityHits];
+
+    return hits;
   }
 }
