@@ -12,7 +12,7 @@ export class UserInterface {
   importMap = () => {
     const fileInput = document.createElement("input");
     fileInput.type = "file";
-    fileInput.accept = ".txt";
+    fileInput.accept = ".json";
     fileInput.id = "map-upload";
 
     fileInput.click();
@@ -54,7 +54,7 @@ export class UserInterface {
 
     let anchor = document.createElement("a");
     anchor.href = url;
-    anchor.download = "map.txt";
+    anchor.download = "map.json";
 
     anchor.click();
 
