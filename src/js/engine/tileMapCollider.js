@@ -20,7 +20,7 @@ export class TileMapCollider {
     this.tilesInRange = [];
   }
 
-  update(dtSec, targetPosition) {
+  update(targetPosition) {
     this.position = Vector2.copy(this.entity.position_);
     this.targetPosition = Vector2.copy(targetPosition);
     this.tilesInRange = this.getMapTilesInRange_V2();

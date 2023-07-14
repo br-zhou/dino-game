@@ -54,12 +54,15 @@ export class Rigibody {
       this.position_.y + this.velocity_.y * dtSec
     );
 
-    this.applyGravity(dtSec);
+    this.applyGravity(dtSec); // ! maybe moving this will prevent gap sliding?
 
     this.isgrounded_ = false;
-    // if (!this.ghost) this.handleOtherEntities_(dtSec, targetPosition);
-    this.handleGroundBlockCollisions_(dtSec, targetPosition);
-    // this.handleTileMapCollisions_(dtSec, targetPosition);
+    const entityHits = this.getEntitiesCollisions_(dtSec, targetPosition);
+    const blockHits = this.getGroundBlockCollisions_(dtSec);
+    const tileHits = this.getTileMapCollisions_(dtSec, targetPosition);
+
+    const hits = [...blockHits, ...tileHits, ...entityHits];
+    this.handleHitCollisions(hits, targetPosition);
 
     this.position_.set(targetPosition);
     this.applyFriction(dtSec);
@@ -90,7 +93,7 @@ export class Rigibody {
     // todo: only apply friction when not being pushed, to remove visual errors
   }
 
-  handleGroundBlockCollisions_(dtSec, targetPosition) {
+  getGroundBlockCollisions_(dtSec) {
     const hits = [];
 
     for (const block of this.scene.groundsBlocks_) {
@@ -100,6 +103,10 @@ export class Rigibody {
       }
     }
 
+    return hits;
+  }
+
+  handleHitCollisions(hits, targetPosition) {
     hits.sort(this.hitInfoSortFn_);
 
     const resolvedAxises = {
@@ -108,33 +115,43 @@ export class Rigibody {
     };
 
     for (const hitInfo of hits) {
-      const normalAxis = hitInfo.normal.x === 0 ? 'y' : 'x';
+      const normalAxis = hitInfo.normal.x === 0 ? "y" : "x";
       if (resolvedAxises[normalAxis]) continue;
 
-      const resolveIsSuccessful = this.resolveWallCollision_(hitInfo, targetPosition);
-      
+      const resolveIsSuccessful = this.resolveWallCollision_(
+        hitInfo,
+        targetPosition
+      );
+
       if (resolveIsSuccessful) resolvedAxises[normalAxis] = true;
       if (resolvedAxises.x && resolvedAxises.y) break;
     }
   }
 
-  handleOtherEntities_(dtSec, targetPosition) {
+  // !! with high velocities, interact with entities behind walls
+  // because rb vs rb respose is handled separately from rb vs wall
+  getEntitiesCollisions_(dtSec) {
+    if (this.ghost) return [];
+
+    const hits = [];
     for (const otherEnt of this.scene.entities_) {
       if (otherEnt === this.entity) continue;
-      if (otherEnt.ghost) continue;
+      if (otherEnt.rb.ghost) continue;
       const hitInfo = this.vsRect(otherEnt, dtSec);
-      if (hitInfo != false && !otherEnt.rb.ghost) {
+      if (hitInfo != false) {
         if (otherEnt.rb.pushable) {
           this.vsRigibodyResponse(otherEnt.rb, hitInfo);
         }
-        this.resolveWallCollision_(hitInfo, targetPosition);
+        hits.push(hitInfo);
       }
     }
+
+    return hits;
   }
 
-  handleTileMapCollisions_(dtSec, targetPosition) {
-    this.mapCollider_.update(dtSec, targetPosition);
-    let hits = [];
+  getTileMapCollisions_(dtSec, targetPosition) {
+    this.mapCollider_.update(targetPosition);
+    const hits = [];
 
     for (const tileIndex of this.mapCollider_.tilesInRange) {
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
@@ -151,11 +168,7 @@ export class Rigibody {
       }
     }
 
-    hits.sort(this.hitInfoSortFn_);
-
-    for (const hit of hits) {
-      this.resolveWallCollision_(hit, targetPosition);
-    }
+    return hits;
   }
 
   hitInfoSortFn_ = (a, b) => {
@@ -273,7 +286,7 @@ export class Rigibody {
     const velocityCopy = this.velocity_;
     this.velocity_ = deltaPosition;
 
-    this.mapCollider_.update(0, targetPosition);
+    this.mapCollider_.update(targetPosition);
     let hits = [];
 
     for (const tileIndex of this.mapCollider_.tilesInRange) {
