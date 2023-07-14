@@ -4,13 +4,8 @@ import { Scene } from "./engine/scene.js";
 import { UI } from "./userInterface.js";
 import { PRIMARY_KEYBINDS } from "./keybinds.js";
 import GameServer from "./server/GameServer.js";
-import Arrow from "./arrow.js";
 import { Foreground } from "./foreground.js";
 import { Vector2 } from "./engine/vector2.js";
-import { CanvasTools } from "./engine/canvasTools.js";
-import { INPUT } from "./engine/input.js";
-import { Ray2D } from "./engine/ray2d.js";
-
 /**
  * Contains main game logic
  * Singleton Instance
@@ -41,16 +36,11 @@ export class Game {
   setup() {
     new Foreground(
       this.scene,
-      new Vector2(-16, -17),
-      new Vector2(32, 1),
+      new Vector2(-32, -17),
+      new Vector2(64, 1),
       "white"
     );
-    new Foreground(
-      this.scene,
-      new Vector2(-16, 14),
-      new Vector2(32, 1),
-      "white"
-    );
+
     new Foreground(
       this.scene,
       new Vector2(-16, 14),
@@ -61,6 +51,19 @@ export class Game {
       this.scene,
       new Vector2(15, 14),
       new Vector2(1, 32),
+      "white"
+    );
+
+    new Foreground(
+      this.scene,
+      new Vector2(-16, 14),
+      new Vector2(32, 1),
+      "white"
+    );    
+    new Foreground(
+      this.scene,
+      new Vector2(-32, -25),
+      new Vector2(64, 1),
       "white"
     );
   }

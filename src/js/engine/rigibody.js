@@ -57,9 +57,9 @@ export class Rigibody {
     this.applyGravity(dtSec);
 
     this.isgrounded_ = false;
-    if (!this.ghost) this.handleOtherEntities_(dtSec, targetPosition);
+    // if (!this.ghost) this.handleOtherEntities_(dtSec, targetPosition);
     this.handleGroundBlockCollisions_(dtSec, targetPosition);
-    this.handleTileMapCollisions_(dtSec, targetPosition);
+    // this.handleTileMapCollisions_(dtSec, targetPosition);
 
     this.position_.set(targetPosition);
     this.applyFriction(dtSec);
@@ -91,11 +91,30 @@ export class Rigibody {
   }
 
   handleGroundBlockCollisions_(dtSec, targetPosition) {
+    const hits = [];
+
     for (const block of this.scene.groundsBlocks_) {
       const hitInfo = this.vsRect(block, dtSec);
       if (hitInfo != false) {
-        this.resolveWallCollision_(hitInfo, targetPosition);
+        hits.push(hitInfo);
       }
+    }
+
+    hits.sort(this.hitInfoSortFn_);
+
+    const resolvedAxises = {
+      x: false,
+      y: false,
+    };
+
+    for (const hitInfo of hits) {
+      const normalAxis = hitInfo.normal.x === 0 ? 'y' : 'x';
+      if (resolvedAxises[normalAxis]) continue;
+
+      const resolveIsSuccessful = this.resolveWallCollision_(hitInfo, targetPosition);
+      
+      if (resolveIsSuccessful) resolvedAxises[normalAxis] = true;
+      if (resolvedAxises.x && resolvedAxises.y) break;
     }
   }
 
@@ -132,12 +151,16 @@ export class Rigibody {
       }
     }
 
-    // hits.sort(this.sortHitInfo_); // ! removed because I don't think it was necessary.
+    hits.sort(this.hitInfoSortFn_);
 
     for (const hit of hits) {
       this.resolveWallCollision_(hit, targetPosition);
     }
   }
+
+  hitInfoSortFn_ = (a, b) => {
+    return a.time - b.time;
+  };
 
   /**
    * Checks if this rigibody will collide with given rectange, and returns hit information or false, depending
@@ -150,7 +173,7 @@ export class Rigibody {
     if (this.velocity_.x === 0 && this.velocity_.y === 0) return false;
     // The previoius line is needed since ray is pointed right when x = 0 & y = 0
 
-    const entityRay = new Ray2D(
+    const rayCast = new Ray2D(
       Vector2.add(
         this.position_,
         new Vector2(this.size_.x / 2, -this.size_.y / 2)
@@ -160,34 +183,62 @@ export class Rigibody {
 
     const expandedRect = Ray2D.expandRect(this, rectangle);
 
-    return entityRay.vsRect(expandedRect, this.velocity_.magnitude() * dtSec);
+    return rayCast.vsRect(expandedRect, this.velocity_.magnitude() * dtSec);
   }
 
+  /**
+   *
+   * @param {hitInfo} hitInfo object
+   * @param {Vector2} targetPosition changes targetPosition to resolved collision position
+   * @returns true if collision is resolved, false otherwise.
+   */
   resolveWallCollision_(hitInfo, targetPosition) {
-    if (hitInfo == false) return;
+    if (hitInfo === false || hitInfo.time < 0) return false;
 
-    const RESOLVE_DISPLACEMENT = 0.001;
+    const RESOLVE_DISPLACEMENT = 0;
     const MIN_IMPULSE_TO_BOUNCE = 4;
 
     const point = hitInfo.point;
     const normal = hitInfo.normal;
 
+    const vecloitySigns = new Vector2(
+      Math.sign(this.velocity_.x),
+      Math.sign(this.velocity_.y)
+    );
+
     if (normal.y != 0) {
       // top and bottom
-      this.velocity_.y *= -this.bounce;
-      if (Math.abs(this.velocity_.y) < MIN_IMPULSE_TO_BOUNCE)
-        this.velocity_.y = 0;
-      targetPosition.y =
+      const newYPos =
         point.y + this.size_.y / 2 + normal.y * RESOLVE_DISPLACEMENT;
+
+      if (Math.sign(newYPos - this.position_.y) === -vecloitySigns.y)
+        return false;
+
+      if (Math.abs(this.velocity_.y) < MIN_IMPULSE_TO_BOUNCE) {
+        this.velocity_.y = 0;
+      } else {
+        this.velocity_.y *= -this.bounce;
+      }
+
+      targetPosition.y = newYPos;
       if (normal.y == 1) this.isgrounded_ = true;
     } else {
-      // left and right
-      this.velocity_.x *= -this.bounce;
-      if (Math.abs(this.velocity_.x) < MIN_IMPULSE_TO_BOUNCE)
-        this.velocity_.x = 0;
-      targetPosition.x =
+      const newXPos =
         point.x - this.size_.x / 2 + normal.x * RESOLVE_DISPLACEMENT;
+
+      if (Math.sign(newXPos - this.position_.x) === -vecloitySigns.x)
+        return false;
+
+      if (Math.abs(this.velocity_.x) < MIN_IMPULSE_TO_BOUNCE) {
+        this.velocity_.x = 0;
+      } else {
+        this.velocity_.x *= -this.bounce;
+      }
+
+      targetPosition.x = newXPos;
     }
+
+    return true;
   }
 
   vsRigibodyResponse(other, hitInfo) {
@@ -223,7 +274,7 @@ export class Rigibody {
     this.velocity_ = deltaPosition;
 
     this.mapCollider_.update(0, targetPosition);
-    let hits = [];  
+    let hits = [];
 
     for (const tileIndex of this.mapCollider_.tilesInRange) {
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
@@ -240,14 +291,12 @@ export class Rigibody {
       }
     }
 
-    hits.sort(this.sortHitInfo_);
-    console.log(hits)
-    
+    hits.sort(this.hitInfoSortFn_);
+
     for (const hit of hits) {
       this.resolveWallCollision_(hit, targetPosition);
     }
 
     this.velocity_ = velocityCopy;
-    console.log("DASHED")
   }
 }

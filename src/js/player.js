@@ -112,6 +112,7 @@ export class Player extends Entity {
   }
 
   crouch() {
+    this.dash();
     // todo: implement
     if (false) {
       // replace with new isgrounded fucntion
