@@ -12,7 +12,9 @@ export default class Brush {
     this.mouseWorldPos = null;
     this.mouseGridIndex = null;
 
-    document.addEventListener("keydown", this.onKeyDown, false);
+    this.state = "brush";
+
+    document.addEventListener("keydown", this.onKeyDown);
     document.addEventListener("mousedown", this.onMouseDown);
     document.addEventListener("mouseup", this.onMouseUp);
     document.addEventListener("mousemove", this.onMouseMove);
@@ -24,6 +26,18 @@ export default class Brush {
 
   onKeyDown = (e) => {
     if (e.repeat) return;
+    const key = e.key.toLowerCase();
+
+    switch (key) {
+      case "e":
+        this.state = "eraser";
+        break;
+      case "b":
+        this.state = "brush";
+        break;
+      default:
+        break;
+    }
   };
 
   onMouseDown = (e) => {
@@ -50,12 +64,35 @@ export default class Brush {
   }
 
   handlePainting() {
-    const tileData = this.tileMap.mapData_.tileData;
     if (!this.isPaintable(this.mouseGridIndex)) return;
 
+    const tileData = this.tileMap.mapData_.tileData;
+    switch (this.state) {
+      case "brush":
+        this.paint(tileData);
+        break;
+      case "eraser":
+        this.erase(tileData);
+        break;
+    }
+  }
+
+  paint(tileData) {
     if (!tileData[this.mouseGridIndex.x]) tileData[this.mouseGridIndex.x] = {};
     tileData[this.mouseGridIndex.x][this.mouseGridIndex.y] = 1;
-    console.log(this.mouseGridIndex);
+  }
+
+  erase(tileData) {
+    if (
+      tileData[this.mouseGridIndex.x] &&
+      tileData[this.mouseGridIndex.x][this.mouseGridIndex.y]
+    ) {
+      delete tileData[this.mouseGridIndex.x][this.mouseGridIndex.y];
+
+      if (Object.keys(tileData[this.mouseGridIndex.x]).length === 0) {
+        delete tileData[this.mouseGridIndex.x];
+      }
+    }
   }
 
   isPaintable(gridIndex) {
