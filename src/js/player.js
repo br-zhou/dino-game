@@ -65,16 +65,14 @@ export class Player extends Entity {
       this.playerMidPos
     );
     const pointingDirection = mousediff.toRadians();
+    
     const deltaPosition = new Vector2(
       Math.cos(pointingDirection) * DASH_DISTANCE,
       Math.sin(pointingDirection) * DASH_DISTANCE
     );
     const targetPosition = Vector2.add(this.position_, deltaPosition);
-
-    this.rb.velocity_.set(new Vector2());
-
-    this.rb.checkDashTileCollision(targetPosition, deltaPosition);
-    this.position_.set(targetPosition);
+    
+    this.rb.handleDashCollision(deltaPosition, targetPosition);
   };
 
   /** @override */

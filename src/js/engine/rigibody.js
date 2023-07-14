@@ -54,9 +54,9 @@ export class Rigibody {
       this.position_.y + this.velocity_.y * dtSec
     );
 
-    this.applyGravity(dtSec); // ! maybe moving this will prevent gap sliding?
-
     this.isgrounded_ = false;
+    this.applyGravity(dtSec);
+
     const entityHits = this.getEntitiesCollisions_(dtSec, targetPosition);
     const blockHits = this.getGroundBlockCollisions_(dtSec);
     const tileHits = this.getTileMapCollisions_(dtSec, targetPosition);
@@ -73,9 +73,12 @@ export class Rigibody {
    * @param {Number} dtSec
    */
   applyGravity(dtSec) {
-    if (!this.isgrounded_) this.velocity_.y -= this.gravity * dtSec;
-    if (this.velocity_.y < -this.maxGravity)
-      this.velocity_.y = -this.maxGravity;
+    if (!this.isgrounded_) {
+      this.velocity_.y -= this.gravity * dtSec;
+      if (this.velocity_.y < -this.maxGravity) {
+        this.velocity_.y = -this.maxGravity;
+      }
+    }
   }
 
   /**
@@ -311,5 +314,21 @@ export class Rigibody {
     }
 
     this.velocity_ = velocityCopy;
+  }
+
+  handleDashCollision(deltaPosition, targetPosition) {
+    const dtSec = 1;
+    this.velocity_.set(deltaPosition);
+
+    const entityHits = this.getEntitiesCollisions_(dtSec, targetPosition);
+    const blockHits = this.getGroundBlockCollisions_(dtSec);
+    const tileHits = this.getTileMapCollisions_(dtSec, targetPosition);
+
+    const hits = [...blockHits, ...tileHits, ...entityHits];
+    this.handleHitCollisions(hits, targetPosition);
+
+    this.position_.set(targetPosition);
+
+    this.velocity_.set(new Vector2(0));
   }
 }
