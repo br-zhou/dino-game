@@ -70,9 +70,8 @@ export class Player extends Entity {
       Math.cos(pointingDirection) * DASH_DISTANCE,
       Math.sin(pointingDirection) * DASH_DISTANCE
     );
-    const targetPosition = Vector2.add(this.position_, deltaPosition);
     
-    this.rb.handleDashCollision(deltaPosition, targetPosition);
+    this.rb.handleDashCollision(deltaPosition);
   };
 
   /** @override */

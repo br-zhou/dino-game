@@ -49,18 +49,10 @@ export class Rigibody {
   }
 
   update(dtSec) {
-    const targetPosition = new Vector2(
-      this.position_.x + this.velocity_.x * dtSec,
-      this.position_.y + this.velocity_.y * dtSec
-    );
-
-    this.isgrounded_ = false;
     this.applyGravity(dtSec);
-    
-    const hits = this.getAllHitCollisions(dtSec, targetPosition);
-    this.handleHitCollisions(hits, targetPosition);
 
-    this.position_.set(targetPosition);
+    this.handleHitCollisions(dtSec);
+
     this.applyFriction(dtSec);
   }
 
@@ -105,9 +97,15 @@ export class Rigibody {
     return hits;
   }
 
-  handleHitCollisions(hits, targetPosition) {
-    hits.sort(this.hitInfoSortFn_);
+  handleHitCollisions(dtSec) {
+    const targetPosition = new Vector2(
+      this.position_.x + this.velocity_.x * dtSec,
+      this.position_.y + this.velocity_.y * dtSec
+    );
 
+    this.isgrounded_ = false;
+    
+    const hits = this.getAllHitCollisions(dtSec, targetPosition);
     const resolvedAxises = {
       x: false,
       y: false,
@@ -125,6 +123,8 @@ export class Rigibody {
       if (resolveIsSuccessful) resolvedAxises[normalAxis] = true;
       if (resolvedAxises.x && resolvedAxises.y) break;
     }
+
+    this.position_.set(targetPosition);
   }
 
   // !! with high velocities, interact with entities behind walls
@@ -169,10 +169,6 @@ export class Rigibody {
 
     return hits;
   }
-
-  hitInfoSortFn_ = (a, b) => {
-    return a.time - b.time;
-  };
 
   /**
    * Checks if this rigibody will collide with given rectange, and returns hit information or false, depending
@@ -280,14 +276,11 @@ export class Rigibody {
     }
   }
 
-  handleDashCollision(deltaPosition, targetPosition) {
+  handleDashCollision(deltaPosition) {
     const dtSec = 1;
     this.velocity_.set(deltaPosition);
 
-    const hits = this.getAllHitCollisions(dtSec, targetPosition);
-    this.handleHitCollisions(hits, targetPosition);
-
-    this.position_.set(targetPosition);
+    this.handleHitCollisions(dtSec);
 
     this.velocity_.set(new Vector2(0));
   }
@@ -298,7 +291,12 @@ export class Rigibody {
     const tileHits = this.getTileMapCollisions_(dtSec, targetPosition);
 
     const hits = [...blockHits, ...tileHits, ...entityHits];
+    hits.sort(this.hitInfoSortFn_);
 
     return hits;
   }
+
+  hitInfoSortFn_ = (a, b) => {
+    return a.time - b.time;
+  };
 }
