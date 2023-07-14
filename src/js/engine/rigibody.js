@@ -104,24 +104,44 @@ export class Rigibody {
     );
 
     this.isgrounded_ = false;
-    
-    const hits = this.getAllHitCollisions(dtSec, targetPosition);
-    const resolvedAxises = {
-      x: false,
-      y: false,
-    };
+
+    // first iteration
+    let hits = this.getAllHitCollisions(dtSec, targetPosition);
+    let firstResolvedAxis = null;
 
     for (const hitInfo of hits) {
       const normalAxis = hitInfo.normal.x === 0 ? "y" : "x";
-      if (resolvedAxises[normalAxis]) continue;
 
       const resolveIsSuccessful = this.resolveWallCollision_(
         hitInfo,
         targetPosition
       );
 
-      if (resolveIsSuccessful) resolvedAxises[normalAxis] = true;
-      if (resolvedAxises.x && resolvedAxises.y) break;
+      if (resolveIsSuccessful) {
+        firstResolvedAxis = normalAxis;
+        this.position_[normalAxis] = targetPosition[normalAxis];
+        break;
+      }
+    }
+
+    if (firstResolvedAxis !== null) {
+      // second iteration
+      hits = this.getAllHitCollisions(dtSec, targetPosition);
+
+      for (const hitInfo of hits) {
+        const normalAxis = hitInfo.normal.x === 0 ? "y" : "x";
+        if (normalAxis === firstResolvedAxis) continue;
+
+        const resolveIsSuccessful = this.resolveWallCollision_(
+          hitInfo,
+          targetPosition
+        );
+
+        if (resolveIsSuccessful) {
+          this.position_[normalAxis] = targetPosition[normalAxis];
+          break;
+        }
+      }
     }
 
     this.position_.set(targetPosition);
