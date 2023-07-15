@@ -169,13 +169,13 @@ export class Rigibody {
   }
 
   getTileMapCollisions_(dtSec, targetPosition) {
-    this.mapCollider_.update(targetPosition);
     const hits = [];
 
-    for (const tileIndex of this.mapCollider_.tilesInRange) {
+    for (const tileIndex of this.mapCollider_.getMapTilesInRange_V2(targetPosition)) {
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
       const hitInfo = this.vsRect(tileEntity, dtSec);
       if (hitInfo != false) {
+        
         const neighbourTile = Vector2.add(tileIndex, hitInfo.normal);
 
         if (

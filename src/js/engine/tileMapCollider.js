@@ -17,49 +17,18 @@ export class TileMapCollider {
       Math.ceil(this.size.y / (2 * tileSize))
     );
 
+    this.position = this.entity.position_;
+
     this.tilesInRange = [];
   }
 
-  update(targetPosition) {
+  /**
+   * @returns a list of all grid indexes that are between entity position and target position
+   */
+  getMapTilesInRange_V2(targetPosition) {
     this.position = Vector2.copy(this.entity.position_);
     this.targetPosition = Vector2.copy(targetPosition);
-    this.tilesInRange = this.getMapTilesInRange_V2();
-  }
 
-  /**
-   * returns position of the center of entity's collision box
-   */
-  get entityCenterPosition() {
-    return new Vector2(
-      this.position.x + this.halfSize.x,
-      this.position.y - this.halfSize.y
-    )
-  }
-
-  /**
-   * returns position of entity's center bottom of collision box
-   */
-  get entityFeetPosition() {
-    return new Vector2(
-      this.position.x + this.halfSize.x,
-      this.position.y - this.size.y
-    );
-  }
-
-  get feetTileIndex() {
-    return this.tileMap.positionToGridIndex(this.entityFeetPosition);;
-  }
-
-  isGrounded() {
-    if(this.tileMap.tileGrid_[this.feetTileIndex.x] === undefined) return false;
-    if(!this.tileMap.tileGrid_[this.feetTileIndex.x][this.feetTileIndex.y]) return false;
-    return true;
-  }
-
-  /**
-   * @returns a list of all grid indexes that are close to enitity collision box
-   */
-  getMapTilesInRange_V2() {
     let tiles = [];
 
     const topLeft = new Vector2(
@@ -83,6 +52,22 @@ export class TileMapCollider {
         tiles.push(new Vector2(i, j));
       }
     }
+    
+    return tiles;
+  }
+
+  /**
+   * @returns a list containing every tile in the map as pairs of vectors
+   */
+  getAllTiles() {
+    const tiles = []
+    for(const x in this.tileMap.tileGrid_) {
+      for (const y in this.tileMap.tileGrid_[x]) {
+        tiles.push(new Vector2(
+          Number(x), Number(y)));
+      }
+    }
+    
     return tiles;
   }
 }
