@@ -18,7 +18,7 @@ export class Rigibody {
     this.maxGravity = 30;
     this.mass = 1;
     this.pushable = false;
-    this.bounce = 0;
+    this.bounce = false;
     this.groundFriction = 150;
     this.ghost = false;
 
@@ -171,11 +171,12 @@ export class Rigibody {
   getTileMapCollisions_(dtSec, targetPosition) {
     const hits = [];
 
-    for (const tileIndex of this.mapCollider_.getMapTilesInRange_V2(targetPosition)) {
+    for (const tileIndex of this.mapCollider_.getMapTilesInRange_V2(
+      targetPosition
+    )) {
       const tileEntity = this.tileMap.tileIndexToEntity(tileIndex);
       const hitInfo = this.vsRect(tileEntity, dtSec);
       if (hitInfo != false) {
-        
         const neighbourTile = Vector2.add(tileIndex, hitInfo.normal);
 
         if (
@@ -221,7 +222,10 @@ export class Rigibody {
    * @returns true if collision is resolved, false otherwise.
    */
   resolveWallCollision_(hitInfo, targetPosition) {
-    if (hitInfo === false || hitInfo.time < 0) return false;
+    const ZERO = -0.01; // sometimes hit time returns a very small negative number (e-16), which is less than 0.
+    if (hitInfo === false || hitInfo.time < ZERO) {
+      return false;
+    }
 
     const RESOLVE_DISPLACEMENT = 0;
     const MIN_IMPULSE_TO_BOUNCE = 4;
@@ -239,10 +243,10 @@ export class Rigibody {
       const newYPos =
         point.y + this.size_.y / 2 + normal.y * RESOLVE_DISPLACEMENT;
 
-      if (Math.sign(newYPos - this.position_.y) === -vecloitySigns.y)
-        return false;
+      // if (Math.sign(newYPos - this.position_.y) === -vecloitySigns.y)
+      //   return false;
 
-      if (Math.abs(this.velocity_.y) < MIN_IMPULSE_TO_BOUNCE) {
+      if (this.bounce && Math.abs(this.velocity_.y) < MIN_IMPULSE_TO_BOUNCE) {
         this.velocity_.y = 0;
       } else {
         this.velocity_.y *= -this.bounce;
@@ -254,10 +258,10 @@ export class Rigibody {
       const newXPos =
         point.x - this.size_.x / 2 + normal.x * RESOLVE_DISPLACEMENT;
 
-      if (Math.sign(newXPos - this.position_.x) === -vecloitySigns.x)
-        return false;
+      // if (Math.sign(newXPos - this.position_.x) === -vecloitySigns.x)
+      //   return false;
 
-      if (Math.abs(this.velocity_.x) < MIN_IMPULSE_TO_BOUNCE) {
+      if (this.bounce && Math.abs(this.velocity_.x) < MIN_IMPULSE_TO_BOUNCE) {
         this.velocity_.x = 0;
       } else {
         this.velocity_.x *= -this.bounce;
