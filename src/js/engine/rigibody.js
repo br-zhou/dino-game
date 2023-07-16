@@ -243,9 +243,6 @@ export class Rigibody {
       const newYPos =
         point.y + this.size_.y / 2 + normal.y * RESOLVE_DISPLACEMENT;
 
-      // if (Math.sign(newYPos - this.position_.y) === -vecloitySigns.y)
-      //   return false;
-
       if (this.bounce && Math.abs(this.velocity_.y) < MIN_IMPULSE_TO_BOUNCE) {
         this.velocity_.y = 0;
       } else {
@@ -257,9 +254,6 @@ export class Rigibody {
     } else {
       const newXPos =
         point.x - this.size_.x / 2 + normal.x * RESOLVE_DISPLACEMENT;
-
-      // if (Math.sign(newXPos - this.position_.x) === -vecloitySigns.x)
-      //   return false;
 
       if (this.bounce && Math.abs(this.velocity_.x) < MIN_IMPULSE_TO_BOUNCE) {
         this.velocity_.x = 0;
