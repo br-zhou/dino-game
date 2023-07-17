@@ -16,7 +16,7 @@ export class Sprite {
     this.flipped = false;
     this.size = 1;
     this.heightWidthRatio = 1;
-
+    this.imgRotationOrigin = new Vector2(1, 0.5);
     this.loadImg();
   }
 
@@ -45,7 +45,8 @@ export class Sprite {
       this.flipped ? this.imgR_ : this.img_,
       position,
       new Vector2(this.size, this.size * this.heightWidthRatio),
-      - rotation
+      - rotation,
+      this.imgRotationOrigin,
     );
   }
 

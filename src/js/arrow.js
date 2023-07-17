@@ -16,7 +16,7 @@ class Arrow extends Entity {
     this.stuck = false;
 
     this.sprite = new Sprite(
-      { name: "arrow", variant: "horizontal" },
+      { name: "arrow"},
       (result) => (this.loaded = result)
     );
 
@@ -32,11 +32,7 @@ class Arrow extends Entity {
     this.setup()
   }
   
-  setup() {
-    this.ray = new Ray2D(this.position_, this.rotation);
-    this.ray.color = "#ffffff80";
-    this.ray.render();
-  }
+  setup() {}
 
   /** @override */
   update(dtSec) {
@@ -49,7 +45,7 @@ class Arrow extends Entity {
   render() {
     if (!this.loaded) return;
 
-    this.sprite.render(this.position_, this.rotation - (Math.PI * 3) / 4);
+    this.sprite.render(this.position_, this.rotation);
 
   }
 }

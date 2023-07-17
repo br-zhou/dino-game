@@ -216,10 +216,11 @@ export class CanvasTools {
    * @param {Vector2} worldPos
    * @param {Vector2} worldSize
    * @param {number} rotation in radians
+   * @param {Vector2} rotationOrigin rotates image around origin. (0,0) = left, top; (1,1) = right, bottom
    * Renders sprite at index at world position with given size
    * Rotates image around top left corner
    */
-  drawSpriteRotated = (img, worldPos, worldSize, rotation) => {
+  drawSpriteRotated = (img, worldPos, worldSize, rotation, rotationOrigin = new Vector2(0.5, 0.5)) => {
     this.ctx.imageSmoothingEnabled = false;
     this.ctx.save();
 
@@ -232,8 +233,8 @@ export class CanvasTools {
 
     this.ctx.drawImage(
       img,
-      0,
-      0,
+      -this.worldToScreenConvert(worldSize.x) * rotationOrigin.x,
+      -this.worldToScreenConvert(worldSize.y) * rotationOrigin.y,
       this.worldToScreenConvert(worldSize.x),
       this.worldToScreenConvert(worldSize.y)
     );
