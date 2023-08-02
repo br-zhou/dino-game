@@ -1,10 +1,11 @@
 export class PlayerController {
-  constructor(keybinds) {
+  constructor(keybinds, player) {
+    this.player = player;
     this.commands = new Set();
     this.wantsToMove = false;
 
-    this.clickCB = null;
-    this.rightClickCB = null;
+    this.clickHandler = null;
+    this.rightClickHandler = null;
     this.keyToCommandHash = keybinds;
 
     document.addEventListener("update-input", (e) => this.update(e));
@@ -13,18 +14,22 @@ export class PlayerController {
   update(e) {
     const details = e.detail;
     const key = details.key;
-    const type = details.type;
+    const action = details.type;
+    const command = this.keyToCommandHash[key];
 
-    if (key == "mouse0" && type == "down" && this.clickCB != null)
-      this.clickCB();
+    if (key == "mouse0" && action == "down" && this.clickHandler != null)
+      this.clickHandler();
     
-    if (key == "mouse2" && type == "down" && this.rightClickCB != null)
-      this.rightClickCB();
+    if (key == "mouse2" && action == "down" && this.rightClickHandler != null)
+      this.rightClickHandler();
 
+    if (command == "suicide" && action == "down") {
+      this.player.suicideHandler();
+    }
 
-    if (this.keyToCommandHash[key] === undefined) return;
+    if (command === undefined) return;
 
-    switch (type) {
+    switch (action) {
       case "up":
         this.commands.delete(this.keyToCommandHash[key]);
         break;

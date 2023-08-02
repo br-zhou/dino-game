@@ -20,7 +20,7 @@ class Arrow extends Entity {
       (result) => (this.loaded = result)
     );
 
-    this.sprite.size = 2;
+    this.sprite.size = 1.75;
     this.rotation = rotation;
 
     this.gravity = 65;

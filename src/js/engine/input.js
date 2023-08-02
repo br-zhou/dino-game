@@ -23,7 +23,7 @@ class Input {
     if (e.repeat) return;
   
     const key = e.key.toLowerCase();
-  
+    
     this.activeKeys.add(key);
     
     this.dispatchNewInputEvent(key, "down");

@@ -29,7 +29,7 @@ export class Player extends Entity {
       this.sprite.gotoState("idle");
     });
 
-    this.specialState = "none";
+    this.effects = {};
   }
 
   /**
@@ -37,13 +37,13 @@ export class Player extends Entity {
    * @param {*} controller
    */
   bindControls(controls) {
-    this.controller_ = new PlayerController(controls);
+    this.controller_ = new PlayerController(controls, this);
 
-    this.controller_.clickCB = () => {
+    this.controller_.clickHandler = () => {
       this.shootArrow();
     };
 
-    this.controller_.rightClickCB = () => {
+    this.controller_.rightClickHandler = () => {
       this.dash();
     };
   }
@@ -65,17 +65,19 @@ export class Player extends Entity {
       this.playerMidPos
     );
     const pointingDirection = mousediff.toRadians();
-    
+
     const deltaPosition = new Vector2(
       Math.cos(pointingDirection) * DASH_DISTANCE,
       Math.sin(pointingDirection) * DASH_DISTANCE
     );
-    
+
     this.rb.handleDashCollision(deltaPosition);
   };
 
   /** @override */
   update(dtSec) {
+    if (this.effects.death) return;
+
     this.handleControllerInput_();
     this.rb.update(dtSec);
     this.updateSpriteLogic();
@@ -109,18 +111,13 @@ export class Player extends Entity {
   }
 
   crouch() {
-    this.dash();
-    // todo: implement
-    if (false) {
-      // replace with new isgrounded fucntion
-      // duck
-    } else {
-      // fast fall
-    }
+    // this.dash();
+    this.shootArrow();
   }
 
   /** @override */
   render() {
+    if (this.effects.death) return;
     const tools = new CanvasTools();
 
     tools.drawRect(
@@ -169,7 +166,19 @@ export class Player extends Entity {
     }
   }
 
-  destroy() {
+  death() {
+    this.effects.death = true;
+
+    setTimeout(this.spawn, 1500);
+  }
+
+  suicideHandler() {
+    // send request to server
+    this.death();
+  }
+
+  spawn = () => {
+    this.effects.death = false;
     this.position_.set(this.spawnPosition);
   }
 
